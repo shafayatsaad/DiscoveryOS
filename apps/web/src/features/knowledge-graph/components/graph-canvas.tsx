@@ -23,7 +23,7 @@ export function GraphCanvas() {
 
   return (
     <div
-      className="absolute inset-0 z-0 cursor-move bg-[radial-gradient(circle_at_center,#181c21_0%,#0a0e13_100%)]"
+      className="relative z-0 h-[430px] cursor-move overflow-hidden bg-[radial-gradient(circle_at_center,#181c21_0%,#0a0e13_100%)] lg:absolute lg:inset-0 lg:h-auto"
       aria-label="Knowledge graph visualization"
       role="img"
     >
