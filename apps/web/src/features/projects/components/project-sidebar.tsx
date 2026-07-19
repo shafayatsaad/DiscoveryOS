@@ -5,12 +5,13 @@ import { FlaskConical, Menu, Plus } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import {
-  projectNavItems,
+  getProjectNavItems,
   projectUtilityItem,
 } from "@/features/projects/data/research-project-content";
 import { cn } from "@/lib/utils";
 
-export function ProjectSidebar() {
+export function ProjectSidebar({ projectId }: { projectId: string }) {
+  const projectNavItems = getProjectNavItems(projectId);
   const UtilityIcon = projectUtilityItem.icon;
 
   return (
