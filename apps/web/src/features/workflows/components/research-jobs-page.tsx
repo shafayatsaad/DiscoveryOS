@@ -6,15 +6,15 @@ import { ResearchJobsHeader } from "@/features/workflows/components/research-job
 import { ResearchJobsSidebar } from "@/features/workflows/components/research-jobs-sidebar";
 import { ResearchTimeline } from "@/features/workflows/components/research-timeline";
 
-export function ResearchJobsPage() {
+export function ResearchJobsPage({ projectId }: { projectId: string }) {
   return (
     <div className="min-h-screen bg-surface-container-lowest text-on-surface md:flex">
-      <ResearchJobsSidebar />
+      <ResearchJobsSidebar projectId={projectId} />
       <main className="flex min-w-0 flex-1 flex-col">
         <div className="flex-1 overflow-auto">
           <div className="mx-auto flex w-full max-w-container-max flex-col gap-8 px-5 py-8 sm:px-8 md:px-10">
             <Reveal>
-              <ResearchJobsHeader />
+              <ResearchJobsHeader projectId={projectId} />
             </Reveal>
             <Reveal delay={0.06}>
               <ResearchTimeline />
