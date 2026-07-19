@@ -4,10 +4,12 @@ import Link from "next/link";
 import { FlaskConical, Menu, Plus, Search } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
-import { evidenceNavItems } from "@/features/evidence/data/evidence-content";
+import { getEvidenceNavItems } from "@/features/evidence/data/evidence-content";
 import { cn } from "@/lib/utils";
 
-export function EvidenceSidebar() {
+export function EvidenceSidebar({ projectId }: { projectId: string }) {
+  const evidenceNavItems = getEvidenceNavItems(projectId);
+
   return (
     <>
       <details className="sticky top-0 z-50 border-b border-white/10 bg-surface/90 backdrop-blur-xl md:hidden [&>summary::-webkit-details-marker]:hidden">
