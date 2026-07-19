@@ -36,4 +36,5 @@ def test_placeholder_agent_run_returns_agent_result() -> None:
 
     assert response.status_code == 200
     assert response.json()["agent_name"] == "planner"
-    assert response.json()["status"] == "not_implemented"
+    assert response.json()["status"] == "completed"
+    assert response.json()["outputs"]["research_domain"] == "General Science"

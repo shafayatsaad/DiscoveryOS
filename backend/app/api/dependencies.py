@@ -10,6 +10,7 @@ from app.agents.registry import AgentRegistry, build_agent_registry
 from app.config import Settings, get_settings
 from app.database.session import get_session
 from app.services.agent_service import AgentService
+from app.services.pipeline_service import DiscoveryPipelineService
 
 
 def settings_dependency() -> Settings:
@@ -36,3 +37,11 @@ def agent_service_dependency(
     """Inject the agent service boundary used by agent-facing routes."""
 
     return AgentService(registry=registry)
+
+
+def pipeline_service_dependency(
+    settings: Annotated[Settings, Depends(settings_dependency)],
+) -> DiscoveryPipelineService:
+    """Inject the pipeline service used by workflow-facing routes."""
+
+    return DiscoveryPipelineService(max_papers_for_extraction=settings.pipeline_max_papers)

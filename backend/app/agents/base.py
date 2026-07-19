@@ -1,6 +1,7 @@
 """Purpose: Define the abstract contract shared by every DiscoveryOS agent."""
 
 from abc import ABC, abstractmethod
+from typing import Any
 
 from app.schemas.agent import AgentContext, AgentResult
 
@@ -12,8 +13,8 @@ class BaseResearchAgent(ABC):
     description: str
 
     @abstractmethod
-    async def run(self, context: AgentContext) -> AgentResult:
-        """Execute an agent with structured context and return a structured result."""
+    async def run(self, context: Any) -> Any:
+        """Execute an agent with structured context and return a typed result."""
 
 
 class PlaceholderResearchAgent(BaseResearchAgent):

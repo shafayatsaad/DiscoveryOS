@@ -23,6 +23,8 @@ class Settings(BaseSettings):
     )
     redis_url: str | None = Field(default=None, alias="DISCOVERYOS_REDIS_URL")
     openai_api_key: str | None = Field(default=None, alias="DISCOVERYOS_OPENAI_API_KEY")
+    openai_model: str = Field(default="gpt-5.6", alias="DISCOVERYOS_OPENAI_MODEL")
+    pipeline_max_papers: int = Field(default=5, alias="DISCOVERYOS_PIPELINE_MAX_PAPERS")
 
     model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8")
 

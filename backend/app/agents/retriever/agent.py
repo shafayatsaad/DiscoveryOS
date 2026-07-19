@@ -1,13 +1,5 @@
-"""Purpose: Define the retriever agent placeholder for future literature search."""
+"""Purpose: Re-export the concrete Retriever Agent from the retriever module."""
 
-from app.agents.base import PlaceholderResearchAgent
+from app.agents.retriever.retriever import RetrieverAgent
 
-
-class RetrieverAgent(PlaceholderResearchAgent):
-    """Agent boundary for retrieving and ranking research sources."""
-
-    def __init__(self) -> None:
-        super().__init__(
-            name="retriever",
-            description="Retriever Agent will search literature and preserve source metadata.",
-        )
+__all__ = ["RetrieverAgent"]

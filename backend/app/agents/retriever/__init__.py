@@ -1,5 +1,6 @@
-"""Purpose: Expose the retriever agent module."""
+"""Purpose: Export Retriever Agent types for workflow orchestration."""
 
-from app.agents.retriever.agent import RetrieverAgent
+from app.agents.retriever.retriever import RetrieverAgent
+from app.agents.retriever.schemas import Paper, PaperCollection
 
-__all__ = ["RetrieverAgent"]
+__all__ = ["Paper", "PaperCollection", "RetrieverAgent"]
