@@ -4,6 +4,7 @@ import { ListFilter, Search } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { MotionDiv } from "@/features/landing/components/motion-primitives";
+import { graphDomainContext } from "@/features/knowledge-graph/data/knowledge-graph-content";
 
 export function GraphSearch() {
   return (
@@ -20,7 +21,7 @@ export function GraphSearch() {
       <input
         id="graph-search"
         className="min-w-0 flex-1 border-none bg-transparent text-sm text-on-surface outline-none placeholder:text-on-surface-variant/50 focus:ring-0 sm:text-base"
-        placeholder="Search graph..."
+        placeholder={`Search ${graphDomainContext.domain} graph...`}
         type="search"
       />
       <Button className="h-9 shrink-0 rounded-full px-4" size="sm">
