@@ -1,5 +1,6 @@
 // Purpose: Compose the project workspace using Stitch project-screen sections.
 
+import { Reveal } from "@/components/ui/reveal";
 import { ProjectFooter } from "@/features/projects/components/project-footer";
 import { ProjectHeader } from "@/features/projects/components/project-header";
 import { ProjectSidebar } from "@/features/projects/components/project-sidebar";
@@ -16,11 +17,19 @@ export function ResearchProjectPage() {
         <ProjectTopBar />
         <div className="mx-auto grid w-full max-w-container-max flex-1 grid-cols-1 gap-6 px-5 py-6 sm:px-8 md:px-10 lg:grid-cols-[minmax(0,1fr)_320px] xl:grid-cols-[minmax(0,1fr)_360px]">
           <div className="flex min-w-0 flex-col gap-6">
-            <ProjectHeader />
-            <ResearchPipeline />
-            <TerminalAndMetrics />
+            <Reveal>
+              <ProjectHeader />
+            </Reveal>
+            <Reveal delay={0.05}>
+              <ResearchPipeline />
+            </Reveal>
+            <Reveal delay={0.1}>
+              <TerminalAndMetrics />
+            </Reveal>
           </div>
-          <ResearchSynopsis />
+          <Reveal delay={0.12}>
+            <ResearchSynopsis />
+          </Reveal>
         </div>
         <ProjectFooter />
       </main>
