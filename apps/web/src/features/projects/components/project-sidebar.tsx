@@ -29,7 +29,7 @@ export function ProjectSidebar() {
             return (
               <a
                 key={item.label}
-                href="#"
+                href={item.href ?? "#"}
                 className={cn(
                   "flex items-center gap-3 rounded-lg px-3 py-2.5 font-display text-sm font-semibold transition-colors",
                   item.active
@@ -71,7 +71,7 @@ export function ProjectSidebar() {
             return (
               <a
                 key={item.label}
-                href="#"
+                href={item.href ?? "#"}
                 className={cn(
                   "flex items-center gap-3 rounded-lg px-4 py-3 font-display text-sm font-semibold transition-all active:scale-[0.98]",
                   item.active
