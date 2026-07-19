@@ -13,7 +13,7 @@ export function EvidenceToolbar() {
         <Search className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-on-surface-variant" />
         <input
           className="h-12 w-full rounded-lg border border-white/10 bg-surface-container-low py-3 pl-12 pr-4 text-sm text-on-surface outline-none transition-all placeholder:text-on-surface-variant/50 focus:border-primary focus:ring-1 focus:ring-primary"
-          placeholder="Search claims, genes, or DOI..."
+          placeholder="Search claims, entities, methods, or DOI..."
           type="search"
         />
       </label>
