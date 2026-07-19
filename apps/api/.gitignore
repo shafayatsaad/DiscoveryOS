@@ -1,0 +1,9 @@
+# Purpose: Keep generated backend artifacts out of version control.
+
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+*.egg-info/
+.env
+

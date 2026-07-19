@@ -1,0 +1,44 @@
+# Purpose: Define the FastAPI backend package, runtime dependencies, test settings, and lint rules.
+
+[project]
+name = "discoveryos-api"
+version = "0.1.0"
+description = "FastAPI backend foundation for the DiscoveryOS scientific operating system."
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+  "fastapi>=0.115.0",
+  "pydantic-settings>=2.6.0",
+  "uvicorn[standard]>=0.30.0",
+]
+
+[project.optional-dependencies]
+dev = [
+  "httpx>=0.27.0",
+  "pytest>=8.3.0",
+  "pytest-asyncio>=0.24.0",
+  "ruff>=0.8.0",
+]
+
+[tool.pytest.ini_options]
+# Purpose: Keep backend tests isolated to the FastAPI service.
+asyncio_mode = "auto"
+pythonpath = ["."]
+testpaths = ["tests"]
+
+[tool.ruff]
+# Purpose: Provide a production-oriented lint baseline for the backend.
+line-length = 100
+target-version = "py311"
+src = ["app", "tests"]
+
+[tool.ruff.lint]
+# Purpose: Select rules that catch correctness, import order, async, and modernization issues.
+select = ["E", "F", "I", "B", "UP", "ASYNC"]
+ignore = []
+
+[tool.ruff.format]
+# Purpose: Use Ruff as the single formatting tool for Python code.
+quote-style = "double"
+indent-style = "space"
+line-ending = "lf"
