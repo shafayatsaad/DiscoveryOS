@@ -3,8 +3,8 @@
 import { SquareTerminal } from "lucide-react";
 
 import {
+  getTerminalLogs,
   projectMetrics,
-  terminalLogs,
 } from "@/features/projects/data/research-project-content";
 import { cn } from "@/lib/utils";
 
@@ -14,7 +14,9 @@ const logToneClasses = {
   WARN: "text-[#f4cf75]",
 };
 
-export function TerminalAndMetrics() {
+export function TerminalAndMetrics({ projectId }: { projectId: string }) {
+  const terminalLogs = getTerminalLogs(projectId);
+
   return (
     <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
       <section className="glass-panel flex min-h-[380px] flex-col rounded-xl lg:col-span-2" aria-labelledby="terminal-heading">
