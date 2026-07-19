@@ -50,7 +50,7 @@ export type ProcessJob = {
 export const navItems: NavItem[] = [
   { label: "Projects", icon: FlaskConical, active: true, href: "/dashboard" },
   { label: "Knowledge Graph", icon: Network, href: "/projects/heart-failure-biomarkers/graph" },
-  { label: "Research Jobs", icon: SquareTerminal },
+  { label: "Research Jobs", icon: SquareTerminal, href: "/projects/heart-failure-biomarkers/workflow" },
   { label: "Evidence Explorer", icon: BarChart3, href: "/projects/heart-failure-biomarkers/evidence" },
   { label: "Experiments", icon: Beaker },
   { label: "Reports", icon: FileText },
