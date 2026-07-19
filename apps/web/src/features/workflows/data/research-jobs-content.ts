@@ -83,7 +83,7 @@ export const jobHeaderMeta = getJobHeaderMeta(primaryProjectId);
 
 export const jobSteps: JobStep[] = [
   {
-    title: "Planning",
+    title: "Planner",
     status: "Done",
     activity: "Research goal decomposed",
     metric: "9 tasks",
@@ -101,7 +101,7 @@ export const jobSteps: JobStep[] = [
     ],
   },
   {
-    title: "Retrieval",
+    title: "Retriever",
     status: "Running",
     activity: "Downloading",
     metric: "1,237 papers",
@@ -117,25 +117,53 @@ export const jobSteps: JobStep[] = [
     ],
   },
   {
-    title: "Evidence",
+    title: "Evidence Extraction",
     status: "Running",
     activity: "Extracting",
-    metric: "421 claims",
+    metric: "1,248 claims",
     bar: "██████",
   },
   {
-    title: "Contradictions",
+    title: "Claim Verification",
+    status: "Running",
+    activity: "Checking provenance",
+    metric: "94% linked",
+    bar: "█████",
+  },
+  {
+    title: "Contradiction Detection",
     status: "Running",
     activity: "Finding conflicts",
     metric: "Found 12",
     bar: "████",
   },
   {
-    title: "Novelty",
+    title: "Knowledge Graph",
+    status: "Queued",
+    activity: "Building",
+    metric: "Entities ready",
+    bar: "███",
+  },
+  {
+    title: "Hypothesis Generator",
+    status: "Queued",
+    activity: "Waiting for graph",
+    metric: "Queued",
+    bar: "██",
+  },
+  {
+    title: "Novelty Analyzer",
     status: "Queued",
     activity: "Computing",
     metric: "Waiting on critic",
     bar: "███",
+  },
+  {
+    title: "Experiment Planner",
+    status: "Pending",
+    activity: "Pending",
+    metric: "--",
+    bar: "",
   },
   {
     title: "Report",
