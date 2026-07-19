@@ -15,6 +15,8 @@ import {
   SquareTerminal,
 } from "lucide-react";
 
+import { primaryProjectId, projectRoute, workspaceProjects } from "@/features/projects/data/project-workspaces";
+
 export type NavItem = {
   label: string;
   icon: LucideIcon;
@@ -23,8 +25,11 @@ export type NavItem = {
 };
 
 export type ResearchProject = {
+  id: string;
   title: string;
+  domain: string;
   description: string;
+  phase: string;
   progress: number;
   status?: "completed";
 };
@@ -49,81 +54,72 @@ export type ProcessJob = {
 
 export const navItems: NavItem[] = [
   { label: "Projects", icon: FlaskConical, active: true, href: "/dashboard" },
-  { label: "Knowledge Graph", icon: Network, href: "/projects/heart-failure-biomarkers/graph" },
-  { label: "Research Jobs", icon: SquareTerminal, href: "/projects/heart-failure-biomarkers/workflow" },
-  { label: "Evidence Explorer", icon: BarChart3, href: "/projects/heart-failure-biomarkers/evidence" },
+  { label: "Knowledge Graph", icon: Network, href: projectRoute(primaryProjectId, "graph") },
+  { label: "Research Pipeline", icon: SquareTerminal, href: projectRoute(primaryProjectId, "pipeline") },
+  { label: "Evidence Explorer", icon: BarChart3, href: projectRoute(primaryProjectId, "evidence") },
   { label: "Experiments", icon: Beaker },
   { label: "Reports", icon: FileText },
 ];
 
 export const utilityNavItems: NavItem[] = [{ label: "Settings", icon: Settings }];
 
-export const researchProjects: ResearchProject[] = [
-  {
-    title: "Heart Failure Models",
-    description: "Cardiovascular genomic dataset cross-reference.",
-    progress: 72,
-  },
-  {
-    title: "Alzheimer's Pathways",
-    description: "Neuro-degenerative protein marker analysis.",
-    progress: 30,
-  },
-  {
-    title: "Lung Cancer Biomarkers",
-    description: "Phase III trial data correlation.",
-    progress: 100,
-    status: "completed",
-  },
-];
+export const researchProjects: ResearchProject[] = workspaceProjects.map((project) => ({
+  id: project.id,
+  title: project.title,
+  domain: project.domain,
+  description: project.summary,
+  phase: project.phase,
+  progress: project.progress,
+  status: project.status === "Completed" ? "completed" : undefined,
+}));
 
 export const insightStream: Insight[] = [
   {
     time: "Just Now",
-    tag: "#Heart-Failure",
-    body: "Novel correlation identified between Gene X22 and reduced left ventricular ejection fraction in dataset subset B.",
+    tag: "#Materials-Science",
+    body: "New conductivity-stability tradeoff surfaced across polymer electrolyte studies using ceramic filler blends.",
     primary: true,
-    action: "View Data",
+    action: "Open Evidence",
   },
   {
     time: "2 hrs ago",
     tag: "System",
-    body: "Data ingestion complete: 4.2TB of new clinical trial records indexed and added to Knowledge Graph.",
+    body: "Cross-domain ingestion complete: 1,237 papers indexed with citations, entities, methods, and extracted claims.",
   },
   {
     time: "5 hrs ago",
-    tag: "#Alzheimers",
-    body: "Anomaly detected in control group protein markers. Flagged for manual review by lead researcher.",
+    tag: "#Climate",
+    body: "Contradiction cluster detected between satellite-derived surface temperature and local exposure studies.",
   },
 ];
 
 export const activeProcesses: ProcessJob[] = [
   {
-    name: "SeqAlign-v4.2",
+    name: "OpenAlex-Retriever",
     role: "Retriever",
     roleTone: "primary",
     icon: Database,
-    progress: 85,
-    state: "Fetching literature",
-    eta: "Est. 2m",
+    progress: 74,
+    state: "Downloading 1,237 papers",
+    eta: "Live",
   },
   {
-    name: "Hypothesis-Gen-HF",
-    role: "Planner",
+    name: "Evidence-Synthesizer",
+    role: "Extractor",
     roleTone: "secondary",
     icon: BrainCircuit,
-    progress: 45,
-    state: "Structuring logic tree",
-    eta: "Est. 15m",
+    progress: 52,
+    state: "Extracting claims",
+    eta: "Running",
   },
   {
-    name: "Graph-Update-Nightly",
+    name: "Novelty-Scorer",
     role: "Queued",
     roleTone: "muted",
     icon: GitBranch,
     progress: 0,
-    state: "Waiting for resources",
-    eta: "--",
+    state: "Waiting for evidence pass",
+    eta: "Queued",
   },
 ];
 
