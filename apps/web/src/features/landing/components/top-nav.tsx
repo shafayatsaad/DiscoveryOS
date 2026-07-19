@@ -1,5 +1,6 @@
 // Purpose: Render the Stitch-aligned dark glass top navigation.
 
+import Link from "next/link";
 import { CircleHelp, Microscope, Sparkles } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -33,8 +34,8 @@ export function TopNav() {
             <CircleHelp className="h-4 w-4" />
           </Button>
         </div>
-        <Button size="sm" className="hidden min-w-[122px] sm:inline-flex">
-          New Research
+        <Button asChild size="sm" className="hidden min-w-[122px] sm:inline-flex">
+          <Link href="/dashboard">New Research</Link>
         </Button>
         <div
           aria-label="DiscoveryOS workspace avatar"
@@ -47,4 +48,3 @@ export function TopNav() {
     </nav>
   );
 }
-

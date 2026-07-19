@@ -46,9 +46,9 @@ export function getJobNavItems(projectId: string): JobNavItem[] {
     { label: "Knowledge Graph", icon: Network, href: projectRoute(projectId, "graph") },
     { label: "Research Pipeline", icon: SquareTerminal, href: projectRoute(projectId, "pipeline"), active: true },
     { label: "Evidence Explorer", icon: BarChart3, href: projectRoute(projectId, "evidence") },
-    { label: "Experiments", icon: Beaker },
-    { label: "Reports", icon: FileText },
-    { label: "Settings", icon: Settings },
+    { label: "Experiments", icon: Beaker, href: projectRoute(projectId, "experiments") },
+    { label: "Reports", icon: FileText, href: projectRoute(projectId, "reports") },
+    { label: "Settings", icon: Settings, href: projectRoute(projectId, "settings") },
   ];
 }
 

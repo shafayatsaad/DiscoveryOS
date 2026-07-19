@@ -10,21 +10,24 @@ import { Button } from "@/components/ui/button";
 import { MotionDiv } from "@/features/landing/components/motion-primitives";
 import {
   magicMomentQuestion,
-  magicMomentResults,
-  magicPipelineSteps,
   quickActions,
 } from "@/features/dashboard/data/dashboard-content";
+import { useMagicMoment } from "@/features/dashboard/hooks/use-magic-moment";
 import { primaryProjectId, projectRoute } from "@/features/projects/data/project-workspaces";
 import { cn } from "@/lib/utils";
 
 export function CommandCenter() {
+  const { data: magicMoment } = useMagicMoment();
+  const magicPipelineSteps = magicMoment?.steps ?? [];
+  const magicMomentResults = magicMoment?.results ?? [];
+  const magicStepCount = magicPipelineSteps.length;
   const [query, setQuery] = useState("");
   const [activeStep, setActiveStep] = useState(-1);
-  const isRunning = activeStep >= 0 && activeStep < magicPipelineSteps.length - 1;
-  const isComplete = activeStep >= magicPipelineSteps.length - 1;
+  const isRunning = activeStep >= 0 && magicStepCount > 0 && activeStep < magicStepCount - 1;
+  const isComplete = magicStepCount > 0 && activeStep >= magicStepCount - 1;
 
   useEffect(() => {
-    if (activeStep < 0 || activeStep >= magicPipelineSteps.length - 1) {
+    if (activeStep < 0 || magicStepCount === 0 || activeStep >= magicStepCount - 1) {
       return;
     }
 
@@ -33,7 +36,7 @@ export function CommandCenter() {
     }, 520);
 
     return () => window.clearTimeout(timer);
-  }, [activeStep]);
+  }, [activeStep, magicStepCount]);
 
   function runDiscovery(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();

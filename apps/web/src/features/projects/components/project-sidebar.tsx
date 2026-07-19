@@ -60,9 +60,11 @@ export function ProjectSidebar({ projectId, activeSection = "project" }: Project
               </span>
             </span>
           </Link>
-          <Button className="mt-8 w-full bg-primary-container text-on-primary-container hover:bg-primary">
-            <Plus className="h-4 w-4" />
-            New Research
+          <Button asChild className="mt-8 w-full bg-primary-container text-on-primary-container hover:bg-primary">
+            <Link href="/dashboard">
+              <Plus className="h-4 w-4" />
+              New Research
+            </Link>
           </Button>
         </div>
 

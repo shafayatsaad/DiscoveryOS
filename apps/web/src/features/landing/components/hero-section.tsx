@@ -1,9 +1,13 @@
-// Purpose: Render the Stitch landing hero with animated shader background.
+// Purpose: Render the DiscoveryOS landing hero with animated shader background.
 
-import { Trophy } from "lucide-react";
+import { Sparkles } from "lucide-react";
+import Link from "next/link";
 
 import { Button } from "@/components/ui/button";
-import { MotionDiv, MotionSection } from "@/features/landing/components/motion-primitives";
+import {
+  MotionDiv,
+  MotionSection,
+} from "@/features/landing/components/motion-primitives";
 import { ShaderBackground } from "@/features/landing/components/shader-background";
 
 export function HeroSection() {
@@ -18,30 +22,38 @@ export function HeroSection() {
       <ShaderBackground />
       <div className="absolute inset-0 z-0 bg-gradient-to-b from-background/35 via-background/70 to-background" />
 
+      {/* Ambient glow behind content */}
+      <div className="pointer-events-none absolute left-1/2 top-1/3 -z-0 h-[500px] w-[500px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-primary/[0.04] blur-[120px]" />
+
       <div className="relative z-10 mx-auto flex w-full max-w-container-max flex-col items-center text-center">
         <MotionDiv
-          className="mb-8 inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/10 px-3 py-1.5 font-display text-xs font-semibold uppercase tracking-normal text-primary"
+          className="mb-8 flex items-center gap-2"
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.12, duration: 0.45 }}
+          transition={{ delay: 0.1, duration: 0.45 }}
         >
-          <Trophy className="h-3.5 w-3.5" />
-          OpenAI Hackathon Winner
+          <span className="flex items-center gap-1.5 rounded-full border border-white/[0.06] bg-surface-container-low px-3 py-1.5 font-display text-xs font-medium text-on-surface-variant">
+            <Sparkles className="h-3 w-3 text-primary" />
+            v0.1 — Early Access
+          </span>
         </MotionDiv>
 
         <MotionDiv
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2, duration: 0.5 }}
+          transition={{ delay: 0.18, duration: 0.5 }}
         >
-          <h1 className="mx-auto mb-6 max-w-4xl font-display text-5xl font-semibold leading-[1.1] text-on-surface tracking-normal sm:text-6xl lg:text-[72px]">
+          <h1 className="mx-auto mb-6 max-w-5xl font-display text-5xl font-semibold leading-[1.05] text-on-surface tracking-tight sm:text-6xl lg:text-[80px]">
             Accelerate Scientific Discovery with{" "}
-            <span className="text-primary">Autonomous AI</span>
+            <span className="bg-gradient-to-r from-primary via-primary/90 to-primary/70 bg-clip-text text-transparent">
+              Autonomous AI
+            </span>
           </h1>
-          <p className="mx-auto mb-10 max-w-2xl text-lg leading-[1.6] text-on-surface-variant">
-            The first Operating System for autonomous research discoveries. Orchestrate complex
-            evidence retrieval, synthesize models, and deploy specialized agents in a unified,
-            distraction-free environment.
+          <p className="mx-auto mb-10 max-w-2xl text-lg leading-[1.7] text-on-surface-variant">
+            The first Operating System for autonomous research discoveries.
+            Orchestrate complex evidence retrieval, synthesize models, and
+            deploy specialized agents in a unified, distraction-free
+            environment.
           </p>
         </MotionDiv>
 
@@ -49,15 +61,30 @@ export function HeroSection() {
           className="flex w-full flex-col items-center justify-center gap-4 sm:w-auto sm:flex-row"
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.32, duration: 0.45 }}
+          transition={{ delay: 0.3, duration: 0.45 }}
         >
-          <Button size="lg" className="w-full min-w-40 sm:w-auto">
-            Request Demo
+          <Button
+            asChild
+            size="lg"
+            className="group relative w-full min-w-40 overflow-hidden sm:w-auto"
+          >
+            <Link href="/dashboard">
+              <span className="absolute inset-0 bg-gradient-to-r from-primary/20 via-transparent to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+              <span className="relative z-10">Start Discovery</span>
+            </Link>
           </Button>
-          <Button variant="secondary" size="lg" className="w-full min-w-40 sm:w-auto">
-            Read Documentation
+          <Button
+            asChild
+            variant="secondary"
+            size="lg"
+            className="w-full min-w-40 sm:w-auto"
+          >
+            <Link href="#capabilities">View Capabilities</Link>
           </Button>
         </MotionDiv>
+
+        {/* Subtle bottom indicator */}
+        <div className="mt-16 h-px w-32 bg-gradient-to-r from-transparent via-primary/20 to-transparent" />
       </div>
     </MotionSection>
   );

@@ -73,9 +73,11 @@ export function DashboardSidebar() {
         </nav>
 
         <div className="mt-auto space-y-3 border-t border-white/[0.05] px-4 py-5">
-          <Button className="w-full">
-            <Plus className="h-4 w-4" />
-            New Research
+          <Button asChild className="w-full">
+            <Link href="/dashboard">
+              <Plus className="h-4 w-4" />
+              New Research
+            </Link>
           </Button>
           {utilityNavItems.map((item) => {
             const Icon = item.icon;
@@ -83,7 +85,7 @@ export function DashboardSidebar() {
             return (
               <a
                 key={item.label}
-                href="#"
+                href={item.href ?? "#"}
                 className="flex items-center gap-3 rounded-lg px-3 py-2.5 font-display text-sm font-semibold text-on-surface-variant transition-all hover:bg-white/[0.04] hover:text-on-surface"
               >
                 <Icon className="h-5 w-5" />
