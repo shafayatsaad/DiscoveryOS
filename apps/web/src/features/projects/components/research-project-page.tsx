@@ -12,7 +12,7 @@ import { TerminalAndMetrics } from "@/features/projects/components/terminal-and-
 export function ResearchProjectPage({ projectId }: { projectId: string }) {
   return (
     <div className="min-h-screen bg-[#0b0f14] text-on-surface md:flex">
-      <ProjectSidebar projectId={projectId} />
+      <ProjectSidebar activeSection="project" projectId={projectId} />
       <main className="flex min-w-0 flex-1 flex-col">
         <ProjectTopBar />
         <div className="mx-auto grid w-full max-w-container-max flex-1 grid-cols-1 gap-6 px-5 py-6 sm:px-8 md:px-10 lg:grid-cols-[minmax(0,1fr)_320px] xl:grid-cols-[minmax(0,1fr)_360px]">
