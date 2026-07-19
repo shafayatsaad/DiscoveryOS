@@ -6,6 +6,9 @@ from pathlib import Path
 from sqlmodel import Session, SQLModel, create_engine
 
 from app.config import get_settings
+from app.workspace import workspace as _workspace_models
+
+_ = _workspace_models
 
 
 def _ensure_sqlite_parent(database_url: str) -> None:
@@ -36,7 +39,7 @@ engine = get_engine()
 
 
 def create_database_and_tables() -> None:
-    """Create currently registered SQLModel tables; no domain tables exist in this scaffold."""
+    """Create currently registered SQLModel tables for local SQLite persistence."""
 
     SQLModel.metadata.create_all(engine)
 

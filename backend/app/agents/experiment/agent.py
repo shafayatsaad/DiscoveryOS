@@ -1,13 +1,5 @@
-"""Purpose: Define the experiment agent placeholder for future validation planning."""
+"""Purpose: Re-export the concrete Experiment Agent."""
 
-from app.agents.base import PlaceholderResearchAgent
+from app.agents.experiment.planner import ExperimentAgent
 
-
-class ExperimentAgent(PlaceholderResearchAgent):
-    """Agent boundary for transforming hypotheses into validation plans."""
-
-    def __init__(self) -> None:
-        super().__init__(
-            name="experiment",
-            description="Experiment Agent will propose validation plans, controls, and risks.",
-        )
+__all__ = ["ExperimentAgent"]

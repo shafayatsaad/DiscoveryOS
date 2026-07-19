@@ -15,12 +15,18 @@ class OpenAlexProvider(HttpLiteratureProvider):
     async def search(self, query: str, limit: int) -> list[Paper]:
         """Search OpenAlex and normalize work records into Paper objects."""
 
+        search_query = self._sanitize_query(query)
         data = await self._get_json(
-            cache_key=f"openalex:{query}:{limit}",
+            cache_key=f"openalex:{search_query}:{limit}",
             url=self.base_url,
-            params={"search": query, "per-page": limit},
+            params={"search": search_query, "per-page": limit},
         )
         return [self._parse_work(work, query) for work in data.get("results", [])[:limit]]
+
+    def _sanitize_query(self, query: str) -> str:
+        """Keep OpenAlex search terms readable while removing punctuation it may reject."""
+
+        return " ".join("".join(char if char.isalnum() else " " for char in query).split())
 
     def _parse_work(self, work: dict[str, Any], query: str) -> Paper:
         """Normalize one OpenAlex work record."""

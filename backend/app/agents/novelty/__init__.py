@@ -1,5 +1,6 @@
-"""Purpose: Expose the novelty agent module."""
+"""Purpose: Export novelty analysis types."""
 
-from app.agents.novelty.agent import NoveltyAgent
+from app.agents.novelty.analyzer import NoveltyAgent
+from app.agents.novelty.schemas import NoveltyAnalysis
 
-__all__ = ["NoveltyAgent"]
+__all__ = ["NoveltyAgent", "NoveltyAnalysis"]

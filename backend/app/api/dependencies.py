@@ -9,8 +9,11 @@ from sqlmodel import Session
 from app.agents.registry import AgentRegistry, build_agent_registry
 from app.config import Settings, get_settings
 from app.database.session import get_session
+from app.graph.repository import KnowledgeGraphRepository
 from app.services.agent_service import AgentService
 from app.services.pipeline_service import DiscoveryPipelineService
+from app.workspace.repository import WorkspaceRepository
+from app.workspace.service import WorkspaceService
 
 
 def settings_dependency() -> Settings:
@@ -41,7 +44,28 @@ def agent_service_dependency(
 
 def pipeline_service_dependency(
     settings: Annotated[Settings, Depends(settings_dependency)],
+    session: Annotated[Session, Depends(database_session_dependency)],
 ) -> DiscoveryPipelineService:
     """Inject the pipeline service used by workflow-facing routes."""
 
-    return DiscoveryPipelineService(max_papers_for_extraction=settings.pipeline_max_papers)
+    workspace_service = WorkspaceService(repository=WorkspaceRepository(session))
+    return DiscoveryPipelineService(
+        max_papers_for_extraction=settings.pipeline_max_papers,
+        workspace_service=workspace_service,
+    )
+
+
+def workspace_service_dependency(
+    session: Annotated[Session, Depends(database_session_dependency)],
+) -> WorkspaceService:
+    """Inject the Discovery Workspace service."""
+
+    return WorkspaceService(repository=WorkspaceRepository(session))
+
+
+def graph_repository_dependency(
+    workspace_service: Annotated[WorkspaceService, Depends(workspace_service_dependency)],
+) -> KnowledgeGraphRepository:
+    """Inject the graph repository backed by workspace JSON storage."""
+
+    return KnowledgeGraphRepository(workspace_service=workspace_service)
