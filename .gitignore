@@ -1,0 +1,11 @@
+# Purpose: Keep generated local artifacts out of version control.
+
+node_modules/
+.next/
+out/
+dist/
+coverage/
+*.tsbuildinfo
+.env
+.env*.local
+*.log

@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Evidence Explorer - DiscoveryOS</title>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Tailwind Configuration -->
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "on-tertiary": "#283140",
+                      "surface-container-lowest": "#0a0e13",
+                      "surface-tint": "#adc6ff",
+                      "tertiary": "#bec7db",
+                      "inverse-primary": "#005ac2",
+                      "outline": "#8c909f",
+                      "secondary-container": "#404758",
+                      "error-container": "#93000a",
+                      "inverse-surface": "#e0e2ea",
+                      "on-tertiary-container": "#212a39",
+                      "on-primary-fixed-variant": "#004395",
+                      "on-tertiary-fixed": "#131c2a",
+                      "background": "#101419",
+                      "on-secondary-fixed-variant": "#404758",
+                      "on-surface-variant": "#c2c6d6",
+                      "on-background": "#e0e2ea",
+                      "secondary-fixed": "#dce2f7",
+                      "surface": "#101419",
+                      "tertiary-container": "#8891a4",
+                      "inverse-on-surface": "#2d3136",
+                      "on-primary": "#002e6a",
+                      "on-secondary-container": "#aeb5c9",
+                      "on-primary-fixed": "#001a42",
+                      "primary-fixed": "#d8e2ff",
+                      "primary-container": "#4d8eff",
+                      "error": "#ffb4ab",
+                      "tertiary-fixed-dim": "#bec7db",
+                      "on-tertiary-fixed-variant": "#3e4758",
+                      "primary": "#adc6ff",
+                      "surface-container-highest": "#31353b",
+                      "on-error": "#690005",
+                      "surface-variant": "#31353b",
+                      "on-primary-container": "#00285d",
+                      "surface-container-low": "#181c21",
+                      "surface-dim": "#101419",
+                      "surface-bright": "#36393f",
+                      "tertiary-fixed": "#dae3f7",
+                      "surface-container-high": "#262a30",
+                      "secondary-fixed-dim": "#c0c6db",
+                      "on-secondary-fixed": "#141b2b",
+                      "on-surface": "#e0e2ea",
+                      "primary-fixed-dim": "#adc6ff",
+                      "on-secondary": "#293040",
+                      "outline-variant": "#424754",
+                      "on-error-container": "#ffdad6",
+                      "secondary": "#c0c6db",
+                      "surface-container": "#1c2025"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "md": "16px",
+                      "xs": "8px",
+                      "base": "4px",
+                      "margin": "40px",
+                      "sm": "12px",
+                      "lg": "24px",
+                      "xl": "32px",
+                      "gutter": "24px",
+                      "container-max": "1440px"
+              },
+              "fontFamily": {
+                      "body-lg": ["Inter"],
+                      "headline-sm": ["Geist"],
+                      "display-lg": ["Geist"],
+                      "code-md": ["Geist"],
+                      "body-md": ["Inter"],
+                      "label-md": ["Geist"],
+                      "headline-lg": ["Geist"],
+                      "body-sm": ["Inter"],
+                      "headline-md": ["Geist"]
+              },
+              "fontSize": {
+                      "body-lg": ["18px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                      "headline-sm": ["20px", {"lineHeight": "1.4", "fontWeight": "500"}],
+                      "display-lg": ["48px", {"lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "600"}],
+                      "code-md": ["14px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                      "body-md": ["16px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                      "label-md": ["12px", {"lineHeight": "1.2", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                      "headline-lg": ["32px", {"lineHeight": "1.2", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                      "body-sm": ["14px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                      "headline-md": ["24px", {"lineHeight": "1.3", "letterSpacing": "-0.01em", "fontWeight": "500"}]
+              }
+            }
+          }
+        }
+    </script>
+<style>
+        body {
+            background-color: theme('colors.background');
+            color: theme('colors.on-background');
+        }
+        
+        .glass-panel {
+            background-color: theme('colors.surface-container');
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .row-expanded .row-content {
+            display: table-row;
+        }
+
+        .row-expanded .expand-icon {
+            transform: rotate(90deg);
+        }
+    </style>
+</head>
+<body class="min-h-screen flex font-body-md text-body-md bg-background text-on-background">
+<!-- TopNavBar for Mobile -->
+<header class="md:hidden flex justify-between items-center w-full px-margin h-16 sticky top-0 z-50 bg-surface/80 backdrop-blur-xl border-b border-white/10">
+<div class="text-headline-sm font-headline-sm font-extrabold text-on-surface">DiscoveryOS</div>
+<div class="flex items-center gap-xs">
+<span class="material-symbols-outlined text-primary cursor-pointer hover:opacity-80 transition-opacity">search</span>
+<span class="material-symbols-outlined text-on-surface-variant cursor-pointer hover:text-primary transition-colors">menu</span>
+</div>
+</header>
+<!-- SideNavBar (Desktop) -->
+<nav class="hidden md:flex flex-col h-full border-r border-white/5 py-lg bg-surface/80 backdrop-blur-xl border-r border-white/10 docked left-0 h-screen w-72 sticky top-0">
+<div class="px-lg mb-lg">
+<div class="text-headline-md font-headline-md font-bold text-on-surface mb-xs flex items-center gap-sm">
+<span class="material-symbols-outlined text-primary text-[32px]">science</span>
+                DiscoveryOS
+            </div>
+<div class="text-body-sm text-on-surface-variant">Autonomous Research</div>
+</div>
+<button class="mx-lg mb-lg bg-primary text-on-primary py-sm px-md rounded-lg font-label-md text-label-md hover:bg-primary-container transition-colors shadow-[0_0_15px_rgba(77,142,255,0.2)]">
+            New Research
+        </button>
+<ul class="flex flex-col gap-base px-sm font-body-md text-body-md">
+<li>
+<a class="flex items-center gap-sm px-sm py-sm rounded-lg text-on-surface-variant hover:bg-white/5 hover:text-on-surface transition-all scale-98 active:scale-95 duration-200" href="#">
+<span class="material-symbols-outlined">science</span> Projects
+                </a>
+</li>
+<li>
+<a class="flex items-center gap-sm px-sm py-sm rounded-lg text-on-surface-variant hover:bg-white/5 hover:text-on-surface transition-all scale-98 active:scale-95 duration-200" href="#">
+<span class="material-symbols-outlined">hub</span> Knowledge Graph
+                </a>
+</li>
+<li>
+<a class="flex items-center gap-sm px-sm py-sm rounded-lg text-on-surface-variant hover:bg-white/5 hover:text-on-surface transition-all scale-98 active:scale-95 duration-200" href="#">
+<span class="material-symbols-outlined">terminal</span> Research Jobs
+                </a>
+</li>
+<li>
+<a class="flex items-center gap-sm px-sm py-sm rounded-lg text-primary font-bold bg-white/5 hover:bg-white/5 hover:text-on-surface transition-all scale-98 active:scale-95 duration-200" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">analytics</span> Evidence Explorer
+                </a>
+</li>
+<li>
+<a class="flex items-center gap-sm px-sm py-sm rounded-lg text-on-surface-variant hover:bg-white/5 hover:text-on-surface transition-all scale-98 active:scale-95 duration-200" href="#">
+<span class="material-symbols-outlined">biotech</span> Experiments
+                </a>
+</li>
+<li>
+<a class="flex items-center gap-sm px-sm py-sm rounded-lg text-on-surface-variant hover:bg-white/5 hover:text-on-surface transition-all scale-98 active:scale-95 duration-200" href="#">
+<span class="material-symbols-outlined">description</span> Reports
+                </a>
+</li>
+<li class="mt-auto">
+<a class="flex items-center gap-sm px-sm py-sm rounded-lg text-on-surface-variant hover:bg-white/5 hover:text-on-surface transition-all scale-98 active:scale-95 duration-200" href="#">
+<span class="material-symbols-outlined">settings</span> Settings
+                </a>
+</li>
+</ul>
+</nav>
+<!-- Main Content Canvas -->
+<main class="flex-1 flex flex-col w-full max-w-[1440px] mx-auto min-w-0">
+<!-- Header Section -->
+<div class="px-margin py-margin flex flex-col md:flex-row md:items-end justify-between gap-md border-b border-white/5">
+<div>
+<h1 class="font-display-lg text-display-lg text-on-surface mb-xs">Evidence Explorer</h1>
+<p class="font-body-lg text-body-lg text-on-surface-variant max-w-2xl">
+                    Query, verify, and trace scientific claims across verified literature.
+                </p>
+</div>
+<div class="flex gap-sm">
+<button class="glass-panel text-on-surface font-label-md text-label-md py-xs px-md rounded-md flex items-center gap-xs hover:bg-white/5 transition-colors">
+<span class="material-symbols-outlined text-[18px]">download</span> Export
+                </button>
+</div>
+</div>
+<!-- Filter & Search Bar -->
+<div class="px-margin py-md flex flex-col md:flex-row gap-sm items-center z-10 sticky top-0 md:top-auto bg-background/90 backdrop-blur-md border-b border-white/5">
+<div class="relative w-full md:w-96 flex-shrink-0">
+<span class="material-symbols-outlined absolute left-sm top-1/2 -translate-y-1/2 text-on-surface-variant">search</span>
+<input class="w-full bg-surface-container-low border border-white/10 rounded-lg py-sm pl-xl pr-sm text-on-surface font-body-sm text-body-sm focus:border-primary focus:ring-1 focus:ring-primary focus:outline-none transition-all placeholder:text-on-surface-variant/50" placeholder="Search claims, genes, or DOI..." type="text"/>
+</div>
+<div class="flex gap-sm overflow-x-auto pb-2 md:pb-0 hide-scrollbar w-full">
+<button class="flex-shrink-0 bg-primary-container/10 text-primary border border-primary/20 rounded-full px-md py-xs font-label-md text-label-md flex items-center gap-xs hover:bg-primary-container/20 transition-colors">
+<span class="material-symbols-outlined text-[16px]">check</span> Genomics
+                </button>
+<button class="flex-shrink-0 glass-panel text-on-surface-variant rounded-full px-md py-xs font-label-md text-label-md hover:bg-white/5 hover:text-on-surface transition-colors">
+                    Clinical
+                </button>
+<button class="flex-shrink-0 glass-panel text-on-surface-variant rounded-full px-md py-xs font-label-md text-label-md hover:bg-white/5 hover:text-on-surface transition-colors">
+                    Proteomics
+                </button>
+<button class="flex-shrink-0 glass-panel text-on-surface-variant rounded-full px-md py-xs font-label-md text-label-md hover:bg-white/5 hover:text-on-surface transition-colors">
+                    In Vivo
+                </button>
+<button class="ml-auto flex-shrink-0 text-on-surface-variant font-label-md text-label-md flex items-center gap-xs hover:text-primary transition-colors">
+<span class="material-symbols-outlined text-[16px]">tune</span> Advanced Filters
+                </button>
+</div>
+</div>
+<!-- Data Table Container -->
+<div class="flex-1 overflow-auto px-margin py-md relative">
+<div class="min-w-[1000px] w-full text-left font-body-sm text-body-sm">
+<!-- Header -->
+<div class="grid grid-cols-[32px_3fr_4fr_1.5fr_1fr_2fr_1fr] gap-sm py-sm border-b border-white/10 text-on-surface-variant font-label-md text-label-md sticky top-0 bg-background/95 backdrop-blur-sm z-10">
+<div></div>
+<div class="flex items-center gap-xs cursor-pointer hover:text-on-surface">Paper Title <span class="material-symbols-outlined text-[14px]">arrow_drop_down</span></div>
+<div>Evidence Snippet</div>
+<div>Claim Type</div>
+<div class="flex items-center gap-xs cursor-pointer hover:text-on-surface">Confidence <span class="material-symbols-outlined text-[14px]">arrow_downward</span></div>
+<div>Citation</div>
+<div>DOI</div>
+</div>
+<!-- Row 1 -->
+<div class="evidence-row group border-b border-white/5 hover:bg-surface-container-low/50 transition-colors cursor-pointer" onclick="this.classList.toggle('row-expanded')">
+<div class="grid grid-cols-[32px_3fr_4fr_1.5fr_1fr_2fr_1fr] gap-sm py-md items-start">
+<div class="text-on-surface-variant pt-1">
+<span class="material-symbols-outlined expand-icon transition-transform duration-200">chevron_right</span>
+</div>
+<div class="text-on-surface font-medium pr-sm">Targeting TP53 mutations in aggressive lung adenocarcinoma models</div>
+<div class="text-on-surface-variant line-clamp-2 pr-sm">"In vivo administration of the compound resulted in a 45% reduction of tumor volume in PDX models expressing the R175H TP53 mutation, suggesting high specificity..."</div>
+<div>
+<span class="inline-block px-xs py-1 rounded bg-secondary-container/30 text-secondary-fixed border border-secondary/10 font-label-md text-[10px]">EFFICACY</span>
+</div>
+<div>
+<div class="flex items-center gap-xs">
+<span class="text-primary font-code-md text-code-md">94%</span>
+<div class="w-16 h-1 bg-white/10 rounded-full overflow-hidden"><div class="h-full bg-primary w-[94%]"></div></div>
+</div>
+</div>
+<div class="text-on-surface-variant/80 truncate pr-sm">Chen et al., Nat Med (2023)</div>
+<div class="text-primary hover:underline font-code-md text-code-md">10.1038/s41591</div>
+</div>
+<!-- Expanded Content -->
+<div class="row-content hidden w-full pb-md pl-[32px] pr-sm">
+<div class="glass-panel p-md rounded-lg flex flex-col gap-md bg-surface-container-lowest/50">
+<div class="flex gap-lg">
+<div class="flex-1 border-r border-white/5 pr-md">
+<h4 class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider mb-sm">Extracted Context</h4>
+<p class="font-body-md text-body-md text-on-surface leading-relaxed font-serif">
+<span class="text-on-surface-variant">...previous attempts to drug this specific conformation have failed due to off-target toxicities. Here,</span>
+<mark class="bg-primary-container/20 text-primary-fixed px-1 rounded">In vivo administration of the compound resulted in a 45% reduction of tumor volume in PDX models expressing the R175H TP53 mutation</mark>, 
+                                        <span class="text-on-surface-variant">suggesting high specificity and offering a potential therapeutic window for...</span>
+</p>
+</div>
+<div class="w-64 space-y-sm">
+<div>
+<div class="font-label-md text-label-md text-on-surface-variant mb-xs">Extracted Entities</div>
+<div class="flex flex-wrap gap-xs">
+<span class="px-xs py-[2px] rounded-sm bg-surface-bright text-on-surface text-[11px] font-code-md">TP53 R175H</span>
+<span class="px-xs py-[2px] rounded-sm bg-surface-bright text-on-surface text-[11px] font-code-md">PDX Model</span>
+</div>
+</div>
+<div>
+<div class="font-label-md text-label-md text-on-surface-variant mb-xs">Verification Trace</div>
+<div class="text-[12px] text-on-surface flex items-center gap-xs"><span class="material-symbols-outlined text-[14px] text-primary">verified</span> NLP Extraction</div>
+<div class="text-[12px] text-on-surface flex items-center gap-xs"><span class="material-symbols-outlined text-[14px] text-primary">verified</span> Cross-ref (3 papers)</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Row 2 -->
+<div class="evidence-row group border-b border-white/5 hover:bg-surface-container-low/50 transition-colors cursor-pointer" onclick="this.classList.toggle('row-expanded')">
+<div class="grid grid-cols-[32px_3fr_4fr_1.5fr_1fr_2fr_1fr] gap-sm py-md items-start">
+<div class="text-on-surface-variant pt-1">
+<span class="material-symbols-outlined expand-icon transition-transform duration-200">chevron_right</span>
+</div>
+<div class="text-on-surface font-medium pr-sm">CRISPR-Cas9 screens identify novel resistance mechanisms to BRAF inhibitors</div>
+<div class="text-on-surface-variant line-clamp-2 pr-sm">"Loss of NF1 was consistently enriched in resistant populations across three independent melanoma cell lines treated with vemurafenib."</div>
+<div>
+<span class="inline-block px-xs py-1 rounded bg-error-container/30 text-error border border-error/10 font-label-md text-[10px]">RESISTANCE</span>
+</div>
+<div>
+<div class="flex items-center gap-xs">
+<span class="text-on-surface font-code-md text-code-md">88%</span>
+<div class="w-16 h-1 bg-white/10 rounded-full overflow-hidden"><div class="h-full bg-secondary w-[88%]"></div></div>
+</div>
+</div>
+<div class="text-on-surface-variant/80 truncate pr-sm">Smith &amp; Doe, Cell (2022)</div>
+<div class="text-primary hover:underline font-code-md text-code-md">10.1016/j.cell</div>
+</div>
+<!-- Expanded Content (Hidden) -->
+<div class="row-content hidden w-full pb-md pl-[32px] pr-sm">
+<div class="glass-panel p-md rounded-lg flex flex-col gap-md bg-surface-container-lowest/50">
+<div class="flex gap-lg">
+<div class="flex-1 border-r border-white/5 pr-md">
+<h4 class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider mb-sm">Extracted Context</h4>
+<p class="font-body-md text-body-md text-on-surface leading-relaxed font-serif">
+<span class="text-on-surface-variant">To systematically map the landscape of acquired resistance, we performed genome-wide pooled CRISPR screens.</span>
+<mark class="bg-error-container/20 text-error px-1 rounded">Loss of NF1 was consistently enriched in resistant populations across three independent melanoma cell lines treated with vemurafenib.</mark>
+<span class="text-on-surface-variant"> This indicates a robust bypass mechanism restoring MAPK signaling despite upstream blockade...</span>
+</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Row 3 -->
+<div class="evidence-row group border-b border-white/5 hover:bg-surface-container-low/50 transition-colors cursor-pointer" onclick="this.classList.toggle('row-expanded')">
+<div class="grid grid-cols-[32px_3fr_4fr_1.5fr_1fr_2fr_1fr] gap-sm py-md items-start">
+<div class="text-on-surface-variant pt-1">
+<span class="material-symbols-outlined expand-icon transition-transform duration-200">chevron_right</span>
+</div>
+<div class="text-on-surface font-medium pr-sm">Longitudinal single-cell transcriptomics of tumor microenvironment</div>
+<div class="text-on-surface-variant line-clamp-2 pr-sm">"We observed a distinct expansion of CD8+ exhausted T-cells expressing high levels of LAG3 and TIM3 at the time of clinical progression."</div>
+<div>
+<span class="inline-block px-xs py-1 rounded bg-tertiary-container/30 text-tertiary-fixed border border-tertiary/10 font-label-md text-[10px]">BIOMARKER</span>
+</div>
+<div>
+<div class="flex items-center gap-xs">
+<span class="text-on-surface font-code-md text-code-md">91%</span>
+<div class="w-16 h-1 bg-white/10 rounded-full overflow-hidden"><div class="h-full bg-tertiary w-[91%]"></div></div>
+</div>
+</div>
+<div class="text-on-surface-variant/80 truncate pr-sm">Patel et al., Sci Immunol (2024)</div>
+<div class="text-primary hover:underline font-code-md text-code-md">10.1126/sciim</div>
+</div>
+<!-- Expanded Content (Hidden) -->
+<div class="row-content hidden w-full pb-md pl-[32px] pr-sm">
+<div class="glass-panel p-md rounded-lg flex flex-col gap-md bg-surface-container-lowest/50">
+<p class="text-on-surface-variant">Full context preview requires additional data loading...</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+</body></html>

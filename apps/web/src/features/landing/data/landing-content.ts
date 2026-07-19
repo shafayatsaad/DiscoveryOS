@@ -1,0 +1,52 @@
+// Purpose: Keep landing page mock content separate from presentation components.
+
+import type { LucideIcon } from "lucide-react";
+import { Bot, Database, Cpu, Network, Globe2, TableProperties } from "lucide-react";
+
+export type FeatureCard = {
+  title: string;
+  description: string;
+  icon: LucideIcon;
+  tone: "primary" | "secondary" | "tertiary";
+};
+
+export const featureCards: FeatureCard[] = [
+  {
+    title: "Autonomous Agents",
+    description:
+      "Deploy specialized AI agents capable of formulating hypotheses, running localized simulations, and iterating on experimental designs autonomously.",
+    icon: Bot,
+    tone: "primary",
+  },
+  {
+    title: "Evidence Retrieval",
+    description:
+      "Instantly parse millions of peer-reviewed papers. Our semantic knowledge graph maps connections across disparate fields of study in real-time.",
+    icon: Database,
+    tone: "secondary",
+  },
+  {
+    title: "ML Synthesis",
+    description:
+      "Automatically train and validate lightweight proxy models based on aggregated experimental data to predict outcomes before running physical tests.",
+    icon: Cpu,
+    tone: "tertiary",
+  },
+];
+
+export const intelligenceNodes = [
+  { className: "left-[17%] top-[28%]", label: "Laboratory Data" },
+  { className: "left-[34%] top-[54%]", label: "Clinical Trials" },
+  { className: "right-[28%] top-[34%]", label: "Genomic Repositories" },
+  { className: "right-[18%] bottom-[25%]", label: "Research Graph" },
+  { className: "left-[48%] bottom-[34%]", label: "Evidence Store" },
+];
+
+export const intelligenceIcons = [Network, Globe2, TableProperties];
+
+export const pipelineStages = [
+  { label: "Stage 1", title: "Ingest arXiv Data", progress: 100, active: false },
+  { label: "Stage 2", title: "Agent Synthesis", progress: 45, active: true },
+  { label: "Stage 3", title: "Report Generation", progress: 0, active: false },
+];
+

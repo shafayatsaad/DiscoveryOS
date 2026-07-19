@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>DiscoveryOS - Knowledge Graph</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@100..900&amp;family=Inter:wght@100..900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "on-tertiary": "#283140",
+                      "surface-container-lowest": "#0a0e13",
+                      "surface-tint": "#adc6ff",
+                      "tertiary": "#bec7db",
+                      "inverse-primary": "#005ac2",
+                      "outline": "#8c909f",
+                      "secondary-container": "#404758",
+                      "error-container": "#93000a",
+                      "inverse-surface": "#e0e2ea",
+                      "on-tertiary-container": "#212a39",
+                      "on-primary-fixed-variant": "#004395",
+                      "on-tertiary-fixed": "#131c2a",
+                      "background": "#101419",
+                      "on-secondary-fixed-variant": "#404758",
+                      "on-surface-variant": "#c2c6d6",
+                      "on-background": "#e0e2ea",
+                      "secondary-fixed": "#dce2f7",
+                      "surface": "#101419",
+                      "tertiary-container": "#8891a4",
+                      "inverse-on-surface": "#2d3136",
+                      "on-primary": "#002e6a",
+                      "on-secondary-container": "#aeb5c9",
+                      "on-primary-fixed": "#001a42",
+                      "primary-fixed": "#d8e2ff",
+                      "primary-container": "#4d8eff",
+                      "error": "#ffb4ab",
+                      "tertiary-fixed-dim": "#bec7db",
+                      "on-tertiary-fixed-variant": "#3e4758",
+                      "primary": "#adc6ff",
+                      "surface-container-highest": "#31353b",
+                      "on-error": "#690005",
+                      "surface-variant": "#31353b",
+                      "on-primary-container": "#00285d",
+                      "surface-container-low": "#181c21",
+                      "surface-dim": "#101419",
+                      "surface-bright": "#36393f",
+                      "tertiary-fixed": "#dae3f7",
+                      "surface-container-high": "#262a30",
+                      "secondary-fixed-dim": "#c0c6db",
+                      "on-secondary-fixed": "#141b2b",
+                      "on-surface": "#e0e2ea",
+                      "primary-fixed-dim": "#adc6ff",
+                      "on-secondary": "#293040",
+                      "outline-variant": "#424754",
+                      "on-error-container": "#ffdad6",
+                      "secondary": "#c0c6db",
+                      "surface-container": "#1c2025"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "md": "16px",
+                      "xs": "8px",
+                      "base": "4px",
+                      "margin": "40px",
+                      "sm": "12px",
+                      "lg": "24px",
+                      "xl": "32px",
+                      "gutter": "24px",
+                      "container-max": "1440px"
+              },
+              "fontFamily": {
+                      "body-lg": [
+                              "Inter"
+                      ],
+                      "headline-sm": [
+                              "Geist"
+                      ],
+                      "display-lg": [
+                              "Geist"
+                      ],
+                      "code-md": [
+                              "Geist"
+                      ],
+                      "body-md": [
+                              "Inter"
+                      ],
+                      "label-md": [
+                              "Geist"
+                      ],
+                      "headline-lg": [
+                              "Geist"
+                      ],
+                      "body-sm": [
+                              "Inter"
+                      ],
+                      "headline-md": [
+                              "Geist"
+                      ]
+              },
+              "fontSize": {
+                      "body-lg": [
+                              "18px",
+                              {
+                                      "lineHeight": "1.6",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "headline-sm": [
+                              "20px",
+                              {
+                                      "lineHeight": "1.4",
+                                      "fontWeight": "500"
+                              }
+                      ],
+                      "display-lg": [
+                              "48px",
+                              {
+                                      "lineHeight": "1.1",
+                                      "letterSpacing": "-0.02em",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "code-md": [
+                              "14px",
+                              {
+                                      "lineHeight": "1.5",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "body-md": [
+                              "16px",
+                              {
+                                      "lineHeight": "1.5",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "label-md": [
+                              "12px",
+                              {
+                                      "lineHeight": "1.2",
+                                      "letterSpacing": "0.05em",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "headline-lg": [
+                              "32px",
+                              {
+                                      "lineHeight": "1.2",
+                                      "letterSpacing": "-0.01em",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "body-sm": [
+                              "14px",
+                              {
+                                      "lineHeight": "1.5",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "headline-md": [
+                              "24px",
+                              {
+                                      "lineHeight": "1.3",
+                                      "letterSpacing": "-0.01em",
+                                      "fontWeight": "500"
+                              }
+                      ]
+              }
+      },
+          },
+        }
+      </script>
+<style>
+        /* Pulse Animation for Nodes */
+        @keyframes pulse-node {
+            0% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.1); opacity: 0.8; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        .node-pulse {
+            animation: pulse-node 3s infinite ease-in-out;
+        }
+        .connection-line {
+            stroke-dasharray: 4;
+            animation: dash 20s linear infinite;
+        }
+        @keyframes dash {
+            to { stroke-dashoffset: -100; }
+        }
+    </style>
+</head>
+<body class="bg-background text-on-surface font-body-md h-screen overflow-hidden flex flex-col md:flex-row">
+<!-- {{DATA:COMPONENTS:COMPONENTS_2}} -->
+<!-- Main Content Canvas -->
+<main class="flex-1 relative bg-surface-container-lowest h-full overflow-hidden flex flex-col">
+<!-- Header / Floating Search -->
+<header class="absolute top-margin left-margin right-margin z-20 flex justify-center pointer-events-none">
+<div class="pointer-events-auto w-full max-w-2xl bg-surface/80 backdrop-blur-xl border border-white/10 rounded-full px-lg py-sm flex items-center shadow-lg gap-sm">
+<span class="material-symbols-outlined text-on-surface-variant">search</span>
+<input class="bg-transparent border-none outline-none text-body-md text-on-surface w-full placeholder:text-on-surface-variant/50 focus:ring-0" placeholder="Search genes, proteins, pathways..." type="text"/>
+<button class="bg-primary-container text-on-primary-container px-sm py-base rounded-full font-label-md hover:bg-primary transition-colors flex items-center gap-base">
+<span class="material-symbols-outlined text-[16px]">filter_list</span>
+                    Filter
+                </button>
+</div>
+</header>
+<!-- Left Overlay: Filter Panel -->
+<aside class="absolute left-margin top-24 bottom-margin w-72 bg-surface/80 backdrop-blur-xl border border-white/10 rounded-xl p-md z-10 flex flex-col gap-lg overflow-y-auto">
+<div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface mb-sm">Node Types</h3>
+<div class="flex flex-col gap-base">
+<label class="flex items-center gap-sm text-body-sm text-on-surface-variant cursor-pointer group">
+<div class="w-4 h-4 rounded-full border border-primary flex items-center justify-center bg-primary/20 group-hover:bg-primary/40 transition-colors">
+<div class="w-2 h-2 rounded-full bg-primary"></div>
+</div>
+                        Genes
+                        <span class="ml-auto font-code-md text-on-surface-variant/50">2,401</span>
+</label>
+<label class="flex items-center gap-sm text-body-sm text-on-surface-variant cursor-pointer group">
+<div class="w-4 h-4 rounded-full border border-tertiary flex items-center justify-center bg-tertiary/20 group-hover:bg-tertiary/40 transition-colors">
+<div class="w-2 h-2 rounded-full bg-tertiary"></div>
+</div>
+                        Proteins
+                        <span class="ml-auto font-code-md text-on-surface-variant/50">842</span>
+</label>
+<label class="flex items-center gap-sm text-body-sm text-on-surface-variant cursor-pointer group">
+<div class="w-4 h-4 rounded-full border border-error flex items-center justify-center bg-error/20 group-hover:bg-error/40 transition-colors">
+<div class="w-2 h-2 rounded-full bg-error"></div>
+</div>
+                        Drugs
+                        <span class="ml-auto font-code-md text-on-surface-variant/50">124</span>
+</label>
+</div>
+</div>
+<div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface mb-sm">Relationship Strength</h3>
+<div class="px-xs">
+<input class="w-full h-1 bg-surface-container-high rounded-full appearance-none outline-none accent-primary" max="100" min="0" type="range" value="50"/>
+<div class="flex justify-between text-label-md text-on-surface-variant mt-xs">
+<span>Low</span>
+<span>High</span>
+</div>
+</div>
+</div>
+<div class="mt-auto">
+<button class="w-full bg-transparent border border-white/10 text-on-surface py-sm rounded-lg hover:bg-white/5 transition-colors font-label-md">
+                    Reset Filters
+                </button>
+</div>
+</aside>
+<!-- Right Overlay: Floating Inspector -->
+<aside class="absolute right-margin top-24 bottom-margin w-80 bg-surface/80 backdrop-blur-xl border border-white/10 rounded-xl p-md z-10 flex flex-col gap-lg shadow-[0_20px_50px_rgba(0,0,0,0.5)]">
+<div class="flex justify-between items-start border-b border-white/10 pb-md">
+<div>
+<span class="font-label-md text-primary bg-primary/10 px-xs py-base rounded-md mb-xs inline-block">Gene</span>
+<h2 class="font-headline-md text-headline-md text-on-surface">NPPA</h2>
+<p class="font-body-sm text-on-surface-variant mt-xs">Natriuretic Peptide A</p>
+</div>
+<button class="text-on-surface-variant hover:text-on-surface transition-colors">
+<span class="material-symbols-outlined">close</span>
+</button>
+</div>
+<div class="flex flex-col gap-sm">
+<h3 class="font-headline-sm text-headline-sm text-on-surface">Function</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant leading-relaxed">
+                    Plays a key role in mediating cardio-renal homeostasis, blood pressure regulation, and sodium excretion.
+                </p>
+</div>
+<div class="flex flex-col gap-sm">
+<h3 class="font-headline-sm text-headline-sm text-on-surface">Related Pathways</h3>
+<div class="flex flex-wrap gap-xs">
+<span class="px-sm py-base rounded-full bg-surface-container text-body-sm text-on-surface border border-white/5">Cardiac Conduction</span>
+<span class="px-sm py-base rounded-full bg-surface-container text-body-sm text-on-surface border border-white/5">GPCR Signaling</span>
+</div>
+</div>
+<div class="mt-auto flex gap-sm">
+<button class="flex-1 bg-primary text-on-primary font-label-md py-sm rounded-lg hover:bg-primary/90 transition-colors">
+                    Analyze
+                </button>
+<button class="px-sm bg-transparent border border-white/10 text-on-surface rounded-lg hover:bg-white/5 transition-colors flex items-center justify-center">
+<span class="material-symbols-outlined">bookmark</span>
+</button>
+</div>
+</aside>
+<!-- Visualization Canvas (SVG Mockup) -->
+<div class="absolute inset-0 z-0 flex items-center justify-center cursor-move" style="background: radial-gradient(circle at center, #181c21 0%, #0a0e13 100%);">
+<svg class="w-full h-full" preserveaspectratio="xMidYMid slice" viewbox="0 0 1000 800">
+<defs>
+<radialgradient cx="50%" cy="50%" id="node-glow-primary" r="50%">
+<stop offset="0%" stop-color="#adc6ff" stop-opacity="0.8"></stop>
+<stop offset="100%" stop-color="#adc6ff" stop-opacity="0"></stop>
+</radialgradient>
+<radialgradient cx="50%" cy="50%" id="node-glow-tertiary" r="50%">
+<stop offset="0%" stop-color="#bec7db" stop-opacity="0.8"></stop>
+<stop offset="100%" stop-color="#bec7db" stop-opacity="0"></stop>
+</radialgradient>
+<radialgradient cx="50%" cy="50%" id="node-glow-error" r="50%">
+<stop offset="0%" stop-color="#ffb4ab" stop-opacity="0.8"></stop>
+<stop offset="100%" stop-color="#ffb4ab" stop-opacity="0"></stop>
+</radialgradient>
+</defs>
+<!-- Edges -->
+<g class="edges" stroke="rgba(255,255,255,0.15)" stroke-width="1.5">
+<line class="connection-line" x1="500" x2="350" y1="400" y2="250"></line>
+<line class="connection-line" x1="500" x2="650" y1="400" y2="250"></line>
+<line class="connection-line" x1="500" x2="500" y1="400" y2="600"></line>
+<line class="connection-line" x1="350" x2="200" y1="250" y2="350"></line>
+<line class="connection-line" x1="650" x2="750" y1="250" y2="400"></line>
+</g>
+<!-- Nodes -->
+<g class="nodes cursor-pointer">
+<!-- Central Node (NPPA) -->
+<g class="node-pulse hover:scale-110 transition-transform origin-center" transform="translate(500, 400)">
+<circle fill="url(#node-glow-primary)" r="40"></circle>
+<circle fill="#adc6ff" r="15"></circle>
+<text class="font-code-md text-sm drop-shadow-md" fill="#e0e2ea" text-anchor="middle" y="35">NPPA</text>
+</g>
+<!-- Peripheral Nodes -->
+<g class="hover:scale-110 transition-transform origin-center" transform="translate(350, 250)">
+<circle fill="url(#node-glow-tertiary)" r="30"></circle>
+<circle fill="#bec7db" r="10"></circle>
+<text class="font-code-md text-xs opacity-70" fill="#e0e2ea" text-anchor="middle" y="25">NPR1</text>
+</g>
+<g class="hover:scale-110 transition-transform origin-center" transform="translate(650, 250)">
+<circle fill="url(#node-glow-tertiary)" r="30"></circle>
+<circle fill="#bec7db" r="10"></circle>
+<text class="font-code-md text-xs opacity-70" fill="#e0e2ea" text-anchor="middle" y="25">NPR2</text>
+</g>
+<g class="hover:scale-110 transition-transform origin-center" transform="translate(500, 600)">
+<circle fill="url(#node-glow-error)" r="35"></circle>
+<circle fill="#ffb4ab" r="12"></circle>
+<text class="font-code-md text-xs opacity-70" fill="#e0e2ea" text-anchor="middle" y="30">Drug X</text>
+</g>
+</g>
+</svg>
+</div>
+</main>
+</body></html>
