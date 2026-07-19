@@ -2,9 +2,11 @@
 
 import { Download, Pause, Share2 } from "lucide-react";
 
-import { projectOverview } from "@/features/projects/data/research-project-content";
+import { getProjectOverview } from "@/features/projects/data/research-project-content";
 
-export function ProjectHeader() {
+export function ProjectHeader({ projectId }: { projectId: string }) {
+  const projectOverview = getProjectOverview(projectId);
+
   return (
     <section className="glass-panel rounded-xl p-5 sm:p-6">
       <div className="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
