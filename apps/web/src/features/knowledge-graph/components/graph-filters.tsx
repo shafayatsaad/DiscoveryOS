@@ -6,12 +6,14 @@ import { cn } from "@/lib/utils";
 
 const toneClasses = {
   primary: "border-primary bg-primary/20 text-primary",
+  secondary: "border-secondary bg-secondary/20 text-secondary",
   tertiary: "border-tertiary bg-tertiary/20 text-tertiary",
   error: "border-error bg-error/20 text-error",
 };
 
 const dotClasses = {
   primary: "bg-primary",
+  secondary: "bg-secondary",
   tertiary: "bg-tertiary",
   error: "bg-error",
 };
