@@ -8,5 +8,12 @@ class Base(DeclarativeBase):
 
 
 # Purpose: Import models after Base is defined so Alembic can discover table metadata.
+from discoveryos_api.models.memory import (  # noqa: E402, F401
+    Evidence,
+    Hypothesis,
+    KnowledgeGraphSnapshot,
+    ResearchNote,
+    TimelineEvent,
+)
 from discoveryos_api.models.project import Project  # noqa: E402, F401
 from discoveryos_api.models.research_job import ResearchJob  # noqa: E402, F401
