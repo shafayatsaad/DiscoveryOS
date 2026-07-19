@@ -20,7 +20,7 @@ export function GraphSearch() {
       <input
         id="graph-search"
         className="min-w-0 flex-1 border-none bg-transparent text-sm text-on-surface outline-none placeholder:text-on-surface-variant/50 focus:ring-0 sm:text-base"
-        placeholder="Search genes, proteins, pathways..."
+        placeholder="Search graph..."
         type="search"
       />
       <Button className="h-9 shrink-0 rounded-full px-4" size="sm">
