@@ -8,15 +8,15 @@ import { MotionDiv } from "@/features/landing/components/motion-primitives";
 import { cn } from "@/lib/utils";
 
 const claimToneClasses: Record<EvidenceRecord["claimType"], string> = {
-  Efficacy: "border-secondary/10 bg-secondary-container/30 text-secondary-fixed",
-  Resistance: "border-error/10 bg-error-container/30 text-error",
-  Biomarker: "border-tertiary/10 bg-tertiary-container/30 text-tertiary-fixed",
+  Performance: "border-secondary/10 bg-secondary-container/30 text-secondary-fixed",
+  Mechanism: "border-tertiary/10 bg-tertiary-container/30 text-tertiary-fixed",
+  Constraint: "border-error/10 bg-error-container/30 text-error",
 };
 
 const confidenceToneClasses: Record<EvidenceRecord["claimType"], string> = {
-  Efficacy: "bg-primary",
-  Resistance: "bg-secondary",
-  Biomarker: "bg-tertiary",
+  Performance: "bg-primary",
+  Mechanism: "bg-tertiary",
+  Constraint: "bg-secondary",
 };
 
 export function EvidenceTable() {
