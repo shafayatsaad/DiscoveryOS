@@ -11,8 +11,8 @@ export function IntelligenceSection() {
             Global Scientific Intelligence
           </h2>
           <p className="max-w-xl text-lg leading-[1.6] text-on-surface-variant">
-            Access a decentralized network of real-time laboratory data, clinical trials, and
-            genomic repositories.
+            Access a decentralized network of literature, datasets, domain repositories, and
+            evidence stores.
           </p>
         </div>
 
@@ -42,4 +42,3 @@ export function IntelligenceSection() {
     </section>
   );
 }
-
