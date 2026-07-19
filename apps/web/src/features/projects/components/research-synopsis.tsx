@@ -1,7 +1,7 @@
 // Purpose: Render the right-side project synopsis and research health indicators.
 
 import {
-  projectOverview,
+  getProjectOverview,
   researchHealth,
   synopsisScores,
 } from "@/features/projects/data/research-project-content";
@@ -12,7 +12,8 @@ const scoreToneClasses = {
   primary: "bg-primary text-primary",
 };
 
-export function ResearchSynopsis() {
+export function ResearchSynopsis({ projectId }: { projectId: string }) {
+  const projectOverview = getProjectOverview(projectId);
   const HealthIcon = researchHealth.icon;
 
   return (
