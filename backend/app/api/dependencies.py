@@ -10,8 +10,11 @@ from app.agents.registry import AgentRegistry, build_agent_registry
 from app.config import Settings, get_settings
 from app.database.session import get_session
 from app.graph.repository import KnowledgeGraphRepository
+from app.orchestrator.orchestrator import DiscoveryOrchestrator
+from app.orchestrator.service import OrchestratorService
 from app.services.agent_service import AgentService
 from app.services.pipeline_service import DiscoveryPipelineService
+from app.storage.state import InMemoryStateBackend
 from app.workspace.repository import WorkspaceRepository
 from app.workspace.service import WorkspaceService
 
@@ -69,3 +72,11 @@ def graph_repository_dependency(
     """Inject the graph repository backed by workspace JSON storage."""
 
     return KnowledgeGraphRepository(workspace_service=workspace_service)
+
+
+def orchestrator_service_dependency() -> OrchestratorService:
+    """Inject the orchestrator service used by project pipeline routes."""
+
+    return OrchestratorService(
+        state_backend=InMemoryStateBackend(),
+    )

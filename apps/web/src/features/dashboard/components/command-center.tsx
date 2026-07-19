@@ -1,10 +1,19 @@
 "use client";
 
-// Purpose: Render the dashboard research-goal command input and animated magic-moment pipeline.
+// Purpose: Render the dashboard research-goal command input and real-time pipeline execution.
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
-import { Check, FileText, GitBranch, Lightbulb, Mic, Network, Search } from "lucide-react";
+import { useCallback, useState } from "react";
+import {
+  Check,
+  FileText,
+  FlaskConical,
+  GitBranch,
+  Lightbulb,
+  Mic,
+  Network,
+  Search,
+} from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { MotionDiv } from "@/features/landing/components/motion-primitives";
@@ -12,36 +21,82 @@ import {
   magicMomentQuestion,
   quickActions,
 } from "@/features/dashboard/data/dashboard-content";
-import { useMagicMoment } from "@/features/dashboard/hooks/use-magic-moment";
-import { primaryProjectId, projectRoute } from "@/features/projects/data/project-workspaces";
+import { usePipelineStream } from "@/features/dashboard/hooks/use-pipeline-stream";
+import {
+  primaryProjectId,
+  projectRoute,
+} from "@/features/projects/data/project-workspaces";
 import { cn } from "@/lib/utils";
+import { startPipeline } from "@/lib/api/client";
+
+const PIPELINE_STAGES = [
+  { id: "planner", label: "Planning", icon: Search },
+  { id: "retriever", label: "Literature Retrieval", icon: Network },
+  { id: "extractor", label: "Evidence Extraction", icon: FileText },
+  { id: "knowledge_graph", label: "Knowledge Graph", icon: GitBranch },
+  { id: "contradiction", label: "Contradiction Detection", icon: FlaskConical },
+  { id: "novelty", label: "Novelty Analysis", icon: Lightbulb },
+  { id: "experiment", label: "Experiment Planning", icon: GitBranch },
+  { id: "report", label: "Report Generation", icon: FileText },
+];
 
 export function CommandCenter() {
-  const { data: magicMoment } = useMagicMoment();
-  const magicPipelineSteps = magicMoment?.steps ?? [];
-  const magicMomentResults = magicMoment?.results ?? [];
-  const magicStepCount = magicPipelineSteps.length;
   const [query, setQuery] = useState("");
-  const [activeStep, setActiveStep] = useState(-1);
-  const isRunning = activeStep >= 0 && magicStepCount > 0 && activeStep < magicStepCount - 1;
-  const isComplete = magicStepCount > 0 && activeStep >= magicStepCount - 1;
+  const [runId, setRunId] = useState<string | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
 
-  useEffect(() => {
-    if (activeStep < 0 || magicStepCount === 0 || activeStep >= magicStepCount - 1) {
-      return;
-    }
+  const handleEvent = useCallback(() => {
+    // Events are tracked via the stream hook state
+  }, []);
 
-    const timer = window.setTimeout(() => {
-      setActiveStep((step) => step + 1);
-    }, 520);
+  const {
+    events: pipelineEvents,
+    latestEvent,
+    status: streamStatus,
+    progress,
+    metadata,
+    isComplete,
+    isFailed,
+  } = usePipelineStream({
+    projectId: runId ? primaryProjectId : null,
+    onEvent: handleEvent,
+  });
 
-    return () => window.clearTimeout(timer);
-  }, [activeStep, magicStepCount]);
+  const isRunning =
+    streamStatus === "connecting" || streamStatus === "connected";
+  const hasStarted = runId !== null;
 
-  function runDiscovery(event: React.FormEvent<HTMLFormElement>) {
+  async function runDiscovery(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    setQuery((currentQuery) => currentQuery.trim() || magicMomentQuestion);
-    setActiveStep(0);
+    const researchQuery = query.trim() || magicMomentQuestion;
+    setQuery(researchQuery);
+    setIsSubmitting(true);
+    setSubmitError(null);
+
+    try {
+      const result = await startPipeline(primaryProjectId, researchQuery);
+      setRunId(result.run_id);
+    } catch (error) {
+      setSubmitError(
+        error instanceof Error ? error.message : "Failed to start pipeline",
+      );
+    } finally {
+      setIsSubmitting(false);
+    }
+  }
+
+  // Determine which stages are completed/active based on pipeline events
+  const completedStages = new Set<string>();
+  let activeStageId: string | null = null;
+
+  for (const event of pipelineEvents) {
+    if (event.event_type === "stage.completed" && event.stage) {
+      completedStages.add(event.stage);
+    }
+    if (event.event_type === "stage.started" && event.stage) {
+      activeStageId = event.stage;
+    }
   }
 
   return (
@@ -57,7 +112,11 @@ export function CommandCenter() {
           What scientific problem are you trying to solve today?
         </h1>
 
-        <form className="mt-8 w-full max-w-4xl" action="#" onSubmit={runDiscovery}>
+        <form
+          className="mt-8 w-full max-w-4xl"
+          action="#"
+          onSubmit={runDiscovery}
+        >
           <label className="sr-only" htmlFor="research-query">
             Research problem
           </label>
@@ -70,55 +129,95 @@ export function CommandCenter() {
               className="h-16 w-full rounded-lg border border-white/10 bg-[#0b0f14] py-3 pl-12 pr-36 font-mono text-sm text-on-surface outline-none transition-colors placeholder:text-outline-variant focus:border-primary focus:ring-0 sm:pr-44"
               placeholder={magicMomentQuestion}
               type="text"
+              disabled={isRunning}
             />
             <div className="absolute inset-y-0 right-2 flex items-center gap-2">
               <button
                 className="hidden rounded-md p-2 text-outline-variant transition-colors hover:text-primary sm:inline-flex"
                 type="button"
                 aria-label="Voice input"
+                disabled={isRunning}
               >
                 <Mic className="h-4 w-4" />
               </button>
-              <Button type="submit" size="sm" variant="secondary" className="border-primary/20 bg-primary/10 text-primary hover:bg-primary hover:text-on-primary">
-                {isRunning ? "Running" : "Run Query"}
+              <Button
+                type="submit"
+                size="sm"
+                variant="secondary"
+                className="border-primary/20 bg-primary/10 text-primary hover:bg-primary hover:text-on-primary"
+                disabled={isSubmitting || isRunning}
+              >
+                {isSubmitting
+                  ? "Starting..."
+                  : isRunning
+                    ? "Running"
+                    : "Run Query"}
               </Button>
             </div>
           </div>
         </form>
 
-        {activeStep >= 0 ? (
+        {submitError && (
+          <p className="mt-4 text-sm text-red-400">{submitError}</p>
+        )}
+
+        {hasStarted ? (
           <MotionDiv
             className="mt-8 grid w-full grid-cols-1 gap-4 text-left lg:grid-cols-[1.1fr_0.9fr]"
             initial={{ opacity: 0, y: 18 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.35 }}
           >
-            <section className="glass-card rounded-xl p-5" aria-labelledby="magic-pipeline-heading">
+            {/* Pipeline Stages */}
+            <section
+              className="glass-card rounded-xl p-5"
+              aria-labelledby="pipeline-heading"
+            >
               <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
                 <div>
                   <p className="font-display text-xs font-semibold uppercase tracking-normal text-primary">
                     DiscoveryOS Pipeline
                   </p>
-                  <h2 id="magic-pipeline-heading" className="mt-1 font-display text-xl font-semibold text-on-surface">
+                  <h2
+                    id="pipeline-heading"
+                    className="mt-1 font-display text-xl font-semibold text-on-surface"
+                  >
                     {query || magicMomentQuestion}
                   </h2>
                 </div>
                 <span className="rounded-md bg-primary/10 px-3 py-1 font-mono text-xs text-primary">
-                  {isComplete ? "Complete" : "Streaming"}
+                  {isComplete
+                    ? "Complete"
+                    : isFailed
+                      ? "Failed"
+                      : `${Math.round(progress)}%`}
                 </span>
               </div>
+
+              {/* Progress bar */}
+              <div className="mb-4 h-1.5 w-full overflow-hidden rounded-full bg-surface-container-highest">
+                <div
+                  className="h-full rounded-full bg-gradient-to-r from-primary to-primary/60 transition-all duration-500"
+                  style={{ width: `${progress}%` }}
+                />
+              </div>
+
               <div className="space-y-3">
-                {magicPipelineSteps.map((step, index) => {
-                  const completed = index <= activeStep;
-                  const current = index === activeStep && !isComplete;
+                {PIPELINE_STAGES.map((stage) => {
+                  const completed = completedStages.has(stage.id);
+                  const current =
+                    stage.id === activeStageId && !isComplete && !isFailed;
 
                   return (
                     <div
-                      key={step.label}
+                      key={stage.id}
                       className={cn(
                         "flex items-start gap-3 rounded-lg border border-white/[0.05] bg-surface/50 p-3 transition-all duration-300",
                         current && "border-primary/30 bg-primary/[0.06]",
-                        !completed && "opacity-45",
+                        !completed && !current && "opacity-45",
+                        isFailed &&
+                          stage.id === activeStageId &&
+                          "border-red-400/30 bg-red-400/5",
                       )}
                     >
                       <span
@@ -126,14 +225,28 @@ export function CommandCenter() {
                           "mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full border",
                           completed
                             ? "border-primary bg-primary/10 text-primary"
-                            : "border-white/10 text-outline-variant",
+                            : current
+                              ? "border-primary/50 bg-primary/5 text-primary"
+                              : "border-white/10 text-outline-variant",
                         )}
                       >
-                        {completed ? <Check className="h-3.5 w-3.5" /> : <span className="h-1.5 w-1.5 rounded-full bg-current" />}
+                        {completed ? (
+                          <Check className="h-3.5 w-3.5" />
+                        ) : (
+                          <span className="h-1.5 w-1.5 rounded-full bg-current" />
+                        )}
                       </span>
                       <span className="min-w-0">
-                        <span className="block font-display text-sm font-semibold text-on-surface">{step.label}</span>
-                        <span className="mt-1 block text-xs leading-[1.45] text-on-surface-variant">{step.detail}</span>
+                        <span className="block font-display text-sm font-semibold text-on-surface">
+                          {stage.label}
+                        </span>
+                        <span className="mt-1 block text-xs leading-[1.45] text-on-surface-variant">
+                          {current
+                            ? "Running..."
+                            : completed
+                              ? "Completed"
+                              : "Pending"}
+                        </span>
                       </span>
                     </div>
                   );
@@ -141,51 +254,182 @@ export function CommandCenter() {
               </div>
             </section>
 
-            <section className="glass-card rounded-xl p-5" aria-labelledby="magic-results-heading">
+            {/* Results Panel */}
+            <section
+              className="glass-card rounded-xl p-5"
+              aria-labelledby="results-heading"
+            >
               <p className="font-display text-xs font-semibold uppercase tracking-normal text-primary">
-                Demo Outcome
+                Pipeline Results
               </p>
-              <h2 id="magic-results-heading" className="mt-1 font-display text-xl font-semibold text-on-surface">
-                {isComplete ? "Evidence-backed workspace ready" : "Assembling research memory"}
+              <h2
+                id="results-heading"
+                className="mt-1 font-display text-xl font-semibold text-on-surface"
+              >
+                {isComplete
+                  ? "Evidence-backed workspace ready"
+                  : isFailed
+                    ? "Pipeline failed"
+                    : "Running discovery pipeline..."}
               </h2>
-              <div className="mt-5 space-y-3">
-                {magicMomentResults.map((result, index) => (
-                  <MotionDiv
-                    key={result.label}
-                    className={cn(
-                      "rounded-lg border border-white/[0.05] bg-surface/50 p-3",
-                      !isComplete && "opacity-45",
-                    )}
-                    initial={false}
-                    animate={{ opacity: isComplete ? 1 : 0.45, y: isComplete ? 0 : 4 }}
-                    transition={{ delay: isComplete ? index * 0.05 : 0, duration: 0.25 }}
-                  >
-                    <p className="font-display text-xs font-semibold uppercase tracking-normal text-primary">
-                      {result.label}
-                    </p>
-                    <p className="mt-1 text-sm leading-[1.45] text-on-surface-variant">{result.value}</p>
-                  </MotionDiv>
-                ))}
-              </div>
-              <div className="mt-5 grid grid-cols-2 gap-3">
-                {[
-                  { label: "Evidence", href: projectRoute(primaryProjectId, "evidence"), icon: FileText },
-                  { label: "Graph", href: projectRoute(primaryProjectId, "graph"), icon: Network },
-                  { label: "Experiments", href: projectRoute(primaryProjectId, "experiments"), icon: Lightbulb },
-                  { label: "Report", href: projectRoute(primaryProjectId, "reports"), icon: GitBranch },
-                ].map((link) => {
-                  const Icon = link.icon;
 
-                  return (
-                    <Button key={link.label} asChild variant="secondary" size="sm" className="justify-center">
-                      <Link href={link.href}>
-                        <Icon className="h-4 w-4" />
-                        {link.label}
-                      </Link>
-                    </Button>
-                  );
-                })}
+              <div className="mt-5 space-y-3">
+                {/* Current Stage */}
+                <div
+                  className={cn(
+                    "rounded-lg border border-white/[0.05] bg-surface/50 p-3",
+                    !isComplete && !isRunning && "opacity-45",
+                  )}
+                >
+                  <p className="font-display text-xs font-semibold uppercase tracking-normal text-primary">
+                    Current Stage
+                  </p>
+                  <p className="mt-1 text-sm leading-[1.45] text-on-surface-variant">
+                    {latestEvent?.stage
+                      ? (PIPELINE_STAGES.find((s) => s.id === latestEvent.stage)
+                          ?.label ?? latestEvent.stage)
+                      : "Waiting..."}
+                  </p>
+                </div>
+
+                {/* Progress */}
+                <div
+                  className={cn(
+                    "rounded-lg border border-white/[0.05] bg-surface/50 p-3",
+                    !isComplete && !isRunning && "opacity-45",
+                  )}
+                >
+                  <p className="font-display text-xs font-semibold uppercase tracking-normal text-primary">
+                    Progress
+                  </p>
+                  <p className="mt-1 text-sm leading-[1.45] text-on-surface-variant">
+                    {Math.round(progress)}%
+                  </p>
+                </div>
+
+                {/* Papers Count */}
+                <div
+                  className={cn(
+                    "rounded-lg border border-white/[0.05] bg-surface/50 p-3",
+                    !isComplete && !isRunning && "opacity-45",
+                  )}
+                >
+                  <p className="font-display text-xs font-semibold uppercase tracking-normal text-primary">
+                    Papers Retrieved
+                  </p>
+                  <p className="mt-1 text-sm leading-[1.45] text-on-surface-variant">
+                    {metadata?.papers_count ?? 0}
+                  </p>
+                </div>
+
+                {/* Evidence Count */}
+                <div
+                  className={cn(
+                    "rounded-lg border border-white/[0.05] bg-surface/50 p-3",
+                    !isComplete && !isRunning && "opacity-45",
+                  )}
+                >
+                  <p className="font-display text-xs font-semibold uppercase tracking-normal text-primary">
+                    Evidence Records
+                  </p>
+                  <p className="mt-1 text-sm leading-[1.45] text-on-surface-variant">
+                    {metadata?.evidence_count ?? 0}
+                  </p>
+                </div>
+
+                {/* Contradictions */}
+                <div
+                  className={cn(
+                    "rounded-lg border border-white/[0.05] bg-surface/50 p-3",
+                    !isComplete && !isRunning && "opacity-45",
+                  )}
+                >
+                  <p className="font-display text-xs font-semibold uppercase tracking-normal text-primary">
+                    Contradictions
+                  </p>
+                  <p className="mt-1 text-sm leading-[1.45] text-on-surface-variant">
+                    {metadata?.contradictions_count ?? 0}
+                  </p>
+                </div>
+
+                {/* Novelty Score */}
+                <div
+                  className={cn(
+                    "rounded-lg border border-white/[0.05] bg-surface/50 p-3",
+                    !isComplete && !isRunning && "opacity-45",
+                  )}
+                >
+                  <p className="font-display text-xs font-semibold uppercase tracking-normal text-primary">
+                    Novelty Score
+                  </p>
+                  <p className="mt-1 text-sm leading-[1.45] text-on-surface-variant">
+                    {metadata?.novelty_score != null
+                      ? `${Math.round(metadata.novelty_score * 100)}%`
+                      : "—"}
+                  </p>
+                </div>
+
+                {/* Execution Time */}
+                <div
+                  className={cn(
+                    "rounded-lg border border-white/[0.05] bg-surface/50 p-3",
+                    !isComplete && !isRunning && "opacity-45",
+                  )}
+                >
+                  <p className="font-display text-xs font-semibold uppercase tracking-normal text-primary">
+                    Execution Time
+                  </p>
+                  <p className="mt-1 text-sm leading-[1.45] text-on-surface-variant">
+                    {metadata?.execution_time_ms != null
+                      ? `${(metadata.execution_time_ms / 1000).toFixed(1)}s`
+                      : "—"}
+                  </p>
+                </div>
               </div>
+
+              {isComplete && (
+                <div className="mt-5 grid grid-cols-2 gap-3">
+                  {[
+                    {
+                      label: "Evidence",
+                      href: projectRoute(primaryProjectId, "evidence"),
+                      icon: FileText,
+                    },
+                    {
+                      label: "Graph",
+                      href: projectRoute(primaryProjectId, "graph"),
+                      icon: Network,
+                    },
+                    {
+                      label: "Experiments",
+                      href: projectRoute(primaryProjectId, "experiments"),
+                      icon: Lightbulb,
+                    },
+                    {
+                      label: "Report",
+                      href: projectRoute(primaryProjectId, "reports"),
+                      icon: GitBranch,
+                    },
+                  ].map((link) => {
+                    const Icon = link.icon;
+
+                    return (
+                      <Button
+                        key={link.label}
+                        asChild
+                        variant="secondary"
+                        size="sm"
+                        className="justify-center"
+                      >
+                        <Link href={link.href}>
+                          <Icon className="h-4 w-4" />
+                          {link.label}
+                        </Link>
+                      </Button>
+                    );
+                  })}
+                </div>
+              )}
             </section>
           </MotionDiv>
         ) : null}
