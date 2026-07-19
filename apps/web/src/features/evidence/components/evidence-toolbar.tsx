@@ -2,10 +2,12 @@
 
 import { Check, Search, SlidersHorizontal } from "lucide-react";
 
-import { evidenceFilters } from "@/features/evidence/data/evidence-content";
+import { getEvidenceFilters } from "@/features/evidence/data/evidence-content";
 import { cn } from "@/lib/utils";
 
-export function EvidenceToolbar() {
+export function EvidenceToolbar({ projectId }: { projectId: string }) {
+  const evidenceFilters = getEvidenceFilters(projectId);
+
   return (
     <section className="sticky top-16 z-30 flex flex-col gap-3 border-b border-white/[0.05] bg-[#0b0f14]/90 px-5 py-4 backdrop-blur-md sm:px-8 md:top-0 md:px-10 lg:flex-row lg:items-center">
       <label className="relative w-full shrink-0 lg:w-96">

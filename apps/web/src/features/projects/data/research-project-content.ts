@@ -14,6 +14,7 @@ import {
   Gavel,
   Lightbulb,
   Network,
+  SlidersHorizontal,
   Settings,
   Sparkles,
   SquareTerminal,
@@ -55,14 +56,29 @@ export type SynopsisScore = {
   tone: "success" | "primary";
 };
 
-export function getProjectNavItems(projectId: string, activeSection: "project" | "graph" | "pipeline" | "evidence" = "project"): ProjectNavItem[] {
+export function getProjectNavItems(
+  projectId: string,
+  activeSection:
+    | "project"
+    | "graph"
+    | "pipeline"
+    | "evidence"
+    | "ml"
+    | "hypotheses"
+    | "experiments"
+    | "reports"
+    | "settings" = "project",
+): ProjectNavItem[] {
   return [
     { label: "Projects", icon: FlaskConical, active: activeSection === "project", href: projectRoute(projectId) },
     { label: "Knowledge Graph", icon: Network, active: activeSection === "graph", href: projectRoute(projectId, "graph") },
     { label: "Research Pipeline", icon: SquareTerminal, active: activeSection === "pipeline", href: projectRoute(projectId, "pipeline") },
     { label: "Evidence Explorer", icon: BarChart3, active: activeSection === "evidence", href: projectRoute(projectId, "evidence") },
-    { label: "Experiments", icon: Beaker },
-    { label: "Reports", icon: FileText },
+    { label: "ML Insights", icon: BrainCircuit, active: activeSection === "ml", href: projectRoute(projectId, "ml") },
+    { label: "Hypotheses", icon: Lightbulb, active: activeSection === "hypotheses", href: projectRoute(projectId, "hypotheses") },
+    { label: "Experiments", icon: Beaker, active: activeSection === "experiments", href: projectRoute(projectId, "experiments") },
+    { label: "Reports", icon: FileText, active: activeSection === "reports", href: projectRoute(projectId, "reports") },
+    { label: "Settings", icon: SlidersHorizontal, active: activeSection === "settings", href: projectRoute(projectId, "settings") },
   ];
 }
 
@@ -146,4 +162,5 @@ export const researchHealth = {
 export const projectUtilityItem: ProjectNavItem = {
   label: "Settings",
   icon: Settings,
+  href: projectRoute(primaryProjectId, "settings"),
 };

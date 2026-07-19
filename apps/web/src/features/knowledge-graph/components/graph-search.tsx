@@ -4,9 +4,8 @@ import { ListFilter, Search } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { MotionDiv } from "@/features/landing/components/motion-primitives";
-import { graphDomainContext } from "@/features/knowledge-graph/data/knowledge-graph-content";
 
-export function GraphSearch({ searchId = "graph-search" }: { searchId?: string }) {
+export function GraphSearch({ domain, searchId = "graph-search" }: { domain: string; searchId?: string }) {
   return (
     <MotionDiv
       className="glass-panel pointer-events-auto mx-auto flex w-full max-w-2xl items-center gap-3 rounded-full px-4 py-3 shadow-ambient lg:absolute lg:left-1/2 lg:top-10 lg:-translate-x-1/2"
@@ -21,7 +20,7 @@ export function GraphSearch({ searchId = "graph-search" }: { searchId?: string }
       <input
         id={searchId}
         className="min-w-0 flex-1 border-none bg-transparent text-sm text-on-surface outline-none placeholder:text-on-surface-variant/50 focus:ring-0 sm:text-base"
-        placeholder={`Search ${graphDomainContext.domain} graph...`}
+        placeholder={`Search ${domain} graph...`}
         type="search"
       />
       <Button className="h-9 shrink-0 rounded-full px-4" size="sm">

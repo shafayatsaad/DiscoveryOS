@@ -4,15 +4,11 @@ import Link from "next/link";
 import { FlaskConical, Menu, Plus } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
-import {
-  getProjectNavItems,
-  projectUtilityItem,
-} from "@/features/projects/data/research-project-content";
+import { getProjectNavItems } from "@/features/projects/data/research-project-content";
 import { cn } from "@/lib/utils";
 
 export function ProjectSidebar({ projectId }: { projectId: string }) {
   const projectNavItems = getProjectNavItems(projectId);
-  const UtilityIcon = projectUtilityItem.icon;
 
   return (
     <>
@@ -24,7 +20,7 @@ export function ProjectSidebar({ projectId }: { projectId: string }) {
           </span>
         </summary>
         <nav className="space-y-1 border-t border-white/[0.05] px-3 py-3" aria-label="Project mobile">
-          {[...projectNavItems, projectUtilityItem].map((item) => {
+          {projectNavItems.map((item) => {
             const Icon = item.icon;
 
             return (
@@ -86,16 +82,6 @@ export function ProjectSidebar({ projectId }: { projectId: string }) {
             );
           })}
         </nav>
-
-        <div className="mt-auto border-t border-white/[0.05] px-4 pt-4">
-          <a
-            href="#"
-            className="flex items-center gap-3 rounded-lg px-4 py-3 font-display text-sm font-semibold text-on-surface-variant transition-colors hover:bg-white/[0.04] hover:text-on-surface"
-          >
-            <UtilityIcon className="h-5 w-5" />
-            {projectUtilityItem.label}
-          </a>
-        </div>
       </aside>
     </>
   );

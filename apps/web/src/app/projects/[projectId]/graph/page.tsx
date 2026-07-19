@@ -2,6 +2,12 @@
 
 import { KnowledgeGraphPage } from "@/features/knowledge-graph/components/knowledge-graph-page";
 
-export default function ProjectKnowledgeGraphRoute() {
-  return <KnowledgeGraphPage />;
+type ProjectKnowledgeGraphRouteProps = {
+  params: Promise<{ projectId: string }>;
+};
+
+export default async function ProjectKnowledgeGraphRoute({ params }: ProjectKnowledgeGraphRouteProps) {
+  const { projectId } = await params;
+
+  return <KnowledgeGraphPage projectId={projectId} />;
 }

@@ -3,7 +3,7 @@
 import { ChevronRight, Verified } from "lucide-react";
 
 import type { EvidenceRecord } from "@/features/evidence/data/evidence-content";
-import { evidenceRecords } from "@/features/evidence/data/evidence-content";
+import { getEvidenceRecords } from "@/features/evidence/data/evidence-content";
 import { MotionDiv } from "@/features/landing/components/motion-primitives";
 import { cn } from "@/lib/utils";
 
@@ -19,7 +19,9 @@ const confidenceToneClasses: Record<EvidenceRecord["claimType"], string> = {
   Constraint: "bg-secondary",
 };
 
-export function EvidenceTable() {
+export function EvidenceTable({ projectId }: { projectId: string }) {
+  const evidenceRecords = getEvidenceRecords(projectId);
+
   return (
     <section className="px-5 py-5 sm:px-8 md:px-10" aria-labelledby="evidence-table-heading">
       <h2 id="evidence-table-heading" className="sr-only">

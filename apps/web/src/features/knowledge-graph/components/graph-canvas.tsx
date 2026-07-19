@@ -1,9 +1,8 @@
 // Purpose: Render a domain-aware SVG knowledge graph canvas with animated nodes and edges.
 
 import {
-  graphEdges,
-  graphNodes,
   type GraphNode,
+  type GraphEdge,
 } from "@/features/knowledge-graph/data/knowledge-graph-content";
 
 const glowIdByTone: Record<GraphNode["tone"], string> = {
@@ -20,8 +19,8 @@ const fillByTone: Record<GraphNode["tone"], string> = {
   error: "#ffb4ab",
 };
 
-export function GraphCanvas() {
-  const nodesById = Object.fromEntries(graphNodes.map((node) => [node.id, node]));
+export function GraphCanvas({ edges, nodes }: { edges: GraphEdge[]; nodes: GraphNode[] }) {
+  const nodesById = Object.fromEntries(nodes.map((node) => [node.id, node]));
 
   return (
     <div
@@ -50,7 +49,7 @@ export function GraphCanvas() {
         </defs>
 
         <g stroke="rgba(255,255,255,0.18)" strokeWidth="1.5">
-          {graphEdges.map((edge) => {
+          {edges.map((edge) => {
             const source = nodesById[edge.source];
             const target = nodesById[edge.target];
 
@@ -68,7 +67,7 @@ export function GraphCanvas() {
         </g>
 
         <g className="cursor-pointer">
-          {graphNodes.map((node) => (
+          {nodes.map((node) => (
             <g
               key={node.id}
               className="transition-opacity duration-300 hover:opacity-90"

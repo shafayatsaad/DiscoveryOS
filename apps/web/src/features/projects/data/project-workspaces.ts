@@ -90,7 +90,17 @@ export function getProjectWorkspace(projectId: string): WorkspaceProject {
   return workspaceProjects.find((project) => project.id === projectId) ?? workspaceProjects[0];
 }
 
-export function projectRoute(projectId: string, section?: "graph" | "evidence" | "pipeline") {
+export type ProjectSection =
+  | "graph"
+  | "evidence"
+  | "pipeline"
+  | "ml"
+  | "hypotheses"
+  | "experiments"
+  | "reports"
+  | "settings";
+
+export function projectRoute(projectId: string, section?: ProjectSection) {
   const baseRoute = `/projects/${projectId}`;
 
   return section ? `${baseRoute}/${section}` : baseRoute;

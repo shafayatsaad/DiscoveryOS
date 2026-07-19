@@ -4,9 +4,9 @@ import { Bookmark, X } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { MotionDiv } from "@/features/landing/components/motion-primitives";
-import { selectedNode } from "@/features/knowledge-graph/data/knowledge-graph-content";
+import type { SelectedGraphNode } from "@/features/knowledge-graph/data/knowledge-graph-content";
 
-export function NodeInspector() {
+export function NodeInspector({ selectedNode }: { selectedNode: SelectedGraphNode }) {
   return (
     <MotionDiv
       className="glass-panel pointer-events-auto flex flex-col gap-6 rounded-xl p-5 shadow-ambient lg:absolute lg:bottom-10 lg:right-10 lg:top-24 lg:w-80"

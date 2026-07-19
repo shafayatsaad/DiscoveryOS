@@ -34,11 +34,11 @@ export function EvidenceExplorerPage({ projectId }: { projectId: string }) {
         </Reveal>
 
         <Reveal delay={0.05}>
-          <EvidenceToolbar />
+          <EvidenceToolbar projectId={projectId} />
         </Reveal>
 
         <Reveal delay={0.1} className="flex-1">
-          <EvidenceTable />
+          <EvidenceTable projectId={projectId} />
         </Reveal>
       </main>
     </div>

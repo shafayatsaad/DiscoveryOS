@@ -1,6 +1,6 @@
 // Purpose: Render graph filtering controls from mocked node-type metadata.
 
-import { nodeTypeFilters } from "@/features/knowledge-graph/data/knowledge-graph-content";
+import type { NodeTypeFilter } from "@/features/knowledge-graph/data/knowledge-graph-content";
 import { MotionDiv } from "@/features/landing/components/motion-primitives";
 import { cn } from "@/lib/utils";
 
@@ -18,7 +18,7 @@ const dotClasses = {
   error: "bg-error",
 };
 
-export function GraphFilters() {
+export function GraphFilters({ filters }: { filters: NodeTypeFilter[] }) {
   return (
     <MotionDiv
       className="glass-panel pointer-events-auto flex flex-col gap-6 rounded-xl p-5 lg:absolute lg:bottom-10 lg:left-10 lg:top-24 lg:w-72"
@@ -31,7 +31,7 @@ export function GraphFilters() {
           Node Types
         </h2>
         <div className="flex flex-col gap-3">
-          {nodeTypeFilters.map((filter) => (
+          {filters.map((filter) => (
             <label
               key={filter.label}
               className="group flex cursor-pointer items-center gap-3 text-sm text-on-surface-variant"
