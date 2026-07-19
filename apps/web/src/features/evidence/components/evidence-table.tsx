@@ -26,8 +26,8 @@ export function EvidenceTable() {
         Evidence records
       </h2>
       <div className="overflow-x-auto">
-        <div className="min-w-[1120px]">
-          <div className="grid grid-cols-[44px_2.2fr_3fr_1.25fr_1.25fr_1.7fr_1fr] gap-4 border-b border-white/10 bg-[#0b0f14]/95 py-3 font-display text-xs font-semibold text-on-surface-variant">
+        <div className="min-w-[1040px]">
+          <div className="grid grid-cols-[44px_2.1fr_2.7fr_1.2fr_1.15fr_1.5fr_0.9fr] gap-4 border-b border-white/10 bg-[#0b0f14]/95 py-3 font-display text-xs font-semibold text-on-surface-variant">
             <span />
             <span>Paper Title</span>
             <span>Evidence Snippet</span>
@@ -58,7 +58,7 @@ export function EvidenceTable() {
 function EvidenceRow({ record }: { record: EvidenceRecord }) {
   return (
     <details className="group border-b border-white/[0.05] transition-colors open:bg-surface-container-low/30 hover:bg-surface-container-low/40 [&>summary::-webkit-details-marker]:hidden">
-      <summary className="grid cursor-pointer list-none grid-cols-[44px_2.2fr_3fr_1.25fr_1.25fr_1.7fr_1fr] gap-4 py-5">
+      <summary className="grid cursor-pointer list-none grid-cols-[44px_2.1fr_2.7fr_1.2fr_1.15fr_1.5fr_0.9fr] gap-4 py-5">
         <span className="pt-1 text-on-surface-variant">
           <ChevronRight className="h-5 w-5 transition-transform group-open:rotate-90" />
         </span>
@@ -86,7 +86,7 @@ function EvidenceRow({ record }: { record: EvidenceRecord }) {
           </span>
         </span>
         <span className="truncate pr-3 text-sm text-on-surface-variant/80">{record.citation}</span>
-        <span className="font-mono text-sm text-primary">{record.doi}</span>
+        <span className="truncate pr-2 font-mono text-sm text-primary">{record.doi}</span>
       </summary>
 
       <div className="pb-5 pl-11 pr-4">
