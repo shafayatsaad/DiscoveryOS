@@ -8,9 +8,14 @@ import { NodeInspector } from "@/features/knowledge-graph/components/node-inspec
 export function KnowledgeGraphPage() {
   return (
     <main className="relative min-h-screen overflow-y-auto bg-surface-container-lowest text-on-surface lg:h-screen lg:overflow-hidden">
-      <GraphCanvas />
-      <div className="relative z-20 flex min-h-screen flex-col gap-4 p-5 sm:p-8 lg:block lg:p-0">
+      <div className="relative z-20 flex flex-col gap-4 p-5 pb-0 sm:p-8 sm:pb-0 lg:hidden">
         <GraphSearch />
+      </div>
+      <GraphCanvas />
+      <div className="relative z-20 flex flex-col gap-4 p-5 pt-0 sm:p-8 sm:pt-0 lg:block lg:min-h-screen lg:p-0">
+        <div className="hidden lg:block">
+          <GraphSearch />
+        </div>
         <GraphFilters />
         <NodeInspector />
       </div>
