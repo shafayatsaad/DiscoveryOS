@@ -1,4 +1,4 @@
-// Purpose: Render Research Jobs navigation with the active workflow section.
+// Purpose: Render Research Pipeline navigation with the active execution section.
 
 import Link from "next/link";
 import { Menu, Plus } from "lucide-react";
@@ -15,7 +15,7 @@ export function ResearchJobsSidebar() {
           <span className="font-display text-xl font-extrabold text-on-surface">DiscoveryOS</span>
           <Menu className="h-4 w-4 text-on-surface-variant" />
         </summary>
-        <nav className="space-y-1 border-t border-white/[0.05] px-3 py-3" aria-label="Research jobs mobile">
+        <nav className="space-y-1 border-t border-white/[0.05] px-3 py-3" aria-label="Research pipeline mobile">
           {jobNavItems.map((item) => {
             const Icon = item.icon;
 
@@ -54,7 +54,7 @@ export function ResearchJobsSidebar() {
           </Button>
         </div>
 
-        <nav className="mt-10 flex-1 space-y-1 overflow-y-auto px-4" aria-label="Research jobs">
+        <nav className="mt-10 flex-1 space-y-1 overflow-y-auto px-4" aria-label="Research pipeline">
           {jobNavItems.map((item) => {
             const Icon = item.icon;
 
