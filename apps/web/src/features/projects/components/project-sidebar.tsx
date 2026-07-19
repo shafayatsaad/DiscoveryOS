@@ -7,8 +7,13 @@ import { Button } from "@/components/ui/button";
 import { getProjectNavItems } from "@/features/projects/data/research-project-content";
 import { cn } from "@/lib/utils";
 
-export function ProjectSidebar({ projectId }: { projectId: string }) {
-  const projectNavItems = getProjectNavItems(projectId);
+type ProjectSidebarProps = {
+  projectId: string;
+  activeSection?: Parameters<typeof getProjectNavItems>[1];
+};
+
+export function ProjectSidebar({ projectId, activeSection = "project" }: ProjectSidebarProps) {
+  const projectNavItems = getProjectNavItems(projectId, activeSection);
 
   return (
     <>
