@@ -39,15 +39,19 @@ export type EvidenceRecord = {
   trace: string[];
 };
 
-export const evidenceNavItems: EvidenceNavItem[] = [
-  { label: "Projects", icon: FlaskConical, href: projectRoute(primaryProjectId) },
-  { label: "Knowledge Graph", icon: Network, href: projectRoute(primaryProjectId, "graph") },
-  { label: "Research Pipeline", icon: SquareTerminal, href: projectRoute(primaryProjectId, "pipeline") },
-  { label: "Evidence Explorer", icon: BarChart3, href: projectRoute(primaryProjectId, "evidence"), active: true },
-  { label: "Experiments", icon: Beaker },
-  { label: "Reports", icon: FileText },
-  { label: "Settings", icon: Settings },
-];
+export function getEvidenceNavItems(projectId: string): EvidenceNavItem[] {
+  return [
+    { label: "Projects", icon: FlaskConical, href: projectRoute(projectId) },
+    { label: "Knowledge Graph", icon: Network, href: projectRoute(projectId, "graph") },
+    { label: "Research Pipeline", icon: SquareTerminal, href: projectRoute(projectId, "pipeline") },
+    { label: "Evidence Explorer", icon: BarChart3, href: projectRoute(projectId, "evidence"), active: true },
+    { label: "Experiments", icon: Beaker },
+    { label: "Reports", icon: FileText },
+    { label: "Settings", icon: Settings },
+  ];
+}
+
+export const evidenceNavItems: EvidenceNavItem[] = getEvidenceNavItems(primaryProjectId);
 
 export const evidenceFilters = ["Conductivity", "Thermal", "Synthesis", "Interfaces"];
 
