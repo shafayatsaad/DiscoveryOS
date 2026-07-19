@@ -30,6 +30,7 @@ export type ResearchProject = {
   domain: string;
   description: string;
   phase: string;
+  href: string;
   progress: number;
   status?: "completed";
 };
@@ -69,6 +70,7 @@ export const researchProjects: ResearchProject[] = workspaceProjects.map((projec
   domain: project.domain,
   description: project.summary,
   phase: project.phase,
+  href: projectRoute(project.id),
   progress: project.progress,
   status: project.status === "Completed" ? "completed" : undefined,
 }));
