@@ -1,7 +1,13 @@
-// Purpose: Render the project research jobs and execution timeline route.
+// Purpose: Redirect the old workflow route to the renamed Research Pipeline screen.
 
-import { ResearchJobsPage } from "@/features/workflows/components/research-jobs-page";
+import { redirect } from "next/navigation";
 
-export default function ProjectWorkflowRoute() {
-  return <ResearchJobsPage />;
+type ProjectWorkflowRouteProps = {
+  params: Promise<{ projectId: string }>;
+};
+
+export default async function ProjectWorkflowRoute({ params }: ProjectWorkflowRouteProps) {
+  const { projectId } = await params;
+
+  redirect(`/projects/${projectId}/pipeline`);
 }
