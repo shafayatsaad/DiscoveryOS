@@ -6,12 +6,12 @@ import { EvidenceTable } from "@/features/evidence/components/evidence-table";
 import { EvidenceToolbar } from "@/features/evidence/components/evidence-toolbar";
 import { evidenceActions } from "@/features/evidence/data/evidence-content";
 
-export function EvidenceExplorerPage() {
+export function EvidenceExplorerPage({ projectId }: { projectId: string }) {
   const ExportIcon = evidenceActions.export;
 
   return (
     <div className="min-h-screen bg-[#0b0f14] text-on-surface md:flex">
-      <EvidenceSidebar />
+      <EvidenceSidebar projectId={projectId} />
       <main className="mx-auto flex w-full min-w-0 max-w-container-max flex-1 flex-col">
         <Reveal>
           <header className="flex flex-col gap-5 border-b border-white/[0.05] px-5 py-8 sm:px-8 md:px-10 lg:flex-row lg:items-end lg:justify-between">
