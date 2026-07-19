@@ -13,15 +13,15 @@ export function ResearchPipeline() {
       </h2>
 
       <div className="relative overflow-x-auto pb-2">
-        <div className="absolute left-0 right-0 top-5 h-0.5 min-w-[840px] bg-surface-container-high">
+        <div className="absolute left-0 right-0 top-5 h-0.5 min-w-[760px] bg-surface-container-high">
           <div className="h-full bg-primary" style={{ width: `${completedPercent}%` }} />
         </div>
-        <div className="relative z-10 grid min-w-[840px] grid-cols-10 gap-3">
+        <div className="relative z-10 grid min-w-[760px] grid-cols-10 gap-1">
           {pipelineStages.map((stage) => {
             const Icon = stage.icon;
 
             return (
-              <div key={stage.label} className="flex min-w-20 flex-col items-center gap-2 text-center">
+              <div key={stage.label} className="flex min-w-16 flex-col items-center gap-2 text-center">
                 <div
                   className={cn(
                     "flex rounded-full border-2 items-center justify-center",
