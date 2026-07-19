@@ -4,10 +4,12 @@ import Link from "next/link";
 import { Menu, Plus } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
-import { jobNavItems } from "@/features/workflows/data/research-jobs-content";
+import { getJobNavItems } from "@/features/workflows/data/research-jobs-content";
 import { cn } from "@/lib/utils";
 
-export function ResearchJobsSidebar() {
+export function ResearchJobsSidebar({ projectId }: { projectId: string }) {
+  const jobNavItems = getJobNavItems(projectId);
+
   return (
     <>
       <details className="sticky top-0 z-50 border-b border-white/10 bg-surface/90 backdrop-blur-xl md:hidden [&>summary::-webkit-details-marker]:hidden">
