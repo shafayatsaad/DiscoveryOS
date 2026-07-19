@@ -20,7 +20,7 @@ export function Reveal({ children, className, delay = 0, y = 18 }: RevealProps) 
   return (
     <motion.div
       className={cn("min-w-0", className)}
-      initial={prefersReducedMotion ? false : { opacity: 0, y }}
+      initial={prefersReducedMotion ? false : { opacity: 0.86, y }}
       whileInView={prefersReducedMotion ? undefined : { opacity: 1, y: 0 }}
       viewport={{ once: true, amount: 0.18 }}
       transition={{ delay, duration: 0.42, ease: "easeOut" }}
