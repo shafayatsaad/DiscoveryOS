@@ -1,0 +1,22 @@
+{
+  "name": "discoveryos",
+  "version": "0.1.0",
+  "private": true,
+  "description": "DiscoveryOS — Autonomous Scientific Discovery Platform powered by AI Agents, MCP, Machine Learning, and Knowledge Graphs.",
+  "scripts": {
+    "dev": "npm run dev --workspace=apps/web",
+    "dev:web": "npm run dev --workspace=apps/web",
+    "dev:api": "cd apps/api && uvicorn app.main:app --reload",
+    "dev:all": "concurrently -n web,api -c cyan,magenta \"npm run dev:web\" \"npm run dev:api\"",
+    "build": "npm run build --workspace=apps/web",
+    "lint": "npm run lint --workspace=apps/web",
+    "typecheck": "npm run typecheck --workspace=apps/web"
+  },
+  "workspaces": [
+    "apps/web",
+    "packages/*"
+  ],
+  "devDependencies": {
+    "concurrently": "^9.1.0"
+  }
+}
