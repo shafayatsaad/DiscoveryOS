@@ -29,7 +29,7 @@ export function CommandCenter() {
             <input
               id="research-query"
               className="h-16 w-full rounded-lg border border-white/10 bg-[#0b0f14] py-3 pl-12 pr-36 font-mono text-sm text-on-surface outline-none transition-colors placeholder:text-outline-variant focus:border-primary focus:ring-0 sm:pr-44"
-              placeholder="e.g., Analyze protein folding pathways in Alzheimer's model..."
+              placeholder="e.g., Discover safer solid-state battery electrolyte candidates..."
               type="text"
             />
             <div className="absolute inset-y-0 right-2 flex items-center gap-2">
