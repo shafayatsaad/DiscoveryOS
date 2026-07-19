@@ -24,6 +24,7 @@ export type ProjectNavItem = {
   label: string;
   icon: LucideIcon;
   active?: boolean;
+  href?: string;
 };
 
 export type PipelineStage = {
@@ -53,8 +54,8 @@ export type SynopsisScore = {
 };
 
 export const projectNavItems: ProjectNavItem[] = [
-  { label: "Projects", icon: FlaskConical, active: true },
-  { label: "Knowledge Graph", icon: Network },
+  { label: "Projects", icon: FlaskConical, active: true, href: "/projects/heart-failure-biomarkers" },
+  { label: "Knowledge Graph", icon: Network, href: "/projects/heart-failure-biomarkers/graph" },
   { label: "Research Jobs", icon: SquareTerminal },
   { label: "Evidence Explorer", icon: BarChart3 },
   { label: "Experiments", icon: Beaker },
