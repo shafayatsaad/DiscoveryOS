@@ -1,4 +1,4 @@
-// Purpose: Compose the Stitch-aligned research job execution timeline screen.
+// Purpose: Compose the Stitch-aligned research pipeline execution screen.
 
 import { Reveal } from "@/components/ui/reveal";
 import { ResearchJobsFooter } from "@/features/workflows/components/research-jobs-footer";
