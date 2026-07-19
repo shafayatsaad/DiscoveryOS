@@ -59,13 +59,12 @@ function TimelineStep({ step, isLast }: { step: JobStep; isLast: boolean }) {
   const hasLogs = Boolean(step.logs?.length);
 
   return (
-    <details
+    <div
       className={cn(
-        "group relative pl-14",
+        "relative",
         !isLast && "pb-7",
         step.status === "Pending" && "opacity-55",
       )}
-      open={step.defaultOpen}
     >
       {!isLast ? (
         <span className="absolute bottom-0 left-[23px] top-12 w-0.5 bg-surface-variant" aria-hidden="true" />
@@ -79,45 +78,50 @@ function TimelineStep({ step, isLast }: { step: JobStep; isLast: boolean }) {
         <Icon className={cn("h-5 w-5", step.status === "Running" && "animate-spin")} />
       </span>
 
-      <summary
-        className={cn(
-          "flex list-none flex-col gap-3 rounded-lg py-1 sm:flex-row sm:items-center sm:justify-between [&::-webkit-details-marker]:hidden",
-          hasLogs && "cursor-pointer",
-        )}
-      >
-        <div className="flex min-w-0 flex-wrap items-center gap-3">
-          <h3 className="font-display text-xl font-semibold leading-[1.3] text-on-surface transition-colors group-hover:text-primary sm:text-2xl">
-            {step.title}
-          </h3>
-          <span
-            className={cn(
-              "rounded-full px-3 py-1 font-display text-xs font-semibold tracking-normal",
-              badgeToneClasses[step.status],
-            )}
-          >
-            {step.status}
-          </span>
-        </div>
-        <div className="flex items-center gap-4 font-mono text-sm text-on-surface-variant">
-          <span>{step.duration}</span>
-          {hasLogs ? (
-            <ChevronDown className="h-5 w-5 transition-transform group-open:rotate-180 group-hover:text-primary" />
-          ) : null}
-        </div>
-      </summary>
+      <details className="group pl-14" open={step.defaultOpen}>
+        <summary
+          className={cn(
+            "flex list-none flex-col gap-3 rounded-lg py-1 sm:flex-row sm:items-center sm:justify-between [&::-webkit-details-marker]:hidden",
+            hasLogs && "cursor-pointer",
+          )}
+        >
+          <div className="flex min-w-0 flex-wrap items-center gap-3">
+            <h3 className="font-display text-xl font-semibold leading-[1.3] text-on-surface transition-colors group-hover:text-primary sm:text-2xl">
+              {step.title}
+            </h3>
+            <span
+              className={cn(
+                "rounded-full px-3 py-1 font-display text-xs font-semibold tracking-normal",
+                badgeToneClasses[step.status],
+              )}
+            >
+              {step.status}
+            </span>
+          </div>
+          <div className="flex items-center gap-4 font-mono text-sm text-on-surface-variant">
+            <span>{step.duration}</span>
+            {hasLogs ? (
+              <ChevronDown className="h-5 w-5 transition-transform group-open:rotate-180 group-hover:text-primary" />
+            ) : null}
+          </div>
+        </summary>
 
-      {hasLogs ? (
-        <div className="code-block mt-4 overflow-x-auto rounded-lg p-4 font-mono text-sm leading-[1.55] text-on-surface-variant">
-          {step.logs?.map((log) => (
-            <div key={`${step.title}-${log.time}-${log.message}`} className={cn("flex min-w-[720px] gap-4", logToneClasses[log.level])}>
-              <span className="w-16 shrink-0 text-outline">{log.time}</span>
-              <span>
-                [{log.level}] {log.message}
-              </span>
-            </div>
-          ))}
-        </div>
-      ) : null}
-    </details>
+        {hasLogs ? (
+          <div className="code-block mt-4 overflow-x-auto rounded-lg p-4 font-mono text-sm leading-[1.55] text-on-surface-variant">
+            {step.logs?.map((log) => (
+              <div
+                key={`${step.title}-${log.time}-${log.message}`}
+                className={cn("flex min-w-[720px] gap-4", logToneClasses[log.level])}
+              >
+                <span className="w-16 shrink-0 text-outline">{log.time}</span>
+                <span>
+                  [{log.level}] {log.message}
+                </span>
+              </div>
+            ))}
+          </div>
+        ) : null}
+      </details>
+    </div>
   );
 }
