@@ -40,7 +40,7 @@ export type EvidenceRecord = {
 export const evidenceNavItems: EvidenceNavItem[] = [
   { label: "Projects", icon: FlaskConical, href: "/projects/heart-failure-biomarkers" },
   { label: "Knowledge Graph", icon: Network, href: "/projects/heart-failure-biomarkers/graph" },
-  { label: "Research Jobs", icon: SquareTerminal },
+  { label: "Research Jobs", icon: SquareTerminal, href: "/projects/heart-failure-biomarkers/workflow" },
   { label: "Evidence Explorer", icon: BarChart3, href: "/projects/heart-failure-biomarkers/evidence", active: true },
   { label: "Experiments", icon: Beaker },
   { label: "Reports", icon: FileText },
