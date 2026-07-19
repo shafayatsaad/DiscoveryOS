@@ -1,4 +1,4 @@
-// Purpose: Render the current research job title, metadata, and job actions.
+// Purpose: Render the active research pipeline title, metadata, and run actions.
 
 import { RotateCw, SquareTerminal } from "lucide-react";
 
@@ -11,9 +11,17 @@ export function ResearchJobsHeader() {
       <div className="min-w-0">
         <div className="mb-4 flex items-start gap-4">
           <SquareTerminal className="mt-2 h-7 w-7 shrink-0 text-primary" />
-          <h1 className="max-w-4xl font-display text-3xl font-semibold leading-[1.15] text-on-surface sm:text-4xl lg:text-5xl">
-            {jobOverview.title}
-          </h1>
+          <div className="min-w-0">
+            <span className="mb-2 inline-flex rounded-md border border-primary/20 bg-primary/10 px-2 py-1 font-mono text-xs font-semibold uppercase tracking-normal text-primary">
+              Domain: {jobOverview.domain}
+            </span>
+            <h1 className="max-w-4xl font-display text-3xl font-semibold leading-[1.15] text-on-surface sm:text-4xl lg:text-5xl">
+              {jobOverview.title}
+            </h1>
+            <p className="mt-3 text-base leading-[1.55] text-on-surface-variant sm:text-lg">
+              {jobOverview.subtitle}
+            </p>
+          </div>
         </div>
         <div className="flex flex-wrap items-center gap-4 font-mono text-sm text-on-surface-variant">
           {jobHeaderMeta.map((meta) => {
@@ -34,11 +42,11 @@ export function ResearchJobsHeader() {
           className="rounded-lg border border-white/10 px-5 py-3 font-display text-xs font-semibold uppercase tracking-normal text-on-surface transition-colors hover:bg-white/[0.05]"
           type="button"
         >
-          Cancel Job
+          Pause Run
         </button>
         <Button className="h-12 px-5">
           <RotateCw className="h-4 w-4" />
-          Rerun
+          Restart
         </Button>
       </div>
     </header>
