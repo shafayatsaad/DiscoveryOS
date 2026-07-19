@@ -15,7 +15,7 @@ import {
   UserCircle,
 } from "lucide-react";
 
-import { primaryProjectId, projectRoute, workspaceProjects } from "@/features/projects/data/project-workspaces";
+import { getProjectWorkspace, primaryProjectId, projectRoute } from "@/features/projects/data/project-workspaces";
 
 export type JobNavItem = {
   label: string;
@@ -40,32 +40,46 @@ export type JobStep = {
   logs?: JobLogLine[];
 };
 
-export const jobNavItems: JobNavItem[] = [
-  { label: "Projects", icon: FlaskConical, href: projectRoute(primaryProjectId) },
-  { label: "Knowledge Graph", icon: Network, href: projectRoute(primaryProjectId, "graph") },
-  { label: "Research Pipeline", icon: SquareTerminal, href: projectRoute(primaryProjectId, "pipeline"), active: true },
-  { label: "Evidence Explorer", icon: BarChart3, href: projectRoute(primaryProjectId, "evidence") },
-  { label: "Experiments", icon: Beaker },
-  { label: "Reports", icon: FileText },
-  { label: "Settings", icon: Settings },
-];
+export function getJobNavItems(projectId: string): JobNavItem[] {
+  return [
+    { label: "Projects", icon: FlaskConical, href: projectRoute(projectId) },
+    { label: "Knowledge Graph", icon: Network, href: projectRoute(projectId, "graph") },
+    { label: "Research Pipeline", icon: SquareTerminal, href: projectRoute(projectId, "pipeline"), active: true },
+    { label: "Evidence Explorer", icon: BarChart3, href: projectRoute(projectId, "evidence") },
+    { label: "Experiments", icon: Beaker },
+    { label: "Reports", icon: FileText },
+    { label: "Settings", icon: Settings },
+  ];
+}
 
-const activeProject = workspaceProjects[0];
+export const jobNavItems: JobNavItem[] = getJobNavItems(primaryProjectId);
 
-export const jobOverview = {
-  title: "Research Pipeline",
-  subtitle: activeProject.title,
-  domain: activeProject.domain,
-  owner: activeProject.owner,
-  started: activeProject.started,
-  commit: activeProject.commit,
-};
+export function getJobOverview(projectId: string) {
+  const project = getProjectWorkspace(projectId);
 
-export const jobHeaderMeta = [
-  { label: jobOverview.owner, icon: UserCircle },
-  { label: jobOverview.started, icon: Clock },
-  { label: jobOverview.commit, icon: RotateCw },
-];
+  return {
+    title: "Research Pipeline",
+    subtitle: project.title,
+    domain: project.domain,
+    owner: project.owner,
+    started: project.started,
+    commit: project.commit,
+  };
+}
+
+export const jobOverview = getJobOverview(primaryProjectId);
+
+export function getJobHeaderMeta(projectId: string) {
+  const overview = getJobOverview(projectId);
+
+  return [
+    { label: overview.owner, icon: UserCircle },
+    { label: overview.started, icon: Clock },
+    { label: overview.commit, icon: RotateCw },
+  ];
+}
+
+export const jobHeaderMeta = getJobHeaderMeta(primaryProjectId);
 
 export const jobSteps: JobStep[] = [
   {
