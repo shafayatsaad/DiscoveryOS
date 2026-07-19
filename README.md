@@ -103,6 +103,7 @@ assets/                Brand and diagram assets
 - [Frontend](docs/09-FRONTEND.md)
 - [Roadmap](docs/10-ROADMAP.md)
 - [Hackathon AI Usage](docs/11-HACKATHON_AI_USAGE.md)
+- [Monorepo Architecture](docs/12-MONOREPO_ARCHITECTURE.md)
 
 ## What Makes DiscoveryOS Different
 
@@ -141,4 +142,3 @@ DiscoveryOS is currently in documentation and architecture phase. Application co
 ## License
 
 License to be selected before public release.
-
