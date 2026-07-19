@@ -57,7 +57,7 @@ export const projectNavItems: ProjectNavItem[] = [
   { label: "Projects", icon: FlaskConical, active: true, href: "/projects/heart-failure-biomarkers" },
   { label: "Knowledge Graph", icon: Network, href: "/projects/heart-failure-biomarkers/graph" },
   { label: "Research Jobs", icon: SquareTerminal },
-  { label: "Evidence Explorer", icon: BarChart3 },
+  { label: "Evidence Explorer", icon: BarChart3, href: "/projects/heart-failure-biomarkers/evidence" },
   { label: "Experiments", icon: Beaker },
   { label: "Reports", icon: FileText },
 ];
