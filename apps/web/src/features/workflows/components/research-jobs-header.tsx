@@ -3,9 +3,12 @@
 import { RotateCw, SquareTerminal } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
-import { jobHeaderMeta, jobOverview } from "@/features/workflows/data/research-jobs-content";
+import { getJobHeaderMeta, getJobOverview } from "@/features/workflows/data/research-jobs-content";
 
-export function ResearchJobsHeader() {
+export function ResearchJobsHeader({ projectId }: { projectId: string }) {
+  const jobOverview = getJobOverview(projectId);
+  const jobHeaderMeta = getJobHeaderMeta(projectId);
+
   return (
     <header className="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
       <div className="min-w-0">
