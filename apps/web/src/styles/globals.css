@@ -35,6 +35,24 @@ a {
   -webkit-tap-highlight-color: transparent;
 }
 
+::-webkit-scrollbar {
+  height: 8px;
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.02);
+}
+
+::-webkit-scrollbar-thumb {
+  border-radius: 9999px;
+  background: rgba(255, 255, 255, 0.12);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
 @layer components {
   .nav-link {
     color: #c2c6d6;
@@ -71,6 +89,27 @@ a {
   .grid-mask {
     background-image: radial-gradient(circle at 1px 1px, rgba(255, 255, 255, 0.12) 1px, transparent 0);
     background-size: 24px 24px;
+  }
+
+  .glow-focus:focus-within {
+    border-color: #adc6ff;
+    box-shadow: 0 0 0 2px rgba(173, 198, 255, 0.2);
+  }
+}
+
+@layer utilities {
+  .animate-shimmer {
+    animation: shimmer 2s infinite;
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+
+  100% {
+    transform: translateX(100%);
   }
 }
 
