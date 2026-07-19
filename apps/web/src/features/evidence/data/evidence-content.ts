@@ -16,6 +16,8 @@ import {
   Verified,
 } from "lucide-react";
 
+import { primaryProjectId, projectRoute } from "@/features/projects/data/project-workspaces";
+
 export type EvidenceNavItem = {
   label: string;
   icon: LucideIcon;
@@ -29,7 +31,7 @@ export type EvidenceRecord = {
   contextBefore: string;
   highlight: string;
   contextAfter: string;
-  claimType: "Efficacy" | "Resistance" | "Biomarker";
+  claimType: "Performance" | "Mechanism" | "Constraint";
   confidence: number;
   citation: string;
   doi: string;
@@ -38,16 +40,16 @@ export type EvidenceRecord = {
 };
 
 export const evidenceNavItems: EvidenceNavItem[] = [
-  { label: "Projects", icon: FlaskConical, href: "/projects/heart-failure-biomarkers" },
-  { label: "Knowledge Graph", icon: Network, href: "/projects/heart-failure-biomarkers/graph" },
-  { label: "Research Jobs", icon: SquareTerminal, href: "/projects/heart-failure-biomarkers/workflow" },
-  { label: "Evidence Explorer", icon: BarChart3, href: "/projects/heart-failure-biomarkers/evidence", active: true },
+  { label: "Projects", icon: FlaskConical, href: projectRoute(primaryProjectId) },
+  { label: "Knowledge Graph", icon: Network, href: projectRoute(primaryProjectId, "graph") },
+  { label: "Research Pipeline", icon: SquareTerminal, href: projectRoute(primaryProjectId, "pipeline") },
+  { label: "Evidence Explorer", icon: BarChart3, href: projectRoute(primaryProjectId, "evidence"), active: true },
   { label: "Experiments", icon: Beaker },
   { label: "Reports", icon: FileText },
   { label: "Settings", icon: Settings },
 ];
 
-export const evidenceFilters = ["Genomics", "Clinical", "Proteomics", "In Vivo"];
+export const evidenceFilters = ["Conductivity", "Thermal", "Synthesis", "Interfaces"];
 
 export const evidenceActions = {
   export: Download,
@@ -59,54 +61,54 @@ export const evidenceActions = {
 
 export const evidenceRecords: EvidenceRecord[] = [
   {
-    title: "Targeting TP53 mutations in aggressive lung adenocarcinoma models",
+    title: "Ceramic-filled PEO electrolytes improve room-temperature ion transport",
     snippet:
-      "In vivo administration of the compound resulted in a 45% reduction of tumor volume in PDX models expressing the R175H TP53 mutation, suggesting high specificity...",
+      "Adding nanoscale LLZO fillers increased lithium-ion conductivity by 38% while preserving processability under solvent-cast fabrication conditions...",
     contextBefore:
-      "Previous attempts to drug this specific conformation have failed due to off-target toxicities. Here,",
+      "Baseline PEO-LiTFSI films showed limited room-temperature conductivity. After filler dispersion,",
     highlight:
-      "in vivo administration of the compound resulted in a 45% reduction of tumor volume in PDX models expressing the R175H TP53 mutation",
+      "adding nanoscale LLZO fillers increased lithium-ion conductivity by 38%",
     contextAfter:
-      "suggesting high specificity and offering a potential therapeutic window for follow-up validation.",
-    claimType: "Efficacy",
+      "while preserving processability under solvent-cast fabrication conditions.",
+    claimType: "Performance",
     confidence: 94,
-    citation: "Chen et al., Nat Med (2023)",
-    doi: "10.1038/s41591",
-    entities: ["TP53 R175H", "PDX Model"],
-    trace: ["NLP Extraction", "Cross-ref (3 papers)"],
+    citation: "Park et al., Adv Energy Mater (2024)",
+    doi: "10.1002/aenm",
+    entities: ["PEO-LiTFSI", "LLZO", "Ion Conductivity"],
+    trace: ["Claim Extraction", "Cross-ref (7 papers)"],
   },
   {
-    title: "CRISPR-Cas9 screens identify novel resistance mechanisms to BRAF inhibitors",
+    title: "Interfacial instability emerges under high-current cycling",
     snippet:
-      "Loss of NF1 was consistently enriched in resistant populations across three independent melanoma cell lines treated with vemurafenib.",
+      "Cells cycled above 1.5 mA cm-2 showed rapid impedance growth and dendrite-associated shorting after fewer than 80 cycles.",
     contextBefore:
-      "To systematically map the landscape of acquired resistance, we performed genome-wide pooled CRISPR screens.",
+      "Long-duration cycling experiments were conducted at increasing current densities.",
     highlight:
-      "Loss of NF1 was consistently enriched in resistant populations across three independent melanoma cell lines treated with vemurafenib.",
+      "rapid impedance growth and dendrite-associated shorting after fewer than 80 cycles",
     contextAfter:
-      "This indicates a robust bypass mechanism restoring MAPK signaling despite upstream blockade.",
-    claimType: "Resistance",
+      "suggesting that candidate ranking must include interfacial failure risk.",
+    claimType: "Constraint",
     confidence: 88,
-    citation: "Smith & Doe, Cell (2022)",
-    doi: "10.1016/j.cell",
-    entities: ["NF1", "BRAF", "Vemurafenib"],
-    trace: ["CRISPR Screen", "Cross-ref (5 papers)"],
+    citation: "Singh & Rao, Joule (2023)",
+    doi: "10.1016/j.joule",
+    entities: ["Dendrite Risk", "Current Density", "Impedance"],
+    trace: ["Table Extraction", "Contradiction Check"],
   },
   {
-    title: "Longitudinal single-cell transcriptomics of tumor microenvironment",
+    title: "Ionic liquid additives disrupt crystallinity and improve transport",
     snippet:
-      "We observed a distinct expansion of CD8+ exhausted T-cells expressing high levels of LAG3 and TIM3 at the time of clinical progression.",
+      "Small fractions of pyrrolidinium-based ionic liquid reduced polymer crystallinity and created additional amorphous conduction pathways.",
     contextBefore:
-      "Serial biopsies were collected across response and relapse intervals in matched patient cohorts.",
+      "Differential scanning calorimetry and impedance spectroscopy were compared across additive concentrations.",
     highlight:
-      "a distinct expansion of CD8+ exhausted T-cells expressing high levels of LAG3 and TIM3",
+      "reduced polymer crystallinity and created additional amorphous conduction pathways",
     contextAfter:
-      "was observed at clinical progression, supporting immune exhaustion as a candidate biomarker.",
-    claimType: "Biomarker",
+      "supporting a mechanism for the observed conductivity gains.",
+    claimType: "Mechanism",
     confidence: 91,
-    citation: "Patel et al., Sci Immunol (2024)",
-    doi: "10.1126/sciim",
-    entities: ["CD8+ T-cells", "LAG3", "TIM3"],
-    trace: ["Single-cell Extraction", "Graph Entity Match"],
+    citation: "Mori et al., ACS Energy Lett (2024)",
+    doi: "10.1021/acsenergylett",
+    entities: ["Ionic Liquid", "Crystallinity", "Amorphous Phase"],
+    trace: ["Figure Extraction", "Graph Entity Match"],
   },
 ];
