@@ -1,4 +1,4 @@
-// Purpose: Render a mock SVG knowledge graph canvas with animated nodes and edges.
+// Purpose: Render a domain-aware SVG knowledge graph canvas with animated nodes and edges.
 
 import {
   graphEdges,
@@ -8,12 +8,14 @@ import {
 
 const glowIdByTone: Record<GraphNode["tone"], string> = {
   primary: "node-glow-primary",
+  secondary: "node-glow-secondary",
   tertiary: "node-glow-tertiary",
   error: "node-glow-error",
 };
 
 const fillByTone: Record<GraphNode["tone"], string> = {
   primary: "#adc6ff",
+  secondary: "#64d2ff",
   tertiary: "#bec7db",
   error: "#ffb4ab",
 };
@@ -36,6 +38,10 @@ export function GraphCanvas() {
           <radialGradient cx="50%" cy="50%" id="node-glow-tertiary" r="50%">
             <stop offset="0%" stopColor="#bec7db" stopOpacity="0.8" />
             <stop offset="100%" stopColor="#bec7db" stopOpacity="0" />
+          </radialGradient>
+          <radialGradient cx="50%" cy="50%" id="node-glow-secondary" r="50%">
+            <stop offset="0%" stopColor="#64d2ff" stopOpacity="0.8" />
+            <stop offset="100%" stopColor="#64d2ff" stopOpacity="0" />
           </radialGradient>
           <radialGradient cx="50%" cy="50%" id="node-glow-error" r="50%">
             <stop offset="0%" stopColor="#ffb4ab" stopOpacity="0.8" />
