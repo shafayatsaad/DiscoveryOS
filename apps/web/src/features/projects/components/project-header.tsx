@@ -16,6 +16,9 @@ export function ProjectHeader() {
             <span className="font-mono text-xs font-semibold uppercase tracking-normal text-on-surface-variant">
               ID: {projectOverview.id}
             </span>
+            <span className="rounded-md border border-white/10 bg-surface-container px-2 py-1 font-mono text-xs font-semibold uppercase tracking-normal text-on-surface-variant">
+              Domain: {projectOverview.domain}
+            </span>
           </div>
           <h1 className="font-display text-3xl font-semibold leading-[1.15] text-on-surface">
             {projectOverview.title}
@@ -25,8 +28,8 @@ export function ProjectHeader() {
         <div className="flex w-full flex-col gap-4 sm:w-auto sm:min-w-80 sm:flex-row sm:items-center">
           <div className="min-w-0 flex-1 sm:w-52">
             <div className="mb-1 flex justify-between font-display text-xs font-semibold text-on-surface-variant">
-              <span>Overall Progress</span>
-              <span className="text-primary">{projectOverview.progress}%</span>
+              <span>Pipeline Phase</span>
+              <span className="text-primary">{projectOverview.phase}</span>
             </div>
             <div className="h-1.5 w-full overflow-hidden rounded-full bg-surface-container-high">
               <div className="h-full rounded-full bg-primary" style={{ width: `${projectOverview.progress}%` }} />
