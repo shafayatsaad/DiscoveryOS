@@ -20,6 +20,8 @@ import {
   Target,
 } from "lucide-react";
 
+import { primaryProjectId, projectRoute, workspaceProjects } from "@/features/projects/data/project-workspaces";
+
 export type ProjectNavItem = {
   label: string;
   icon: LucideIcon;
@@ -54,21 +56,25 @@ export type SynopsisScore = {
 };
 
 export const projectNavItems: ProjectNavItem[] = [
-  { label: "Projects", icon: FlaskConical, active: true, href: "/projects/heart-failure-biomarkers" },
-  { label: "Knowledge Graph", icon: Network, href: "/projects/heart-failure-biomarkers/graph" },
-  { label: "Research Jobs", icon: SquareTerminal, href: "/projects/heart-failure-biomarkers/workflow" },
-  { label: "Evidence Explorer", icon: BarChart3, href: "/projects/heart-failure-biomarkers/evidence" },
+  { label: "Projects", icon: FlaskConical, active: true, href: projectRoute(primaryProjectId) },
+  { label: "Knowledge Graph", icon: Network, href: projectRoute(primaryProjectId, "graph") },
+  { label: "Research Pipeline", icon: SquareTerminal, href: projectRoute(primaryProjectId, "pipeline") },
+  { label: "Evidence Explorer", icon: BarChart3, href: projectRoute(primaryProjectId, "evidence") },
   { label: "Experiments", icon: Beaker },
   { label: "Reports", icon: FileText },
 ];
 
+const activeProject = workspaceProjects[0];
+
 export const projectOverview = {
-  id: "RES-492-BHF",
-  status: "Running",
-  title: "Biomarkers for Heart Failure",
-  progress: 72,
-  synopsis:
-    "Investigating novel protein biomarkers for early-stage heart failure detection. Currently applying machine learning models across 450 cross-referenced papers to identify anomaly patterns in patient proteomics data prior to structural heart damage.",
+  id: activeProject.displayId,
+  status: activeProject.status,
+  domain: activeProject.domain,
+  phase: activeProject.phase,
+  title: activeProject.title,
+  progress: activeProject.progress,
+  synopsis: activeProject.summary,
+  researchGoal: activeProject.researchGoal,
 };
 
 export const pipelineStages: PipelineStage[] = [
@@ -85,32 +91,32 @@ export const pipelineStages: PipelineStage[] = [
 ];
 
 export const terminalLogs: TerminalLog[] = [
-  { time: "10:42:01", level: "INFO", message: "Initializing ML model training context..." },
-  { time: "10:42:05", level: "INFO", message: "Loading Knowledge Graph embeddings (12.4M nodes)." },
+  { time: "10:42:01", level: "INFO", message: "Initializing project workspace context..." },
+  { time: "10:42:05", level: "INFO", message: "Loading Materials Science graph embeddings (2.8M nodes)." },
   { time: "10:42:12", level: "SUCCESS", message: "Embeddings loaded in 6.8s." },
   {
     time: "10:42:15",
     level: "INFO",
-    message: "Cross-referencing novel biomarker candidates with existing literature...",
+    message: "Cross-referencing polymer electrolyte candidates with literature evidence...",
   },
   {
     time: "10:42:45",
     level: "WARN",
     message:
-      "Candidate 'B-type natriuretic peptide (BNP)' variant analysis yielding high variance. Adjusting threshold.",
+      "Contradictory conductivity claims detected for ceramic-filled blends. Marking for critic review.",
   },
   {
     time: "10:43:10",
     level: "INFO",
-    message: "Training predictive heart failure trajectory model. Epoch 1/50.",
+    message: "Training structure-property ranking model. Epoch 1/50.",
   },
   { time: "10:44:20", level: "INFO", message: "Epoch 10/50 - Loss: 0.245 - Accuracy: 88.2%" },
 ];
 
 export const projectMetrics: MetricCard[] = [
-  { label: "Evidence Count", value: "1.2k", icon: Database },
-  { label: "Paper Count", value: "450", icon: BookOpen },
-  { label: "Confidence Score", value: "89%", icon: Target, emphasized: true },
+  { label: "Evidence Items", value: "1.2k", icon: Database },
+  { label: "Papers Indexed", value: "1,237", icon: BookOpen },
+  { label: "Confidence", value: "89%", icon: Target, emphasized: true },
 ];
 
 export const synopsisScores: SynopsisScore[] = [
@@ -119,8 +125,8 @@ export const synopsisScores: SynopsisScore[] = [
 ];
 
 export const researchHealth = {
-  label: "Research Health",
-  value: "Optimal",
+  label: "Workspace Health",
+  value: "Stable",
   icon: HeartPulse,
 };
 
