@@ -1,4 +1,4 @@
-// Purpose: Render footer links for the research jobs workspace.
+// Purpose: Render footer links for the research pipeline workspace.
 
 export function ResearchJobsFooter() {
   return (
