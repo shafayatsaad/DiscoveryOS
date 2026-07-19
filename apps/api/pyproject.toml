@@ -1,14 +1,21 @@
 # Purpose: Define the FastAPI backend package, runtime dependencies, test settings, and lint rules.
 
+[build-system]
+requires = ["setuptools>=69.0.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
 [project]
 name = "discoveryos-api"
 version = "0.1.0"
 description = "FastAPI backend foundation for the DiscoveryOS scientific operating system."
 readme = "README.md"
-requires-python = ">=3.11"
+requires-python = ">=3.12"
 dependencies = [
   "fastapi>=0.115.0",
   "pydantic-settings>=2.6.0",
+  "sqlalchemy[asyncio]>=2.0.35",
+  "aiosqlite>=0.20.0",
+  "alembic>=1.13.3",
   "uvicorn[standard]>=0.30.0",
 ]
 
@@ -20,17 +27,21 @@ dev = [
   "ruff>=0.8.0",
 ]
 
+[tool.setuptools.packages.find]
+# Purpose: Enforce the requested src architecture for the installable backend package.
+where = ["src"]
+
 [tool.pytest.ini_options]
 # Purpose: Keep backend tests isolated to the FastAPI service.
 asyncio_mode = "auto"
-pythonpath = ["."]
+pythonpath = ["src"]
 testpaths = ["tests"]
 
 [tool.ruff]
 # Purpose: Provide a production-oriented lint baseline for the backend.
 line-length = 100
-target-version = "py311"
-src = ["app", "tests"]
+target-version = "py312"
+src = ["src", "tests", "alembic"]
 
 [tool.ruff.lint]
 # Purpose: Select rules that catch correctness, import order, async, and modernization issues.

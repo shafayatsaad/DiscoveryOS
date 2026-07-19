@@ -1,0 +1,18 @@
+# Purpose: Provide a local development composition for the DiscoveryOS backend service.
+
+services:
+  api:
+    # Purpose: Build the API service from the backend package context.
+    build:
+      context: ./apps/api
+      dockerfile: Dockerfile
+    # Purpose: Load documented defaults without requiring a local secret-bearing .env file.
+    env_file:
+      - ./apps/api/.env.example
+    environment:
+      DISCOVERYOS_DATABASE_URL: sqlite+aiosqlite:////app/storage/sqlite/runtime/discoveryos.db
+    ports:
+      - "8000:8000"
+    volumes:
+      # Purpose: Persist local SQLite and artifact data across container restarts.
+      - ./storage:/app/storage

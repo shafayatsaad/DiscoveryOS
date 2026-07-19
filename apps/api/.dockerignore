@@ -1,0 +1,11 @@
+# Purpose: Keep local development artifacts out of backend container build contexts.
+
+.env
+.pytest_cache/
+.ruff_cache/
+__pycache__/
+*.py[cod]
+*.egg-info/
+storage/
+tests/
+

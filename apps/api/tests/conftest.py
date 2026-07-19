@@ -1,9 +1,10 @@
 """Purpose: Configure reusable pytest fixtures for the FastAPI backend."""
 
 import pytest
-from app.core.config import Settings
-from app.main import create_app
 from httpx import ASGITransport, AsyncClient
+
+from discoveryos_api.core.config import Settings
+from discoveryos_api.main import create_app
 
 
 @pytest.fixture
@@ -13,6 +14,7 @@ def test_settings() -> Settings:
         environment="test",
         debug=True,
         cors_origins=["http://testserver"],
+        database_url="sqlite+aiosqlite:///:memory:",
         log_level="WARNING",
     )
 

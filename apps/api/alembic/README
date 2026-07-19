@@ -1,0 +1,8 @@
+# Purpose: Explain the Alembic migration directory for the DiscoveryOS backend.
+
+Alembic migration revisions live in `versions/`.
+
+The backend currently defines infrastructure only, so no domain tables are created yet.
+Future migrations should be generated from SQLAlchemy metadata once real persistence models are
+introduced.
+
