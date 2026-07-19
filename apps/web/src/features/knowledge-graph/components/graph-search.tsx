@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { MotionDiv } from "@/features/landing/components/motion-primitives";
 import { graphDomainContext } from "@/features/knowledge-graph/data/knowledge-graph-content";
 
-export function GraphSearch() {
+export function GraphSearch({ searchId = "graph-search" }: { searchId?: string }) {
   return (
     <MotionDiv
       className="glass-panel pointer-events-auto mx-auto flex w-full max-w-2xl items-center gap-3 rounded-full px-4 py-3 shadow-ambient lg:absolute lg:left-1/2 lg:top-10 lg:-translate-x-1/2"
@@ -15,11 +15,11 @@ export function GraphSearch() {
       transition={{ duration: 0.38 }}
     >
       <Search className="h-5 w-5 shrink-0 text-on-surface-variant" />
-      <label className="sr-only" htmlFor="graph-search">
+      <label className="sr-only" htmlFor={searchId}>
         Search knowledge graph
       </label>
       <input
-        id="graph-search"
+        id={searchId}
         className="min-w-0 flex-1 border-none bg-transparent text-sm text-on-surface outline-none placeholder:text-on-surface-variant/50 focus:ring-0 sm:text-base"
         placeholder={`Search ${graphDomainContext.domain} graph...`}
         type="search"
