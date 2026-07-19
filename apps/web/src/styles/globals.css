@@ -125,6 +125,11 @@ a {
     animation: dash 20s linear infinite;
     stroke-dasharray: 4;
   }
+
+  .code-block {
+    border: 1px solid #31353b;
+    background: #1c2025;
+  }
 }
 
 @layer utilities {
