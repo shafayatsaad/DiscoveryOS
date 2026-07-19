@@ -1,4 +1,4 @@
-// Purpose: Render expandable research job steps and execution logs.
+// Purpose: Render expandable research pipeline stages and live execution logs.
 
 import { ChevronDown } from "lucide-react";
 
@@ -12,14 +12,16 @@ import { MotionDiv } from "@/features/landing/components/motion-primitives";
 import { cn } from "@/lib/utils";
 
 const statusToneClasses: Record<JobStep["status"], string> = {
-  Completed: "border-[#4ade80] bg-[#1c2025] text-[#4ade80]",
+  Done: "border-[#4ade80] bg-[#1c2025] text-[#4ade80]",
   Running: "border-primary bg-primary-container/20 text-primary",
+  Queued: "border-tertiary bg-tertiary/10 text-tertiary",
   Pending: "border-outline-variant bg-[#1c2025] text-outline-variant",
 };
 
 const badgeToneClasses: Record<JobStep["status"], string> = {
-  Completed: "bg-[#4ade80]/10 text-[#4ade80]",
+  Done: "bg-[#4ade80]/10 text-[#4ade80]",
   Running: "bg-primary/10 text-primary",
+  Queued: "bg-tertiary/10 text-tertiary",
   Pending: "bg-surface-variant text-on-surface-variant",
 };
 
@@ -36,7 +38,7 @@ export function ResearchTimeline() {
   return (
     <section className="glass-panel rounded-xl p-5 sm:p-6" aria-labelledby="timeline-heading">
       <h2 id="timeline-heading" className="sr-only">
-        Research job execution timeline
+        Research pipeline execution timeline
       </h2>
       <div className="relative">
         {jobSteps.map((step, index) => (
@@ -63,7 +65,7 @@ function TimelineStep({ step, isLast }: { step: JobStep; isLast: boolean }) {
       className={cn(
         "relative",
         !isLast && "pb-7",
-        step.status === "Pending" && "opacity-55",
+        (step.status === "Pending" || step.status === "Queued") && "opacity-70",
       )}
     >
       {!isLast ? (
@@ -98,8 +100,10 @@ function TimelineStep({ step, isLast }: { step: JobStep; isLast: boolean }) {
               {step.status}
             </span>
           </div>
-          <div className="flex items-center gap-4 font-mono text-sm text-on-surface-variant">
-            <span>{step.duration}</span>
+          <div className="flex flex-wrap items-center gap-4 font-mono text-sm text-on-surface-variant">
+            <span className="text-primary">{step.bar}</span>
+            <span>{step.activity}</span>
+            <span>{step.metric}</span>
             {hasLogs ? (
               <ChevronDown className="h-5 w-5 transition-transform group-open:rotate-180 group-hover:text-primary" />
             ) : null}
