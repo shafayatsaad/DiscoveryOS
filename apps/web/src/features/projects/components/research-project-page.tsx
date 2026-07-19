@@ -9,26 +9,26 @@ import { ResearchPipeline } from "@/features/projects/components/research-pipeli
 import { ResearchSynopsis } from "@/features/projects/components/research-synopsis";
 import { TerminalAndMetrics } from "@/features/projects/components/terminal-and-metrics";
 
-export function ResearchProjectPage() {
+export function ResearchProjectPage({ projectId }: { projectId: string }) {
   return (
     <div className="min-h-screen bg-[#0b0f14] text-on-surface md:flex">
-      <ProjectSidebar />
+      <ProjectSidebar projectId={projectId} />
       <main className="flex min-w-0 flex-1 flex-col">
         <ProjectTopBar />
         <div className="mx-auto grid w-full max-w-container-max flex-1 grid-cols-1 gap-6 px-5 py-6 sm:px-8 md:px-10 lg:grid-cols-[minmax(0,1fr)_320px] xl:grid-cols-[minmax(0,1fr)_360px]">
           <div className="flex min-w-0 flex-col gap-6">
             <Reveal>
-              <ProjectHeader />
+              <ProjectHeader projectId={projectId} />
             </Reveal>
             <Reveal delay={0.05}>
               <ResearchPipeline />
             </Reveal>
             <Reveal delay={0.1}>
-              <TerminalAndMetrics />
+              <TerminalAndMetrics projectId={projectId} />
             </Reveal>
           </div>
           <Reveal delay={0.12}>
-            <ResearchSynopsis />
+            <ResearchSynopsis projectId={projectId} />
           </Reveal>
         </div>
         <ProjectFooter />
