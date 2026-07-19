@@ -17,7 +17,7 @@ export function ProjectHeader() {
               ID: {projectOverview.id}
             </span>
           </div>
-          <h1 className="font-display text-3xl font-semibold leading-[1.15] text-on-surface sm:text-4xl">
+          <h1 className="font-display text-3xl font-semibold leading-[1.15] text-on-surface">
             {projectOverview.title}
           </h1>
         </div>
