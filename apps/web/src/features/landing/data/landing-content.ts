@@ -36,8 +36,8 @@ export const featureCards: FeatureCard[] = [
 
 export const intelligenceNodes = [
   { className: "left-[17%] top-[28%]", label: "Laboratory Data" },
-  { className: "left-[34%] top-[54%]", label: "Clinical Trials" },
-  { className: "right-[28%] top-[34%]", label: "Genomic Repositories" },
+  { className: "left-[34%] top-[54%]", label: "Literature Claims" },
+  { className: "right-[28%] top-[34%]", label: "Domain Repositories" },
   { className: "right-[18%] bottom-[25%]", label: "Research Graph" },
   { className: "left-[48%] bottom-[34%]", label: "Evidence Store" },
 ];
@@ -45,8 +45,7 @@ export const intelligenceNodes = [
 export const intelligenceIcons = [Network, Globe2, TableProperties];
 
 export const pipelineStages = [
-  { label: "Stage 1", title: "Ingest arXiv Data", progress: 100, active: false },
-  { label: "Stage 2", title: "Agent Synthesis", progress: 45, active: true },
-  { label: "Stage 3", title: "Report Generation", progress: 0, active: false },
+  { label: "Stage 1", title: "Literature Retrieval", progress: 100, active: false },
+  { label: "Stage 2", title: "Evidence Extraction", progress: 45, active: true },
+  { label: "Stage 3", title: "Hypothesis Report", progress: 0, active: false },
 ];
-
