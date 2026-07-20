@@ -3,10 +3,11 @@
 // Purpose: Render the dashboard research-goal command input and animated research timeline.
 
 import Link from "next/link";
-import { useCallback, useState } from "react";
-import { FolderOpen, Mic, Search } from "lucide-react";
+import { useCallback, useMemo, useState } from "react";
+import { Mic, Search, WifiOff } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
+import { ErrorBoundary } from "@/components/feedback/error-boundary";
 import { MotionDiv } from "@/features/landing/components/motion-primitives";
 import {
   magicMomentQuestion,
@@ -17,10 +18,16 @@ import {
   ResearchTimeline,
 } from "@/features/dashboard/components/research-timeline";
 import { usePipelineStream } from "@/features/dashboard/hooks/use-pipeline-stream";
-import { primaryProjectId } from "@/features/projects/data/project-workspaces";
+import {
+  getProjectWorkspace,
+  primaryProjectId,
+} from "@/features/projects/data/project-workspaces";
 import { startPipeline } from "@/lib/api/client";
 
 export function CommandCenter() {
+  // Use the active project's research goal as the input placeholder when available.
+  const activeProject = getProjectWorkspace(primaryProjectId);
+  const inputPlaceholder = activeProject?.researchGoal ?? magicMomentQuestion;
   const [query, setQuery] = useState("");
   const [runId, setRunId] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -37,6 +44,7 @@ export function CommandCenter() {
     metadata,
     isComplete,
     isFailed,
+    isReconnectExhausted,
   } = usePipelineStream({
     projectId: runId ? primaryProjectId : null,
     onEvent: handleEvent,
@@ -46,11 +54,9 @@ export function CommandCenter() {
     streamStatus === "connecting" || streamStatus === "connected";
   const hasStarted = runId !== null;
 
-  const timelineEntries = deriveTimelineEntries(
-    pipelineEvents,
-    metadata,
-    isComplete,
-    isFailed,
+  const timelineEntries = useMemo(
+    () => deriveTimelineEntries(pipelineEvents, metadata, isComplete, isFailed),
+    [pipelineEvents, metadata, isComplete, isFailed],
   );
 
   async function runDiscovery(event: React.FormEvent<HTMLFormElement>) {
@@ -73,101 +79,115 @@ export function CommandCenter() {
   }
 
   return (
-    <MotionDiv
-      className="glass-panel relative overflow-hidden rounded-xl p-6 text-center sm:p-8 md:p-10"
-      initial={{ opacity: 0, y: 12 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.35 }}
-    >
-      <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(173,198,255,0.06),transparent_60%)]" />
-      <div className="relative z-10 mx-auto flex max-w-5xl flex-col items-center">
-        <h1 className="max-w-3xl font-display text-3xl font-semibold leading-[1.15] text-on-surface sm:text-4xl lg:text-5xl">
-          What scientific problem are you trying to solve today?
-        </h1>
+    <ErrorBoundary>
+      <MotionDiv
+        className="glass-panel relative overflow-hidden rounded-xl p-6 text-center sm:p-8 md:p-10"
+        initial={{ opacity: 0, y: 12 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.35 }}
+      >
+        <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(173,198,255,0.06),transparent_60%)]" />
 
-        <form
-          className="mt-8 w-full max-w-4xl"
-          action="#"
-          onSubmit={runDiscovery}
-        >
-          <label className="sr-only" htmlFor="research-query">
-            Research problem
-          </label>
-          <div className="glow-focus relative rounded-lg">
-            <Search className="pointer-events-none absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-outline-variant" />
-            <input
-              id="research-query"
-              value={query}
-              onChange={(event) => setQuery(event.target.value)}
-              className="h-16 w-full rounded-lg border border-white/10 bg-[#0b0f14] py-3 pl-12 pr-36 font-mono text-sm text-on-surface outline-none transition-colors placeholder:text-outline-variant focus:border-primary focus:ring-0 sm:pr-44"
-              placeholder={magicMomentQuestion}
-              type="text"
-              disabled={isRunning}
-            />
-            <div className="absolute inset-y-0 right-2 flex items-center gap-2">
-              <button
-                className="hidden rounded-md p-2 text-outline-variant transition-colors hover:text-primary sm:inline-flex"
-                type="button"
-                aria-label="Voice input"
-                disabled={isRunning}
-              >
-                <Mic className="h-4 w-4" />
-              </button>
-              <Button
-                type="submit"
-                size="sm"
-                variant="secondary"
-                className="border-primary/20 bg-primary/10 text-primary hover:bg-primary hover:text-on-primary"
-                disabled={isSubmitting || isRunning}
-              >
-                {isSubmitting
-                  ? "Starting..."
-                  : isRunning
-                    ? "Running"
-                    : "Run Query"}
-              </Button>
-            </div>
+        {/* Connection lost banner */}
+        {isReconnectExhausted && (
+          <div className="relative z-10 mb-6 flex items-center justify-center gap-2 rounded-lg border border-red-400/20 bg-red-500/10 px-4 py-3 text-sm text-red-400">
+            <WifiOff className="h-4 w-4 shrink-0" />
+            <span>
+              Connection lost. Could not reconnect to the backend after multiple
+              attempts. Please refresh the page or try again later.
+            </span>
           </div>
-        </form>
-
-        {submitError && (
-          <p className="mt-4 text-sm text-red-400">{submitError}</p>
         )}
 
-        {hasStarted && (
-          <MotionDiv
-            className="mt-8 w-full max-w-3xl text-left"
-            initial={{ opacity: 0, y: 18 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.35 }}
+        <div className="relative z-10 mx-auto flex max-w-5xl flex-col items-center">
+          <h1 className="max-w-3xl font-display text-3xl font-semibold leading-[1.15] text-on-surface sm:text-4xl lg:text-5xl">
+            What scientific problem are you trying to solve today?
+          </h1>
+
+          <form
+            className="mt-8 w-full max-w-4xl"
+            action="#"
+            onSubmit={runDiscovery}
           >
-            <ResearchTimeline
-              entries={timelineEntries}
-              progress={progress}
-              isComplete={isComplete}
-              isFailed={isFailed}
-              isRunning={isRunning}
-            />
-          </MotionDiv>
-        )}
+            <label className="sr-only" htmlFor="research-query">
+              Research problem
+            </label>
+            <div className="glow-focus relative rounded-lg">
+              <Search className="pointer-events-none absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-outline-variant" />
+              <input
+                id="research-query"
+                value={query}
+                onChange={(event) => setQuery(event.target.value)}
+                className="h-16 w-full rounded-lg border border-white/10 bg-[#0b0f14] py-3 pl-12 pr-36 font-mono text-sm text-on-surface outline-none transition-colors placeholder:text-outline-variant focus:border-primary focus:ring-0 sm:pr-44"
+                placeholder={inputPlaceholder}
+                type="text"
+                disabled={isRunning}
+              />
+              <div className="absolute inset-y-0 right-2 flex items-center gap-2">
+                <button
+                  className="hidden rounded-md p-2 text-outline-variant transition-colors hover:text-primary sm:inline-flex"
+                  type="button"
+                  aria-label="Voice input"
+                  disabled={isRunning}
+                >
+                  <Mic className="h-4 w-4" />
+                </button>
+                <Button
+                  type="submit"
+                  size="sm"
+                  variant="secondary"
+                  className="border-primary/20 bg-primary/10 text-primary hover:bg-primary hover:text-on-primary"
+                  disabled={isSubmitting || isRunning}
+                >
+                  {isSubmitting
+                    ? "Starting..."
+                    : isRunning
+                      ? "Running"
+                      : "Run Query"}
+                </Button>
+              </div>
+            </div>
+          </form>
 
-        <div className="mt-6 flex flex-wrap justify-center gap-3">
-          {quickActions.map((action) => {
-            const Icon = action.icon;
+          {submitError && (
+            <p className="mt-4 text-sm text-red-400">{submitError}</p>
+          )}
 
-            return (
-              <Link
-                key={action.label}
-                href={action.href}
-                className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-surface/60 px-4 py-2 font-display text-xs font-semibold text-on-surface-variant transition-colors hover:bg-white/[0.05] hover:text-on-surface"
-              >
-                <Icon className="h-3.5 w-3.5" />
-                {action.label}
-              </Link>
-            );
-          })}
+          {hasStarted && (
+            <MotionDiv
+              className="mt-8 w-full max-w-3xl text-left"
+              initial={{ opacity: 0, y: 18 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.35 }}
+            >
+              <ResearchTimeline
+                entries={timelineEntries}
+                progress={progress}
+                isComplete={isComplete}
+                isFailed={isFailed}
+                isRunning={isRunning}
+              />
+            </MotionDiv>
+          )}
+
+          <div className="mt-6 flex flex-wrap justify-center gap-3">
+            {quickActions.map((action) => {
+              const Icon = action.icon;
+
+              return (
+                <Link
+                  key={action.label}
+                  href={action.href}
+                  className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-surface/60 px-4 py-2 font-display text-xs font-semibold text-on-surface-variant transition-colors hover:bg-white/[0.05] hover:text-on-surface"
+                >
+                  <Icon className="h-3.5 w-3.5" />
+                  {action.label}
+                </Link>
+              );
+            })}
+          </div>
         </div>
-      </div>
-    </MotionDiv>
+      </MotionDiv>
+    </ErrorBoundary>
   );
 }
