@@ -15,24 +15,32 @@ type ProjectSidebarProps = {
   activeSection?: Parameters<typeof getProjectNavItems>[1];
 };
 
-export function ProjectSidebar({ projectId, activeSection = "project" }: ProjectSidebarProps) {
+export function ProjectSidebar({
+  projectId,
+  activeSection = "project",
+}: ProjectSidebarProps) {
   const projectNavItems = getProjectNavItems(projectId, activeSection);
 
   return (
     <>
       <details className="sticky top-0 z-50 border-b border-white/10 bg-surface/90 backdrop-blur-xl md:hidden [&>summary::-webkit-details-marker]:hidden">
         <summary className="flex h-16 cursor-pointer list-none items-center justify-between px-5">
-          <span className="font-display text-xl font-extrabold text-on-surface">DiscoveryOS</span>
+          <span className="font-display text-xl font-extrabold text-on-surface">
+            DiscoveryOS
+          </span>
           <span className="inline-flex h-9 w-9 items-center justify-center rounded-full text-on-surface-variant transition-colors hover:bg-white/[0.04] hover:text-primary">
             <Menu className="h-4 w-4" />
           </span>
         </summary>
-        <nav className="space-y-1 border-t border-white/[0.05] px-3 py-3" aria-label="Project mobile">
+        <nav
+          className="space-y-1 border-t border-white/[0.05] px-3 py-3"
+          aria-label="Project mobile"
+        >
           {projectNavItems.map((item) => {
             const Icon = item.icon;
 
             return (
-              <a
+              <Link
                 key={item.label}
                 href={item.href ?? "#"}
                 className={cn(
@@ -44,7 +52,7 @@ export function ProjectSidebar({ projectId, activeSection = "project" }: Project
               >
                 <Icon className="h-5 w-5" />
                 {item.label}
-              </a>
+              </Link>
             );
           })}
         </nav>
@@ -68,7 +76,10 @@ export function ProjectSidebar({ projectId, activeSection = "project" }: Project
               </span>
             </span>
           </Link>
-          <Button asChild className="mt-8 w-full bg-primary-container text-on-primary-container hover:bg-primary">
+          <Button
+            asChild
+            className="mt-8 w-full bg-primary-container text-on-primary-container hover:bg-primary"
+          >
             <Link href="/dashboard">
               <Plus className="h-4 w-4" />
               New Research
@@ -76,7 +87,10 @@ export function ProjectSidebar({ projectId, activeSection = "project" }: Project
           </Button>
         </div>
 
-        <nav className="mt-10 flex-1 space-y-1 overflow-y-auto px-4" aria-label="Project">
+        <nav
+          className="mt-10 flex-1 space-y-1 overflow-y-auto px-4"
+          aria-label="Project"
+        >
           {projectNavItems.map((item, index) => {
             const Icon = item.icon;
 
@@ -87,18 +101,18 @@ export function ProjectSidebar({ projectId, activeSection = "project" }: Project
                 initial={{ opacity: 0, x: -8 }}
                 transition={{ delay: index * 0.025, duration: 0.22 }}
               >
-                <a
-                href={item.href ?? "#"}
-                className={cn(
-                  "flex items-center gap-3 rounded-lg px-4 py-3 font-display text-sm font-semibold transition-all active:scale-[0.98]",
-                  item.active
-                    ? "bg-white/[0.05] text-primary"
-                    : "text-on-surface-variant hover:bg-white/[0.04] hover:text-on-surface",
-                )}
-              >
-                <Icon className="h-5 w-5 shrink-0" />
-                <span>{item.label}</span>
-              </a>
+                <Link
+                  href={item.href ?? "#"}
+                  className={cn(
+                    "flex items-center gap-3 rounded-lg px-4 py-3 font-display text-sm font-semibold transition-all active:scale-[0.98]",
+                    item.active
+                      ? "bg-white/[0.05] text-primary"
+                      : "text-on-surface-variant hover:bg-white/[0.04] hover:text-on-surface",
+                  )}
+                >
+                  <Icon className="h-5 w-5 shrink-0" />
+                  <span>{item.label}</span>
+                </Link>
               </MotionDiv>
             );
           })}
