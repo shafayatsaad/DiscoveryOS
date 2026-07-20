@@ -75,7 +75,7 @@ export function EvidenceSidebar({ projectId }: { projectId: string }) {
             const Icon = item.icon;
 
             return (
-              <a
+              <Link
                 key={item.label}
                 href={item.href ?? "#"}
                 className={cn(
@@ -87,7 +87,7 @@ export function EvidenceSidebar({ projectId }: { projectId: string }) {
               >
                 <Icon className="h-5 w-5 shrink-0" />
                 {item.label}
-              </a>
+              </Link>
             );
           })}
         </nav>
