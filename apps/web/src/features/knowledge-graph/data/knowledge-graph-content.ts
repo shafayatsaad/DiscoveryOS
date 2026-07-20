@@ -11,6 +11,7 @@ export type NodeTypeFilter = {
 export type GraphNode = {
   id: string;
   label: string;
+  type: string;
   x: number;
   y: number;
   radius: number;
@@ -19,8 +20,17 @@ export type GraphNode = {
 };
 
 export type GraphEdge = {
+  id?: string;
   source: string;
   target: string;
+  label?: string;
+  strength?: number;
+  evidence?: {
+    title: string;
+    source: string;
+    quote: string;
+    confidence: number;
+  };
 };
 
 export type GraphTone = "primary" | "secondary" | "tertiary" | "error";
@@ -62,18 +72,62 @@ export const nodeTypeFilters: NodeTypeFilter[] = [
 ];
 
 export const graphNodes: GraphNode[] = [
-  { id: "peo-litfsi", label: "PEO-LiTFSI", x: 500, y: 400, radius: 16, tone: "primary", active: true },
-  { id: "ionic-conductivity", label: "Conductivity", x: 330, y: 250, radius: 11, tone: "secondary" },
-  { id: "ceramic-filler", label: "LLZO filler", x: 670, y: 250, radius: 11, tone: "tertiary" },
-  { id: "thermal-stability", label: "Thermal stability", x: 360, y: 585, radius: 12, tone: "secondary" },
-  { id: "dendrite-risk", label: "Dendrite risk", x: 635, y: 600, radius: 12, tone: "error" },
+  { id: "peo-litfsi", label: "PEO-LiTFSI", type: "Candidate Materials", x: 500, y: 400, radius: 16, tone: "primary", active: true },
+  { id: "ionic-conductivity", label: "Conductivity", type: "Material Properties", x: 330, y: 250, radius: 11, tone: "secondary" },
+  { id: "ceramic-filler", label: "LLZO filler", type: "Synthesis Methods", x: 670, y: 250, radius: 11, tone: "tertiary" },
+  { id: "thermal-stability", label: "Thermal stability", type: "Material Properties", x: 360, y: 585, radius: 12, tone: "secondary" },
+  { id: "dendrite-risk", label: "Dendrite risk", type: "Failure Modes", x: 635, y: 600, radius: 12, tone: "error" },
 ];
 
 export const graphEdges: GraphEdge[] = [
-  { source: "peo-litfsi", target: "ionic-conductivity" },
-  { source: "peo-litfsi", target: "ceramic-filler" },
-  { source: "peo-litfsi", target: "thermal-stability" },
-  { source: "peo-litfsi", target: "dendrite-risk" },
+  {
+    source: "peo-litfsi",
+    target: "ionic-conductivity",
+    label: "transport evidence",
+    strength: 86,
+    evidence: {
+      title: "Polymer electrolyte conductivity screen",
+      source: "OpenAlex",
+      quote: "Conductivity improved when ceramic fillers were controlled for dispersion quality.",
+      confidence: 0.86,
+    },
+  },
+  {
+    source: "peo-litfsi",
+    target: "ceramic-filler",
+    label: "additive route",
+    strength: 74,
+    evidence: {
+      title: "Ceramic-filled solid polymer electrolyte review",
+      source: "Crossref",
+      quote: "LLZO additions are repeatedly associated with process and interface tradeoffs.",
+      confidence: 0.74,
+    },
+  },
+  {
+    source: "peo-litfsi",
+    target: "thermal-stability",
+    label: "stability link",
+    strength: 69,
+    evidence: {
+      title: "Thermal behavior of lithium polymer electrolytes",
+      source: "OpenAlex",
+      quote: "Thermal stability varied with salt loading and polymer crystallinity.",
+      confidence: 0.69,
+    },
+  },
+  {
+    source: "peo-litfsi",
+    target: "dendrite-risk",
+    label: "risk signal",
+    strength: 61,
+    evidence: {
+      title: "Interface failure modes in solid-state lithium cells",
+      source: "arXiv",
+      quote: "High-current cycling increased interface instability in several polymer systems.",
+      confidence: 0.61,
+    },
+  },
 ];
 
 export const selectedNode = {
@@ -95,17 +149,61 @@ const biomedicalGraphData: GraphData = {
     { label: "Contradictions", count: "14", tone: "error" },
   ],
   nodes: [
-    { id: "exhaustion", label: "Exhaustion", x: 500, y: 400, radius: 16, tone: "primary", active: true },
-    { id: "lag3", label: "LAG3", x: 330, y: 250, radius: 11, tone: "secondary" },
-    { id: "tim3", label: "TIM3", x: 670, y: 250, radius: 11, tone: "secondary" },
-    { id: "flow", label: "Flow assay", x: 360, y: 585, radius: 12, tone: "tertiary" },
-    { id: "assay-conflict", label: "Assay conflict", x: 635, y: 600, radius: 12, tone: "error" },
+    { id: "exhaustion", label: "Exhaustion", type: "Biomarkers", x: 500, y: 400, radius: 16, tone: "primary", active: true },
+    { id: "lag3", label: "LAG3", type: "Cell States", x: 330, y: 250, radius: 11, tone: "secondary" },
+    { id: "tim3", label: "TIM3", type: "Cell States", x: 670, y: 250, radius: 11, tone: "secondary" },
+    { id: "flow", label: "Flow assay", type: "Assays", x: 360, y: 585, radius: 12, tone: "tertiary" },
+    { id: "assay-conflict", label: "Assay conflict", type: "Contradictions", x: 635, y: 600, radius: 12, tone: "error" },
   ],
   edges: [
-    { source: "exhaustion", target: "lag3" },
-    { source: "exhaustion", target: "tim3" },
-    { source: "exhaustion", target: "flow" },
-    { source: "exhaustion", target: "assay-conflict" },
+    {
+      source: "exhaustion",
+      target: "lag3",
+      label: "marker association",
+      strength: 83,
+      evidence: {
+        title: "Checkpoint marker evidence across exhausted T cells",
+        source: "OpenAlex",
+        quote: "LAG3 expression was enriched in exhausted T-cell signatures across cohorts.",
+        confidence: 0.83,
+      },
+    },
+    {
+      source: "exhaustion",
+      target: "tim3",
+      label: "marker association",
+      strength: 78,
+      evidence: {
+        title: "Single-cell immune exhaustion atlas",
+        source: "PubMed",
+        quote: "TIM3 appeared in a recurrent checkpoint-marker panel with assay-dependent signal.",
+        confidence: 0.78,
+      },
+    },
+    {
+      source: "exhaustion",
+      target: "flow",
+      label: "assay support",
+      strength: 71,
+      evidence: {
+        title: "Flow cytometry validation of exhaustion signatures",
+        source: "Crossref",
+        quote: "Matched flow panels preserved marker direction but changed effect size.",
+        confidence: 0.71,
+      },
+    },
+    {
+      source: "exhaustion",
+      target: "assay-conflict",
+      label: "contradiction",
+      strength: 58,
+      evidence: {
+        title: "Bulk and spatial immune profiling discordance",
+        source: "OpenAlex",
+        quote: "Bulk RNA and spatial profiling produced different exhaustion estimates.",
+        confidence: 0.58,
+      },
+    },
   ],
   selectedNode: {
     type: "Mechanism",
@@ -127,17 +225,61 @@ const climateGraphData: GraphData = {
     { label: "Evidence Conflicts", count: "12", tone: "error" },
   ],
   nodes: [
-    { id: "heat-risk", label: "Heat risk", x: 500, y: 400, radius: 16, tone: "primary", active: true },
-    { id: "tree-canopy", label: "Tree canopy", x: 330, y: 250, radius: 11, tone: "primary" },
-    { id: "cool-roofs", label: "Cool roofs", x: 670, y: 250, radius: 11, tone: "tertiary" },
-    { id: "wearables", label: "Wearables", x: 360, y: 585, radius: 12, tone: "secondary" },
-    { id: "satellite-gap", label: "Satellite gap", x: 635, y: 600, radius: 12, tone: "error" },
+    { id: "heat-risk", label: "Heat risk", type: "Interventions", x: 500, y: 400, radius: 16, tone: "primary", active: true },
+    { id: "tree-canopy", label: "Tree canopy", type: "Interventions", x: 330, y: 250, radius: 11, tone: "primary" },
+    { id: "cool-roofs", label: "Cool roofs", type: "Data Sources", x: 670, y: 250, radius: 11, tone: "tertiary" },
+    { id: "wearables", label: "Wearables", type: "Exposure Metrics", x: 360, y: 585, radius: 12, tone: "secondary" },
+    { id: "satellite-gap", label: "Satellite gap", type: "Evidence Conflicts", x: 635, y: 600, radius: 12, tone: "error" },
   ],
   edges: [
-    { source: "heat-risk", target: "tree-canopy" },
-    { source: "heat-risk", target: "cool-roofs" },
-    { source: "heat-risk", target: "wearables" },
-    { source: "heat-risk", target: "satellite-gap" },
+    {
+      source: "heat-risk",
+      target: "tree-canopy",
+      label: "intervention",
+      strength: 84,
+      evidence: {
+        title: "Urban canopy cooling meta-analysis",
+        source: "OpenAlex",
+        quote: "Canopy interventions reduced modeled pedestrian heat exposure.",
+        confidence: 0.84,
+      },
+    },
+    {
+      source: "heat-risk",
+      target: "cool-roofs",
+      label: "built environment",
+      strength: 73,
+      evidence: {
+        title: "Reflective roofing and neighborhood heat",
+        source: "Crossref",
+        quote: "Cool roof benefits varied by morphology and exposure metric.",
+        confidence: 0.73,
+      },
+    },
+    {
+      source: "heat-risk",
+      target: "wearables",
+      label: "exposure metric",
+      strength: 66,
+      evidence: {
+        title: "Wearable sensor heat exposure validation",
+        source: "OpenAlex",
+        quote: "Wearable measures captured shade benefits missed by surface temperature.",
+        confidence: 0.66,
+      },
+    },
+    {
+      source: "heat-risk",
+      target: "satellite-gap",
+      label: "measurement conflict",
+      strength: 57,
+      evidence: {
+        title: "Satellite versus pedestrian heat discordance",
+        source: "OpenAlex",
+        quote: "Land-surface temperature diverged from human-scale exposure in shaded corridors.",
+        confidence: 0.57,
+      },
+    },
   ],
   selectedNode: {
     type: "Intervention Cluster",
