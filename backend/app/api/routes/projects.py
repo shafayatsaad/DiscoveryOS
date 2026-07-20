@@ -79,14 +79,15 @@ async def stream_project_pipeline(
         last_progress = -1.0
         last_status = None
         keepalive_interval = 15  # seconds
+        max_wait_seconds = 300  # 5 minutes max streaming duration
+        elapsed = 0.0
 
-        while True:
+        while elapsed < max_wait_seconds:
             # Check if client disconnected
             if await request.is_disconnected():
                 break
 
             # Try to find the latest run for this project
-            # We scan known run IDs — for simplicity, we use a convention
             run_id = f"run_{project_id}"
             state = await service.get_pipeline_state(run_id)
 
@@ -141,10 +142,24 @@ async def stream_project_pipeline(
                     yield f"data: {json.dumps(payload)}\n\n"
                     last_status = "waiting"
 
+                # If no state after 60s, stop waiting
+                if elapsed >= 60:
+                    payload = {
+                        "event_type": "pipeline.timeout",
+                        "stage": None,
+                        "progress": 0.0,
+                        "message": "Pipeline did not start within 60 seconds.",
+                        "timestamp": None,
+                        "metadata": _empty_metadata(),
+                    }
+                    yield f"data: {json.dumps(payload)}\n\n"
+                    break
+
             # Keepalive ping
             yield f": keepalive\n\n"
 
             await asyncio.sleep(0.5)
+            elapsed += 0.5
 
     return StreamingResponse(
         event_generator(),
