@@ -3,7 +3,7 @@
 import { ChevronDown } from "lucide-react";
 
 import {
-  jobSteps,
+  getJobSteps,
   statusIcon,
   type JobLogLine,
   type JobStep,
@@ -34,7 +34,9 @@ const logToneClasses: Record<JobLogLine["level"], string> = {
   RUNNING: "text-primary animate-pulse",
 };
 
-export function ResearchTimeline() {
+export function ResearchTimeline({ projectId }: { projectId: string }) {
+  const jobSteps = getJobSteps(projectId);
+
   return (
     <section className="glass-panel rounded-xl p-5 sm:p-6" aria-labelledby="timeline-heading">
       <h2 id="timeline-heading" className="sr-only">
