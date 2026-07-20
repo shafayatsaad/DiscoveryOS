@@ -1,13 +1,22 @@
-// Purpose: Compose the Stitch-aligned Evidence Explorer workspace.
+// Purpose: Compose the Stitch-aligned Evidence Explorer workspace with breadcrumbs.
 
+import { Breadcrumbs } from "@/components/navigation/breadcrumbs";
+import type { BreadcrumbSegment } from "@/components/navigation/breadcrumbs";
 import { Reveal } from "@/components/ui/reveal";
 import { EvidenceSidebar } from "@/features/evidence/components/evidence-sidebar";
 import { EvidenceTable } from "@/features/evidence/components/evidence-table";
 import { EvidenceToolbar } from "@/features/evidence/components/evidence-toolbar";
 import { evidenceActions } from "@/features/evidence/data/evidence-content";
+import { getProjectWorkspace } from "@/features/projects/data/project-workspaces";
 
 export function EvidenceExplorerPage({ projectId }: { projectId: string }) {
   const ExportIcon = evidenceActions.export;
+  const project = getProjectWorkspace(projectId);
+  const breadcrumbSegments: BreadcrumbSegment[] = [
+    { label: "Dashboard", href: "/dashboard" },
+    { label: project?.title ?? projectId, href: `/projects/${projectId}` },
+    { label: "Evidence", href: `/projects/${projectId}/evidence` },
+  ];
 
   return (
     <div className="min-h-screen bg-[#0b0f14] text-on-surface md:flex">
@@ -16,11 +25,13 @@ export function EvidenceExplorerPage({ projectId }: { projectId: string }) {
         <Reveal>
           <header className="flex flex-col gap-5 border-b border-white/[0.05] px-5 py-8 sm:px-8 md:px-10 lg:flex-row lg:items-end lg:justify-between">
             <div>
-              <h1 className="font-display text-4xl font-semibold leading-[1.1] text-on-surface sm:text-5xl">
+              <Breadcrumbs segments={breadcrumbSegments} />
+              <h1 className="mt-2 font-display text-4xl font-semibold leading-[1.1] text-on-surface sm:text-5xl">
                 Evidence Explorer
               </h1>
               <p className="mt-4 max-w-2xl text-lg leading-[1.5] text-on-surface-variant">
-                Query, verify, and trace scientific claims across verified literature.
+                Query, verify, and trace scientific claims across verified
+                literature.
               </p>
             </div>
             <button
