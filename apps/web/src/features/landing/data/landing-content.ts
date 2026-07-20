@@ -1,7 +1,15 @@
-// Purpose: Keep landing page mock content separate from presentation components.
+// Purpose: Provide static landing page presentation content such as capability cards.
+// This is marketing copy, not mock data. Real-time pipeline data comes from the backend SSE stream.
 
 import type { LucideIcon } from "lucide-react";
-import { Bot, Database, Cpu, Network, Globe2, TableProperties } from "lucide-react";
+import {
+  Bot,
+  Database,
+  Cpu,
+  Network,
+  Globe2,
+  TableProperties,
+} from "lucide-react";
 
 export type FeatureCard = {
   title: string;
@@ -44,8 +52,20 @@ export const intelligenceNodes = [
 
 export const intelligenceIcons = [Network, Globe2, TableProperties];
 
+// Visual decoration for the landing page execution pipeline graphic.
+// Actual pipeline stages and labels come from the backend orchestrator state machine.
 export const pipelineStages = [
-  { label: "Stage 1", title: "Literature Retrieval", progress: 100, active: false },
-  { label: "Stage 2", title: "Evidence Extraction", progress: 45, active: true },
+  {
+    label: "Stage 1",
+    title: "Literature Retrieval",
+    progress: 100,
+    active: false,
+  },
+  {
+    label: "Stage 2",
+    title: "Evidence Extraction",
+    progress: 45,
+    active: true,
+  },
   { label: "Stage 3", title: "Hypothesis Report", progress: 0, active: false },
 ];
