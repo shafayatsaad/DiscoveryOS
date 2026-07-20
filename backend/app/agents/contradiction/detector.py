@@ -3,7 +3,11 @@
 from typing import Protocol
 
 from app.agents.base import BaseResearchAgent
-from app.agents.contradiction.prompts import CONTRADICTION_PROMPT_VERSION, CONTRADICTION_SYSTEM_PROMPT
+from app.agents.contradiction.prompts import (
+    CONTRADICTION_PROMPT_VERSION,
+    CONTRADICTION_SYSTEM_PROMPT,
+    CONTRADICTION_TASK_PROMPT_TEMPLATE,
+)
 from app.agents.contradiction.schemas import (
     Contradiction,
     ContradictionAnalysis,
@@ -11,6 +15,7 @@ from app.agents.contradiction.schemas import (
     SupportingPaper,
 )
 from app.agents.openai_adapter import OpenAIClient
+from app.agents.prompt_templates import render_task_prompt
 from app.config import Settings, get_settings
 from app.graph.schemas import KnowledgeGraph
 from app.schemas.agent import AgentContext
@@ -39,7 +44,10 @@ class OpenAIContradictionClient:
 
     async def detect(self, request: ContradictionDetectionRequest) -> ContradictionAnalysis:
         """Detect contradictions using GPT-5 structured outputs."""
-        user_content = request.model_dump_json()
+        user_content = render_task_prompt(
+            CONTRADICTION_TASK_PROMPT_TEMPLATE,
+            payload=request.model_dump_json(),
+        )
         result = await self._client.parse(
             user_content=user_content,
             response_format=ContradictionAnalysis,
