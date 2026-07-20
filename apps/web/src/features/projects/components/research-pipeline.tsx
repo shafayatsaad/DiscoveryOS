@@ -1,10 +1,15 @@
+"use client";
+
 // Purpose: Render the project's multi-agent pipeline execution progress.
+
+import { motion, useReducedMotion } from "framer-motion";
 
 import { pipelineStages } from "@/features/projects/data/research-project-content";
 import { cn } from "@/lib/utils";
 
 export function ResearchPipeline() {
   const completedPercent = 50;
+  const prefersReducedMotion = useReducedMotion();
 
   return (
     <section className="glass-panel hud-glow rounded-xl p-5 sm:p-6" aria-labelledby="pipeline-heading">
@@ -14,15 +19,26 @@ export function ResearchPipeline() {
 
       <div className="relative overflow-x-auto pb-2">
         <div className="absolute left-0 right-0 top-5 h-0.5 min-w-[760px] bg-surface-container-high">
-          <div className="h-full bg-primary" style={{ width: `${completedPercent}%` }} />
+          <motion.div
+            animate={prefersReducedMotion ? undefined : { width: `${completedPercent}%` }}
+            className="h-full bg-primary"
+            initial={prefersReducedMotion ? false : { width: 0 }}
+            transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+          />
         </div>
         <div className="relative z-10 grid min-w-[760px] grid-cols-10 gap-1">
-          {pipelineStages.map((stage) => {
+          {pipelineStages.map((stage, index) => {
             const Icon = stage.icon;
 
             return (
-              <div key={stage.label} className="flex min-w-16 flex-col items-center gap-2 text-center">
-                <div
+              <motion.div
+                animate={prefersReducedMotion ? undefined : { opacity: 1, y: 0 }}
+                initial={prefersReducedMotion ? false : { opacity: 0, y: 8 }}
+                key={stage.label}
+                className="flex min-w-16 flex-col items-center gap-2 text-center"
+                transition={{ delay: index * 0.035, duration: 0.28, ease: "easeOut" }}
+              >
+                <motion.div
                   className={cn(
                     "flex rounded-full border-2 items-center justify-center",
                     stage.state === "complete" &&
@@ -32,9 +48,10 @@ export function ResearchPipeline() {
                     stage.state === "pending" &&
                       "h-10 w-10 border-white/10 bg-surface-container-high text-on-surface-variant",
                   )}
+                  whileHover={prefersReducedMotion ? undefined : { y: -2, scale: 1.02 }}
                 >
                   <Icon className={stage.state === "active" ? "h-5 w-5" : "h-4 w-4"} />
-                </div>
+                </motion.div>
                 <span
                   className={cn(
                     "font-display text-xs font-semibold tracking-normal",
@@ -47,7 +64,7 @@ export function ResearchPipeline() {
                 >
                   {stage.label}
                 </span>
-              </div>
+              </motion.div>
             );
           })}
         </div>
