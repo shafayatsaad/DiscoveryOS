@@ -154,11 +154,13 @@ class TestFilesystemMCPServer:
         result = await fs_server.call_tool("read_file", {"path": "nonexistent.txt"})
         assert result.status == "error"
 
-    @pytest.mark.asyncio
-    async def test_path_traversal_prevented(self, fs_server: FilesystemMCPServer) -> None:
+    def test_path_traversal_prevented(self) -> None:
         """Directory traversal should be prevented."""
-        with pytest.raises(ValueError, match="Path traversal"):
-            fs_server._resolve_path("../../etc/passwd")
+        import tempfile
+        with tempfile.TemporaryDirectory() as tmpdir:
+            server = FilesystemMCPServer(root_path=tmpdir)
+            with pytest.raises(ValueError, match="Path traversal"):
+                server._resolve_path("../../etc/passwd")
 
 
 # ---------------------------------------------------------------------------
