@@ -4,7 +4,12 @@ import html
 
 from app.agents.base import BaseResearchAgent
 from app.agents.openai_adapter import OpenAIClient
-from app.agents.report.prompts import REPORT_PROMPT_VERSION, REPORT_SYSTEM_PROMPT
+from app.agents.prompt_templates import render_task_prompt
+from app.agents.report.prompts import (
+    REPORT_PROMPT_VERSION,
+    REPORT_SYSTEM_PROMPT,
+    REPORT_TASK_PROMPT_TEMPLATE,
+)
 from app.agents.report.schemas import ScientificReport, ScientificReportRequest
 from app.agents.contradiction.schemas import ContradictionAnalysis
 from app.agents.experiment.schemas import ExperimentPlan
@@ -27,7 +32,10 @@ class OpenAIReportClient:
 
     async def generate(self, request: ScientificReportRequest) -> ScientificReport:
         """Generate a report using GPT-5 structured outputs."""
-        user_content = request.model_dump_json()
+        user_content = render_task_prompt(
+            REPORT_TASK_PROMPT_TEMPLATE,
+            payload=request.model_dump_json(),
+        )
         result = await self._client.parse(
             user_content=user_content,
             response_format=ScientificReport,
