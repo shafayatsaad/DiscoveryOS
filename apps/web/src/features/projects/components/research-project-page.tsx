@@ -1,5 +1,7 @@
-// Purpose: Compose the project workspace using Stitch project-screen sections.
+// Purpose: Compose the project workspace using Stitch project-screen sections with breadcrumbs.
 
+import { Breadcrumbs } from "@/components/navigation/breadcrumbs";
+import type { BreadcrumbSegment } from "@/components/navigation/breadcrumbs";
 import { Reveal } from "@/components/ui/reveal";
 import { ProjectFooter } from "@/features/projects/components/project-footer";
 import { ProjectHeader } from "@/features/projects/components/project-header";
@@ -8,8 +10,15 @@ import { ProjectTopBar } from "@/features/projects/components/project-top-bar";
 import { ResearchPipeline } from "@/features/projects/components/research-pipeline";
 import { ResearchSynopsis } from "@/features/projects/components/research-synopsis";
 import { TerminalAndMetrics } from "@/features/projects/components/terminal-and-metrics";
+import { getProjectWorkspace } from "@/features/projects/data/project-workspaces";
 
 export function ResearchProjectPage({ projectId }: { projectId: string }) {
+  const project = getProjectWorkspace(projectId);
+  const breadcrumbSegments: BreadcrumbSegment[] = [
+    { label: "Dashboard", href: "/dashboard" },
+    { label: project?.title ?? projectId, href: `/projects/${projectId}` },
+  ];
+
   return (
     <div className="min-h-screen bg-[#0b0f14] text-on-surface md:flex">
       <ProjectSidebar activeSection="project" projectId={projectId} />
@@ -17,6 +26,7 @@ export function ResearchProjectPage({ projectId }: { projectId: string }) {
         <ProjectTopBar />
         <div className="mx-auto grid w-full max-w-container-max flex-1 grid-cols-1 gap-6 px-5 py-6 sm:px-8 md:px-10 lg:grid-cols-[minmax(0,1fr)_320px] xl:grid-cols-[minmax(0,1fr)_360px]">
           <div className="flex min-w-0 flex-col gap-6">
+            <Breadcrumbs segments={breadcrumbSegments} />
             <Reveal>
               <ProjectHeader projectId={projectId} />
             </Reveal>
