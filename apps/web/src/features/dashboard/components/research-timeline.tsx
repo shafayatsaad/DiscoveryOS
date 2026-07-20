@@ -2,7 +2,7 @@
 
 // Purpose: Render an animated real-time research timeline from pipeline SSE events.
 
-import { useEffect, useMemo, useRef } from "react";
+import { useEffect, useRef } from "react";
 import {
   Atom,
   BrainCircuit,

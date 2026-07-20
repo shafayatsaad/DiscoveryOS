@@ -25,14 +25,14 @@ export function AnimatedCard({
   return (
     <motion.div
       className={cn("min-w-0", className)}
-      initial={prefersReducedMotion ? false : { opacity: 0, y: 10 }}
+      initial={prefersReducedMotion ? false : { opacity: 0, y: 6 }}
       animate={prefersReducedMotion ? undefined : { opacity: 1, y: 0 }}
       whileHover={
         !prefersReducedMotion && interactive
-          ? { y: -2, transition: { duration: 0.16 } }
+          ? { y: -2, transition: { duration: 0.12 } }
           : undefined
       }
-      transition={{ delay, duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
+      transition={{ delay, duration: 0.2, ease: [0.22, 1, 0.36, 1] }}
     >
       {children}
     </motion.div>

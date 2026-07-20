@@ -81,7 +81,7 @@ export function CommandCenter() {
   return (
     <ErrorBoundary>
       <MotionDiv
-        className="glass-panel relative overflow-hidden rounded-xl p-6 text-center sm:p-8 md:p-10"
+        className="glass-panel-elevated relative overflow-hidden rounded-xl p-6 text-center sm:p-8 md:p-10"
         initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.35 }}
@@ -100,7 +100,7 @@ export function CommandCenter() {
         )}
 
         <div className="relative z-10 mx-auto flex max-w-5xl flex-col items-center">
-          <h1 className="max-w-3xl font-display text-3xl font-semibold leading-[1.15] text-on-surface sm:text-4xl lg:text-5xl">
+          <h1 className="max-w-3xl font-display text-3xl font-bold leading-[1.15] text-on-surface sm:text-4xl lg:text-5xl tracking-tight">
             What scientific problem are you trying to solve today?
           </h1>
 
@@ -112,13 +112,13 @@ export function CommandCenter() {
             <label className="sr-only" htmlFor="research-query">
               Research problem
             </label>
-            <div className="glow-focus relative rounded-lg">
-              <Search className="pointer-events-none absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-outline-variant" />
+            <div className="glow-focus relative rounded-lg transition-all duration-300">
+              <Search className="pointer-events-none absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-primary/55" />
               <input
                 id="research-query"
                 value={query}
                 onChange={(event) => setQuery(event.target.value)}
-                className="h-16 w-full rounded-lg border border-white/10 bg-[#0b0f14] py-3 pl-12 pr-36 font-mono text-sm text-on-surface outline-none transition-colors placeholder:text-outline-variant focus:border-primary focus:ring-0 sm:pr-44"
+                className="h-16 w-full rounded-lg border border-white/10 bg-[#070b11] py-3 pl-12 pr-36 font-mono text-sm text-on-surface outline-none transition-all placeholder:text-outline-variant focus:border-primary focus:ring-0 sm:pr-44 focus:shadow-[0_0_25px_rgba(173,198,255,0.12)]"
                 placeholder={inputPlaceholder}
                 type="text"
                 disabled={isRunning}
@@ -136,7 +136,7 @@ export function CommandCenter() {
                   type="submit"
                   size="sm"
                   variant="secondary"
-                  className="border-primary/20 bg-primary/10 text-primary hover:bg-primary hover:text-on-primary"
+                  className="border-primary/20 bg-primary/10 text-primary hover:bg-primary hover:text-on-primary shadow-glow-sm hover:shadow-glow-md"
                   disabled={isSubmitting || isRunning}
                 >
                   {isSubmitting
@@ -170,7 +170,7 @@ export function CommandCenter() {
             </MotionDiv>
           )}
 
-          <div className="mt-6 flex flex-wrap justify-center gap-3">
+          <div className="mt-8 flex flex-wrap justify-center gap-3">
             {quickActions.map((action) => {
               const Icon = action.icon;
 
@@ -178,9 +178,9 @@ export function CommandCenter() {
                 <Link
                   key={action.label}
                   href={action.href}
-                  className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-surface/60 px-4 py-2 font-display text-xs font-semibold text-on-surface-variant transition-colors hover:bg-white/[0.05] hover:text-on-surface"
+                  className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.02] backdrop-blur-md px-4 py-2 font-display text-xs font-semibold text-on-surface-variant hover:border-primary/30 hover:bg-white/[0.05] hover:text-primary transition-all duration-300 hover:shadow-[0_0_15px_rgba(173,198,255,0.06)] hover:scale-[1.02]"
                 >
-                  <Icon className="h-3.5 w-3.5" />
+                  <Icon className="h-3.5 w-3.5 text-primary" />
                   {action.label}
                 </Link>
               );

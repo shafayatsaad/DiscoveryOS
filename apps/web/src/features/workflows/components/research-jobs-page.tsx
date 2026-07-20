@@ -1,4 +1,5 @@
 // Purpose: Compose the Stitch-aligned research pipeline execution screen.
+// Breadcrumbs are rendered by ResearchJobsHeader.
 
 import { Reveal } from "@/components/ui/reveal";
 import { SuccessMark } from "@/components/ui/feedback-states";
@@ -16,7 +17,7 @@ export function ResearchJobsPage({ projectId }: { projectId: string }) {
       <ResearchJobsSidebar projectId={projectId} />
       <main className="flex min-w-0 flex-1 flex-col">
         <div className="flex-1 overflow-auto">
-          <div className="mx-auto flex w-full max-w-container-max flex-col gap-8 px-5 py-8 sm:px-8 md:px-10">
+          <div className="mx-auto flex w-full max-w-container-max flex-col gap-6 px-5 py-8 sm:px-8 md:px-10">
             <Reveal>
               <ResearchJobsHeader projectId={projectId} />
             </Reveal>
@@ -28,7 +29,9 @@ export function ResearchJobsPage({ projectId }: { projectId: string }) {
                       Demo Mode workflow loaded
                     </p>
                     <p className="mt-1 text-sm text-on-surface-variant">
-                      Cached planner, retrieval, graph, contradiction, experiment, and report artifacts are ready for instant review.
+                      Cached planner, retrieval, graph, contradiction,
+                      experiment, and report artifacts are ready for instant
+                      review.
                     </p>
                   </div>
                   <SuccessMark label="Cached results ready" />

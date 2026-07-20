@@ -3,15 +3,28 @@
 import { RotateCw, SquareTerminal } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
-import { getJobHeaderMeta, getJobOverview } from "@/features/workflows/data/research-jobs-content";
+import { Breadcrumbs } from "@/components/navigation/breadcrumbs";
+import type { BreadcrumbSegment } from "@/components/navigation/breadcrumbs";
+import {
+  getJobHeaderMeta,
+  getJobOverview,
+} from "@/features/workflows/data/research-jobs-content";
+import { getProjectWorkspace } from "@/features/projects/data/project-workspaces";
 
 export function ResearchJobsHeader({ projectId }: { projectId: string }) {
   const jobOverview = getJobOverview(projectId);
   const jobHeaderMeta = getJobHeaderMeta(projectId);
+  const project = getProjectWorkspace(projectId);
+  const breadcrumbSegments: BreadcrumbSegment[] = [
+    { label: "Dashboard", href: "/dashboard" },
+    { label: project?.title ?? projectId, href: `/projects/${projectId}` },
+    { label: "Research Pipeline", href: `/projects/${projectId}/pipeline` },
+  ];
 
   return (
     <header className="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
       <div className="min-w-0">
+        <Breadcrumbs segments={breadcrumbSegments} />
         <div className="mb-4 flex items-start gap-4">
           <SquareTerminal className="mt-2 h-7 w-7 shrink-0 text-primary" />
           <div className="min-w-0">

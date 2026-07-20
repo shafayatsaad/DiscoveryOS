@@ -29,34 +29,37 @@ export function ProjectsPanel() {
         {activeProjects.map((project) => (
           <MotionDiv
             key={project.title}
-            className="glass-panel min-h-36 rounded-lg transition-colors hover:bg-white/[0.05]"
-            whileHover={{ y: -3 }}
-            transition={{ duration: 0.18 }}
+            className="glass-panel min-h-36 rounded-lg transition-all duration-300 hover:bg-white/[0.03] hover:border-primary/20 hover:shadow-card-hover"
+            whileHover={{ y: -4 }}
+            transition={{ duration: 0.2 }}
           >
             <Link className="flex h-full flex-col justify-between p-5" href={project.href}>
               <div className="mb-6 flex items-start justify-between gap-4">
                 <div>
-                  <span className="mb-3 inline-flex rounded-md bg-primary/10 px-2 py-1 font-mono text-xs font-semibold uppercase tracking-normal text-primary">
+                  <span className="mb-3 inline-flex rounded-md bg-primary/10 px-2.5 py-1 font-mono text-xs font-bold uppercase tracking-wider text-primary border border-primary/15">
                     {project.domain}
                   </span>
-                  <h3 className="font-display text-xl font-semibold leading-[1.3] text-on-surface transition-colors">
+                  <h3 className="font-display text-xl font-semibold leading-[1.3] text-on-surface transition-colors hover:text-primary">
                     {project.title}
                   </h3>
                   <p className="mt-3 text-sm leading-[1.5] text-on-surface-variant">
                     {project.description}
                   </p>
                 </div>
-                <span className="rounded-md bg-primary/10 px-2 py-1 font-mono text-sm font-semibold text-primary">
+                <span className="rounded-md bg-primary/10 px-2.5 py-1 font-mono text-sm font-bold text-primary border border-primary/15 shrink-0">
                   {project.progress}%
                 </span>
               </div>
               <div>
                 <div className="mb-2 flex justify-between gap-3 font-display text-xs font-semibold text-on-surface-variant">
                   <span>{project.phase}</span>
-                  <span>Live</span>
+                  <span className="flex items-center gap-1.5">
+                    <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                    Live
+                  </span>
                 </div>
                 <div className="h-1.5 w-full overflow-hidden rounded-full bg-surface-container">
-                  <div className="h-full rounded-full bg-primary" style={{ width: `${project.progress}%` }} />
+                  <div className="h-full rounded-full bg-gradient-to-r from-primary via-[#7dd3fc] to-secondary" style={{ width: `${project.progress}%` }} />
                 </div>
               </div>
             </Link>
@@ -65,28 +68,28 @@ export function ProjectsPanel() {
 
         {completedProject ? (
           <MotionDiv
-            className="glass-panel min-h-28 rounded-lg transition-colors hover:bg-white/[0.05] md:col-span-2"
-            whileHover={{ y: -3 }}
-            transition={{ duration: 0.18 }}
+            className="glass-panel min-h-28 rounded-lg transition-all duration-300 hover:bg-white/[0.03] hover:border-primary/20 hover:shadow-card-hover md:col-span-2"
+            whileHover={{ y: -4 }}
+            transition={{ duration: 0.2 }}
           >
             <Link className="flex min-h-28 items-center justify-between gap-4 p-5" href={completedProject.href}>
               <div className="flex min-w-0 items-center gap-4">
-                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md border border-primary/40 bg-primary/10 text-primary">
+                <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg border border-emerald-500/20 bg-emerald-500/10 text-emerald-400">
                   <Check className="h-5 w-5" />
                 </div>
                 <div className="min-w-0">
-                  <span className="mb-2 inline-flex rounded-md bg-white/[0.05] px-2 py-1 font-mono text-xs font-semibold uppercase tracking-normal text-on-surface-variant">
+                  <span className="mb-2 inline-flex rounded-md bg-white/[0.05] px-2.5 py-1 font-mono text-xs font-semibold uppercase tracking-normal text-on-surface-variant">
                     {completedProject.domain}
                   </span>
                   <h3 className="font-display text-xl font-semibold leading-[1.3] text-on-surface">
                     {completedProject.title}
                   </h3>
-                  <p className="text-sm leading-[1.5] text-on-surface-variant">
+                  <p className="text-sm leading-[1.5] text-on-surface-variant truncate">
                     {completedProject.description}
                   </p>
                 </div>
               </div>
-              <span className="shrink-0 rounded-md bg-surface-container-highest px-3 py-1 font-display text-xs font-semibold uppercase tracking-normal text-on-surface">
+              <span className="shrink-0 rounded-md bg-emerald-500/10 border border-emerald-500/15 px-3 py-1 font-display text-xs font-semibold uppercase tracking-normal text-emerald-400">
                 Completed
               </span>
             </Link>

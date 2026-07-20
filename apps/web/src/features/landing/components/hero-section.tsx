@@ -21,20 +21,21 @@ export function HeroSection() {
       transition={{ duration: 0.55 }}
     >
       <ShaderBackground />
-      <div className="absolute inset-0 z-0 bg-gradient-to-b from-background/35 via-background/70 to-background" />
+      <div className="absolute inset-0 z-0 bg-gradient-to-b from-background/25 via-background/60 to-background" />
 
-      {/* Ambient glow behind content */}
-      <div className="pointer-events-none absolute left-1/2 top-1/3 -z-0 h-[500px] w-[500px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-primary/[0.04] blur-[120px]" />
+      {/* Decorative gradient overlay blobs */}
+      <div className="pointer-events-none absolute left-1/4 top-1/4 -z-0 h-[400px] w-[400px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-primary/[0.05] blur-[100px] animate-glow-pulse" />
+      <div className="pointer-events-none absolute right-1/4 bottom-1/4 -z-0 h-[300px] w-[300px] translate-x-1/2 translate-y-1/2 rounded-full bg-secondary/[0.03] blur-[120px]" />
 
       <div className="relative z-10 mx-auto flex w-full max-w-container-max flex-col items-center text-center">
         <MotionDiv
           className="mb-8 flex items-center gap-2"
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.1, duration: 0.45 }}
+          transition={{ delay: 0.08, duration: 0.35 }}
         >
-          <span className="flex items-center gap-1.5 rounded-full border border-white/[0.06] bg-surface-container-low px-3 py-1.5 font-display text-xs font-medium text-on-surface-variant">
-            <Sparkles className="h-3 w-3 text-primary" />
+          <span className="flex items-center gap-1.5 rounded-full border border-white/[0.06] bg-surface-container-low px-3.5 py-1.5 font-display text-xs font-semibold text-on-surface-variant hover:border-primary/20 transition-all duration-300">
+            <Sparkles className="h-3.5 w-3.5 text-primary animate-pulse" />
             v0.1 — Early Access
           </span>
         </MotionDiv>
@@ -42,15 +43,16 @@ export function HeroSection() {
         <MotionDiv
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.18, duration: 0.5 }}
+          transition={{ delay: 0.12, duration: 0.4 }}
+          className="animate-float"
         >
-          <h1 className="mx-auto mb-6 max-w-5xl font-display text-5xl font-semibold leading-[1.05] text-on-surface tracking-tight sm:text-6xl lg:text-[80px]">
+          <h1 className="mx-auto mb-6 max-w-5xl font-display text-5xl font-extrabold leading-[1.05] text-on-surface tracking-tight sm:text-6xl lg:text-[80px]">
             Accelerate Scientific Discovery with{" "}
-            <span className="bg-gradient-to-r from-primary via-primary/90 to-primary/70 bg-clip-text text-transparent">
+            <span className="bg-gradient-to-r from-primary via-[#7dd3fc] to-secondary bg-clip-text text-transparent">
               Autonomous AI
             </span>
           </h1>
-          <p className="mx-auto mb-10 max-w-2xl text-lg leading-[1.7] text-on-surface-variant">
+          <p className="mx-auto mb-10 max-w-2xl text-base sm:text-lg leading-[1.7] text-on-surface-variant">
             The first Operating System for autonomous research discoveries.
             Orchestrate complex evidence retrieval, synthesize models, and
             deploy specialized agents in a unified, distraction-free
@@ -62,23 +64,23 @@ export function HeroSection() {
           className="flex w-full flex-col items-center justify-center gap-4 sm:w-auto sm:flex-row"
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.3, duration: 0.45 }}
+          transition={{ delay: 0.2, duration: 0.4 }}
         >
           <Button
             asChild
             size="lg"
-            className="group relative w-full min-w-40 overflow-hidden sm:w-auto"
+            variant="glow"
+            className="w-full min-w-44 sm:w-auto"
           >
             <Link href="/dashboard">
-              <span className="absolute inset-0 bg-gradient-to-r from-primary/20 via-transparent to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
-              <span className="relative z-10">Start Discovery</span>
+              Start Discovery
             </Link>
           </Button>
           <Button
             asChild
             variant="secondary"
             size="lg"
-            className="w-full min-w-40 sm:w-auto"
+            className="w-full min-w-44 sm:w-auto"
           >
             <Link href="#capabilities">View Capabilities</Link>
           </Button>
@@ -86,17 +88,25 @@ export function HeroSection() {
             asChild
             variant="secondary"
             size="lg"
-            className="w-full min-w-40 border-primary/30 text-primary sm:w-auto"
+            className="w-full min-w-44 border-primary/20 text-primary hover:border-primary/40 hover:bg-primary/5 sm:w-auto"
           >
             <Link href={primaryDemoHref}>
-              <PlayCircle className="h-4 w-4" />
+              <PlayCircle className="h-4 w-4 shrink-0" />
               Try Demo
             </Link>
           </Button>
         </MotionDiv>
 
-        {/* Subtle bottom indicator */}
-        <div className="mt-16 h-px w-32 bg-gradient-to-r from-transparent via-primary/20 to-transparent" />
+        {/* Subtle scroll down indicator */}
+        <MotionDiv 
+          className="mt-20 flex flex-col items-center gap-2 cursor-pointer opacity-40 hover:opacity-80 transition-opacity duration-300"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 0.4 }}
+          transition={{ delay: 0.4 }}
+        >
+          <span className="font-display text-[10px] font-bold uppercase tracking-widest">Explore OS</span>
+          <div className="h-6 w-[1px] bg-gradient-to-b from-primary/80 to-transparent" />
+        </MotionDiv>
       </div>
     </MotionSection>
   );

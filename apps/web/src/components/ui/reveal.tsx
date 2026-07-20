@@ -14,16 +14,16 @@ type RevealProps = {
   y?: number;
 };
 
-export function Reveal({ children, className, delay = 0, y = 18 }: RevealProps) {
+export function Reveal({ children, className, delay = 0, y = 8 }: RevealProps) {
   const prefersReducedMotion = useReducedMotion();
 
   return (
     <motion.div
       className={cn("min-w-0", className)}
-      initial={prefersReducedMotion ? false : { opacity: 0.86, y }}
+      initial={prefersReducedMotion ? false : { opacity: 0.92, y }}
       whileInView={prefersReducedMotion ? undefined : { opacity: 1, y: 0 }}
-      viewport={{ once: true, amount: 0.18 }}
-      transition={{ delay, duration: 0.42, ease: "easeOut" }}
+      viewport={{ once: true, amount: 0.12 }}
+      transition={{ delay, duration: 0.26, ease: "easeOut" }}
     >
       {children}
     </motion.div>

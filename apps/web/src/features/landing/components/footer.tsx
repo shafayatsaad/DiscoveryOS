@@ -2,6 +2,7 @@
 
 import { Github, BookOpen, Mail } from "lucide-react";
 import Link from "next/link";
+import { Logo } from "@/components/ui/logo";
 
 export function Footer() {
   return (
@@ -10,10 +11,8 @@ export function Footer() {
         <div className="flex flex-col items-start justify-between gap-8 md:flex-row md:items-center">
           {/* Brand */}
           <div>
-            <span className="font-display text-lg font-bold text-on-surface">
-              DiscoveryOS
-            </span>
-            <p className="mt-1 max-w-xs text-xs leading-[1.5] text-on-surface-variant">
+            <Logo size="md" />
+            <p className="mt-2.5 max-w-xs text-xs leading-[1.5] text-on-surface-variant">
               Autonomous Scientific Discovery Platform — Orchestrating research
               at the intersection of AI agents and knowledge graphs.
             </p>
@@ -60,9 +59,9 @@ export function Footer() {
                 rel={
                   href.startsWith("http") ? "noopener noreferrer" : undefined
                 }
-                className="flex h-9 w-9 items-center justify-center rounded-lg border border-white/[0.06] bg-surface-container-low text-on-surface-variant transition-colors hover:border-primary/30 hover:text-primary"
+                className="flex h-9 w-9 items-center justify-center rounded-lg border border-white/[0.06] glass-card text-on-surface-variant hover:scale-105"
               >
-                <Icon className="h-4 w-4" />
+                <Icon className="h-4 w-4 text-primary" />
               </a>
             ))}
           </div>

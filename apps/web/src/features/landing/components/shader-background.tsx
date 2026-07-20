@@ -70,13 +70,13 @@ export function ShaderBackground() {
 
       void main() {
         vec2 uv = v_texCoord;
-        vec3 base = vec3(0.043, 0.059, 0.078);
-        vec3 tint = vec3(0.067, 0.094, 0.153);
-        float t = u_time * 0.2;
-        float n = nodeField(uv + sin(t * 0.5) * 0.1, t);
-        float vignette = smoothstep(0.92, 0.12, distance(uv, vec2(0.5, 0.5)));
-        vec3 color = mix(base, tint, uv.y + n * 0.1);
-        color += n * vec3(0.231, 0.510, 0.965) * 0.28;
+        vec3 base = vec3(0.02, 0.03, 0.05);
+        vec3 tint = vec3(0.04, 0.06, 0.11);
+        float t = u_time * 0.25;
+        float n = nodeField(uv + sin(t * 0.4) * 0.08, t);
+        float vignette = smoothstep(0.96, 0.16, distance(uv, vec2(0.5, 0.5)));
+        vec3 color = mix(base, tint, uv.y + n * 0.12);
+        color += n * mix(vec3(0.3, 0.55, 1.0), vec3(0.62, 0.45, 0.98), uv.x) * 0.34;
         color *= vignette;
         gl_FragColor = vec4(color, 1.0);
       }

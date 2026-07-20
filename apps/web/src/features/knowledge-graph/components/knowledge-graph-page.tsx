@@ -1,20 +1,27 @@
 "use client";
 
-// Purpose: Compose the Stitch knowledge graph explorer as a responsive project tool.
+// Purpose: Compose the Stitch knowledge graph explorer as a responsive project tool with breadcrumbs.
 
 import { FileSearch } from "lucide-react";
 import { useMemo, useState } from "react";
 
+import { Breadcrumbs } from "@/components/navigation/breadcrumbs";
+import type { BreadcrumbSegment } from "@/components/navigation/breadcrumbs";
 import { EmptyState } from "@/components/ui/feedback-states";
 import { AnimatedCard } from "@/components/ui/motion";
 import { GraphCanvas } from "@/features/knowledge-graph/components/graph-canvas";
 import { GraphFilters } from "@/features/knowledge-graph/components/graph-filters";
 import { GraphSearch } from "@/features/knowledge-graph/components/graph-search";
 import { NodeInspector } from "@/features/knowledge-graph/components/node-inspector";
-import { getGraphData, type GraphEdge } from "@/features/knowledge-graph/data/knowledge-graph-content";
+import {
+  getGraphData,
+  type GraphEdge,
+} from "@/features/knowledge-graph/data/knowledge-graph-content";
+import { getProjectWorkspace } from "@/features/projects/data/project-workspaces";
 
 export function KnowledgeGraphPage({ projectId }: { projectId: string }) {
   const graphData = getGraphData(projectId);
+  const project = getProjectWorkspace(projectId);
   const [query, setQuery] = useState("");
   const [activeFilters, setActiveFilters] = useState(() =>
     graphData.filters.map((filter) => filter.label),
@@ -24,6 +31,12 @@ export function KnowledgeGraphPage({ projectId }: { projectId: string }) {
     graphData.nodes.find((node) => node.active)?.id ?? graphData.nodes[0]?.id,
   );
   const [selectedEdge, setSelectedEdge] = useState<GraphEdge | null>(null);
+
+  const breadcrumbSegments: BreadcrumbSegment[] = [
+    { label: "Dashboard", href: "/dashboard" },
+    { label: project?.title ?? projectId, href: `/projects/${projectId}` },
+    { label: "Knowledge Graph", href: `/projects/${projectId}/graph` },
+  ];
 
   const filteredNodes = useMemo(() => {
     const normalizedQuery = query.trim().toLowerCase();
@@ -59,7 +72,7 @@ export function KnowledgeGraphPage({ projectId }: { projectId: string }) {
   );
 
   const selectedEdgeId = selectedEdge
-    ? selectedEdge.id ?? `${selectedEdge.source}-${selectedEdge.target}`
+    ? (selectedEdge.id ?? `${selectedEdge.source}-${selectedEdge.target}`)
     : undefined;
 
   function resetFilters() {
@@ -67,19 +80,24 @@ export function KnowledgeGraphPage({ projectId }: { projectId: string }) {
     setActiveFilters(graphData.filters.map((filter) => filter.label));
     setMinStrength(45);
     setSelectedEdge(null);
-    setSelectedNodeId(graphData.nodes.find((node) => node.active)?.id ?? graphData.nodes[0]?.id);
+    setSelectedNodeId(
+      graphData.nodes.find((node) => node.active)?.id ?? graphData.nodes[0]?.id,
+    );
   }
 
   return (
     <main className="relative min-h-screen overflow-y-auto bg-surface-container-lowest text-on-surface lg:h-screen lg:overflow-hidden">
-      <div className="relative z-20 flex flex-col gap-4 p-5 pb-0 sm:p-8 sm:pb-0 lg:hidden">
-        <GraphSearch
-          domain={graphData.domain}
-          onChange={setQuery}
-          resultCount={filteredNodes.length}
-          searchId="graph-search-mobile"
-          value={query}
-        />
+      <div className="relative z-20 flex flex-col gap-4 p-5 pb-0 sm:p-8 sm:pb-0">
+        <Breadcrumbs segments={breadcrumbSegments} />
+        <div className="lg:hidden">
+          <GraphSearch
+            domain={graphData.domain}
+            onChange={setQuery}
+            resultCount={filteredNodes.length}
+            searchId="graph-search-mobile"
+            value={query}
+          />
+        </div>
       </div>
       <GraphCanvas
         edges={filteredEdges}
@@ -97,7 +115,10 @@ export function KnowledgeGraphPage({ projectId }: { projectId: string }) {
       />
       {filteredNodes.length === 0 ? (
         <div className="pointer-events-none absolute inset-x-5 top-32 z-20 lg:left-1/2 lg:right-auto lg:top-1/2 lg:w-96 lg:-translate-x-1/2 lg:-translate-y-1/2">
-          <AnimatedCard className="glass-panel rounded-xl p-5" interactive={false}>
+          <AnimatedCard
+            className="glass-panel rounded-xl p-5"
+            interactive={false}
+          >
             <EmptyState
               body="Try a broader search term or restore the node type filters."
               icon={FileSearch}
@@ -147,7 +168,9 @@ export function KnowledgeGraphPage({ projectId }: { projectId: string }) {
             </p>
             <div className="mt-4 flex items-center justify-between gap-3 font-mono text-xs text-on-surface-variant">
               <span>{selectedEdge.evidence.source}</span>
-              <span>{Math.round(selectedEdge.evidence.confidence * 100)}% confidence</span>
+              <span>
+                {Math.round(selectedEdge.evidence.confidence * 100)}% confidence
+              </span>
             </div>
           </AnimatedCard>
         ) : null}
