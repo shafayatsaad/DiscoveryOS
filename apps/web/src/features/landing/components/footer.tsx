@@ -21,17 +21,20 @@ export function Footer() {
 
           {/* Links */}
           <div className="flex flex-wrap items-center gap-6">
-            {["Documentation", "API", "Support", "Ethics Policy"].map(
-              (link) => (
-                <Link
-                  key={link}
-                  href="#"
-                  className="text-xs font-semibold uppercase tracking-normal text-on-surface-variant transition-colors hover:text-primary"
-                >
-                  {link}
-                </Link>
-              ),
-            )}
+            {[
+              { label: "Documentation", href: "/docs" },
+              { label: "API", href: "/api/docs" },
+              { label: "Support", href: "mailto:support@discoveryos.org" },
+              { label: "Dashboard", href: "/dashboard" },
+            ].map((link) => (
+              <Link
+                key={link.label}
+                href={link.href}
+                className="text-xs font-semibold uppercase tracking-normal text-on-surface-variant transition-colors hover:text-primary"
+              >
+                {link.label}
+              </Link>
+            ))}
           </div>
 
           {/* Social */}
