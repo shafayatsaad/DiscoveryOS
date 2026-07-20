@@ -82,3 +82,12 @@ def orchestrator_service_dependency() -> OrchestratorService:
     return OrchestratorService(
         state_backend=InMemoryStateBackend(),
     )
+
+
+def mcp_service_dependency(
+    settings: Annotated[Settings, Depends(settings_dependency)],
+) -> MCPService:
+    """Inject the MCP service used by MCP status routes."""
+
+    registry = build_mcp_registry(settings)
+    return MCPService(registry=registry)
