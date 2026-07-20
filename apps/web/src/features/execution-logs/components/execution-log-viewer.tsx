@@ -1,8 +1,16 @@
 "use client";
 
-// Purpose: Render a filterable developer-mode execution log inspector.
+// Purpose: Render a filterable developer-mode execution log inspector with breadcrumbs.
 
-import { AlertTriangle, Clock3, Filter, Search, Server, TerminalSquare } from "lucide-react";
+import {
+  AlertTriangle,
+  Clock3,
+  Filter,
+  Search,
+  Server,
+  TerminalSquare,
+} from "lucide-react";
+import { Breadcrumbs } from "@/components/navigation/breadcrumbs";
 import type { LucideIcon } from "lucide-react";
 import { useMemo, useState } from "react";
 import type { ReactNode } from "react";
@@ -22,7 +30,13 @@ const statusClasses: Record<ExecutionLogStatus, string> = {
   retrying: "bg-amber-500/10 text-amber-300",
 };
 
-const filters: Array<ExecutionLogStatus | "all"> = ["all", "success", "running", "retrying", "failed"];
+const filters: Array<ExecutionLogStatus | "all"> = [
+  "all",
+  "success",
+  "running",
+  "retrying",
+  "failed",
+];
 
 export function ExecutionLogViewer() {
   const [query, setQuery] = useState("");
@@ -47,14 +61,21 @@ export function ExecutionLogViewer() {
     <main className="min-h-screen bg-[#0b0f14] px-5 py-6 text-on-surface sm:px-8 md:px-10 md:py-10">
       <div className="mx-auto flex w-full max-w-container-max flex-col gap-6">
         <header className="glass-panel rounded-xl p-5 sm:p-6">
+          <Breadcrumbs
+            segments={[
+              { label: "Dashboard", href: "/dashboard" },
+              { label: "Execution Logs", href: "/dev/execution-logs" },
+            ]}
+          />
           <span className="rounded-md border border-primary/20 bg-primary/10 px-2 py-1 font-mono text-xs font-semibold uppercase tracking-normal text-primary">
             Developer Mode
           </span>
-          <h1 className="mt-4 font-display text-4xl font-semibold leading-tight">
+          <h1 className="mt-2 font-display text-4xl font-semibold leading-tight">
             Execution Log Viewer
           </h1>
           <p className="mt-3 max-w-3xl text-base leading-[1.6] text-on-surface-variant">
-            Inspect prompts, token usage, timings, retries, errors, MCP calls, status, and timeline events.
+            Inspect prompts, token usage, timings, retries, errors, MCP calls,
+            status, and timeline events.
           </p>
         </header>
 
@@ -93,7 +114,10 @@ export function ExecutionLogViewer() {
         </section>
 
         {filteredLogs.length === 0 ? (
-          <AnimatedCard className="glass-panel rounded-xl p-6" interactive={false}>
+          <AnimatedCard
+            className="glass-panel rounded-xl p-6"
+            interactive={false}
+          >
             <EmptyState
               body="Adjust status filters or search text to inspect a different run."
               icon={TerminalSquare}
@@ -107,7 +131,11 @@ export function ExecutionLogViewer() {
                 animate={{ opacity: 1, y: 0 }}
                 initial={{ opacity: 0, y: 10 }}
                 key={log.id}
-                transition={{ delay: index * 0.04, duration: 0.26, ease: "easeOut" }}
+                transition={{
+                  delay: index * 0.04,
+                  duration: 0.26,
+                  ease: "easeOut",
+                }}
               >
                 <article className="glass-panel rounded-xl p-5">
                   <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
@@ -116,8 +144,15 @@ export function ExecutionLogViewer() {
                         <h2 className="font-display text-2xl font-semibold text-on-surface">
                           {log.agent}
                         </h2>
-                        <span className="font-mono text-xs text-on-surface-variant">{log.id}</span>
-                        <span className={cn("rounded-md px-2 py-1 font-display text-xs font-semibold", statusClasses[log.status])}>
+                        <span className="font-mono text-xs text-on-surface-variant">
+                          {log.id}
+                        </span>
+                        <span
+                          className={cn(
+                            "rounded-md px-2 py-1 font-display text-xs font-semibold",
+                            statusClasses[log.status],
+                          )}
+                        >
                           {log.status}
                         </span>
                       </div>
@@ -126,8 +161,14 @@ export function ExecutionLogViewer() {
                       </p>
                     </div>
                     <div className="grid shrink-0 grid-cols-3 gap-3 text-center">
-                      <Metric label="Tokens" value={`${log.tokenUsage.input + log.tokenUsage.output}`} />
-                      <Metric label="Time" value={`${(log.executionTimeMs / 1000).toFixed(1)}s`} />
+                      <Metric
+                        label="Tokens"
+                        value={`${log.tokenUsage.input + log.tokenUsage.output}`}
+                      />
+                      <Metric
+                        label="Time"
+                        value={`${(log.executionTimeMs / 1000).toFixed(1)}s`}
+                      />
                       <Metric label="Retries" value={String(log.retries)} />
                     </div>
                   </div>
@@ -145,14 +186,22 @@ export function ExecutionLogViewer() {
                     </Panel>
                     <Panel icon={Clock3} title="Timeline">
                       {log.timeline.map((item) => (
-                        <Row key={`${item.time}-${item.label}`} left={`${item.time} ${item.label}`} status={item.status} />
+                        <Row
+                          key={`${item.time}-${item.label}`}
+                          left={`${item.time} ${item.label}`}
+                          status={item.status}
+                        />
                       ))}
                     </Panel>
                     <Panel icon={AlertTriangle} title="Errors">
                       {log.errors.length > 0 ? (
-                        log.errors.map((error) => <Row key={error} left={error} status="failed" />)
+                        log.errors.map((error) => (
+                          <Row key={error} left={error} status="failed" />
+                        ))
                       ) : (
-                        <p className="text-sm text-on-surface-variant">No errors recorded.</p>
+                        <p className="text-sm text-on-surface-variant">
+                          No errors recorded.
+                        </p>
                       )}
                     </Panel>
                   </div>
@@ -169,8 +218,12 @@ export function ExecutionLogViewer() {
 function Metric({ label, value }: { label: string; value: string }) {
   return (
     <div className="rounded-lg border border-white/[0.06] bg-surface/50 p-3">
-      <p className="font-mono text-[10px] uppercase tracking-normal text-on-surface-variant">{label}</p>
-      <p className="mt-1 font-display text-lg font-semibold text-on-surface">{value}</p>
+      <p className="font-mono text-[10px] uppercase tracking-normal text-on-surface-variant">
+        {label}
+      </p>
+      <p className="mt-1 font-display text-lg font-semibold text-on-surface">
+        {value}
+      </p>
     </div>
   );
 }
@@ -206,8 +259,15 @@ function Row({
 }) {
   return (
     <div className="flex items-start justify-between gap-3 rounded-md bg-white/[0.03] px-3 py-2">
-      <span className="min-w-0 text-sm leading-5 text-on-surface-variant">{left}</span>
-      <span className={cn("shrink-0 rounded px-2 py-0.5 font-mono text-[10px]", statusClasses[status])}>
+      <span className="min-w-0 text-sm leading-5 text-on-surface-variant">
+        {left}
+      </span>
+      <span
+        className={cn(
+          "shrink-0 rounded px-2 py-0.5 font-mono text-[10px]",
+          statusClasses[status],
+        )}
+      >
         {right ?? status}
       </span>
     </div>
