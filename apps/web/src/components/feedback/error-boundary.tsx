@@ -79,4 +79,3 @@ export class ErrorBoundary extends Component<
     return this.props.children;
   }
 }
-</write_to_file>
