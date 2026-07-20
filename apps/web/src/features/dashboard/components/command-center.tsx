@@ -1,19 +1,10 @@
 "use client";
 
-// Purpose: Render the dashboard research-goal command input and real-time pipeline execution.
+// Purpose: Render the dashboard research-goal command input and animated research timeline.
 
 import Link from "next/link";
 import { useCallback, useState } from "react";
-import {
-  Check,
-  FileText,
-  FlaskConical,
-  GitBranch,
-  Lightbulb,
-  Mic,
-  Network,
-  Search,
-} from "lucide-react";
+import { FolderOpen, Mic, Search } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { MotionDiv } from "@/features/landing/components/motion-primitives";
@@ -21,24 +12,13 @@ import {
   magicMomentQuestion,
   quickActions,
 } from "@/features/dashboard/data/dashboard-content";
-import { usePipelineStream } from "@/features/dashboard/hooks/use-pipeline-stream";
 import {
-  primaryProjectId,
-  projectRoute,
-} from "@/features/projects/data/project-workspaces";
-import { cn } from "@/lib/utils";
+  deriveTimelineEntries,
+  ResearchTimeline,
+} from "@/features/dashboard/components/research-timeline";
+import { usePipelineStream } from "@/features/dashboard/hooks/use-pipeline-stream";
+import { primaryProjectId } from "@/features/projects/data/project-workspaces";
 import { startPipeline } from "@/lib/api/client";
-
-const PIPELINE_STAGES = [
-  { id: "planner", label: "Planning", icon: Search },
-  { id: "retriever", label: "Literature Retrieval", icon: Network },
-  { id: "extractor", label: "Evidence Extraction", icon: FileText },
-  { id: "knowledge_graph", label: "Knowledge Graph", icon: GitBranch },
-  { id: "contradiction", label: "Contradiction Detection", icon: FlaskConical },
-  { id: "novelty", label: "Novelty Analysis", icon: Lightbulb },
-  { id: "experiment", label: "Experiment Planning", icon: GitBranch },
-  { id: "report", label: "Report Generation", icon: FileText },
-];
 
 export function CommandCenter() {
   const [query, setQuery] = useState("");
@@ -52,7 +32,6 @@ export function CommandCenter() {
 
   const {
     events: pipelineEvents,
-    latestEvent,
     status: streamStatus,
     progress,
     metadata,
@@ -66,6 +45,13 @@ export function CommandCenter() {
   const isRunning =
     streamStatus === "connecting" || streamStatus === "connected";
   const hasStarted = runId !== null;
+
+  const timelineEntries = deriveTimelineEntries(
+    pipelineEvents,
+    metadata,
+    isComplete,
+    isFailed,
+  );
 
   async function runDiscovery(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -83,19 +69,6 @@ export function CommandCenter() {
       );
     } finally {
       setIsSubmitting(false);
-    }
-  }
-
-  // Determine which stages are completed/active based on pipeline events
-  const completedStages = new Set<string>();
-  let activeStageId: string | null = null;
-
-  for (const event of pipelineEvents) {
-    if (event.event_type === "stage.completed" && event.stage) {
-      completedStages.add(event.stage);
-    }
-    if (event.event_type === "stage.started" && event.stage) {
-      activeStageId = event.stage;
     }
   }
 
@@ -161,278 +134,22 @@ export function CommandCenter() {
           <p className="mt-4 text-sm text-red-400">{submitError}</p>
         )}
 
-        {hasStarted ? (
+        {hasStarted && (
           <MotionDiv
-            className="mt-8 grid w-full grid-cols-1 gap-4 text-left lg:grid-cols-[1.1fr_0.9fr]"
+            className="mt-8 w-full max-w-3xl text-left"
             initial={{ opacity: 0, y: 18 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.35 }}
           >
-            {/* Pipeline Stages */}
-            <section
-              className="glass-card rounded-xl p-5"
-              aria-labelledby="pipeline-heading"
-            >
-              <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
-                <div>
-                  <p className="font-display text-xs font-semibold uppercase tracking-normal text-primary">
-                    DiscoveryOS Pipeline
-                  </p>
-                  <h2
-                    id="pipeline-heading"
-                    className="mt-1 font-display text-xl font-semibold text-on-surface"
-                  >
-                    {query || magicMomentQuestion}
-                  </h2>
-                </div>
-                <span className="rounded-md bg-primary/10 px-3 py-1 font-mono text-xs text-primary">
-                  {isComplete
-                    ? "Complete"
-                    : isFailed
-                      ? "Failed"
-                      : `${Math.round(progress)}%`}
-                </span>
-              </div>
-
-              {/* Progress bar */}
-              <div className="mb-4 h-1.5 w-full overflow-hidden rounded-full bg-surface-container-highest">
-                <div
-                  className="h-full rounded-full bg-gradient-to-r from-primary to-primary/60 transition-all duration-500"
-                  style={{ width: `${progress}%` }}
-                />
-              </div>
-
-              <div className="space-y-3">
-                {PIPELINE_STAGES.map((stage) => {
-                  const completed = completedStages.has(stage.id);
-                  const current =
-                    stage.id === activeStageId && !isComplete && !isFailed;
-
-                  return (
-                    <div
-                      key={stage.id}
-                      className={cn(
-                        "flex items-start gap-3 rounded-lg border border-white/[0.05] bg-surface/50 p-3 transition-all duration-300",
-                        current && "border-primary/30 bg-primary/[0.06]",
-                        !completed && !current && "opacity-45",
-                        isFailed &&
-                          stage.id === activeStageId &&
-                          "border-red-400/30 bg-red-400/5",
-                      )}
-                    >
-                      <span
-                        className={cn(
-                          "mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full border",
-                          completed
-                            ? "border-primary bg-primary/10 text-primary"
-                            : current
-                              ? "border-primary/50 bg-primary/5 text-primary"
-                              : "border-white/10 text-outline-variant",
-                        )}
-                      >
-                        {completed ? (
-                          <Check className="h-3.5 w-3.5" />
-                        ) : (
-                          <span className="h-1.5 w-1.5 rounded-full bg-current" />
-                        )}
-                      </span>
-                      <span className="min-w-0">
-                        <span className="block font-display text-sm font-semibold text-on-surface">
-                          {stage.label}
-                        </span>
-                        <span className="mt-1 block text-xs leading-[1.45] text-on-surface-variant">
-                          {current
-                            ? "Running..."
-                            : completed
-                              ? "Completed"
-                              : "Pending"}
-                        </span>
-                      </span>
-                    </div>
-                  );
-                })}
-              </div>
-            </section>
-
-            {/* Results Panel */}
-            <section
-              className="glass-card rounded-xl p-5"
-              aria-labelledby="results-heading"
-            >
-              <p className="font-display text-xs font-semibold uppercase tracking-normal text-primary">
-                Pipeline Results
-              </p>
-              <h2
-                id="results-heading"
-                className="mt-1 font-display text-xl font-semibold text-on-surface"
-              >
-                {isComplete
-                  ? "Evidence-backed workspace ready"
-                  : isFailed
-                    ? "Pipeline failed"
-                    : "Running discovery pipeline..."}
-              </h2>
-
-              <div className="mt-5 space-y-3">
-                {/* Current Stage */}
-                <div
-                  className={cn(
-                    "rounded-lg border border-white/[0.05] bg-surface/50 p-3",
-                    !isComplete && !isRunning && "opacity-45",
-                  )}
-                >
-                  <p className="font-display text-xs font-semibold uppercase tracking-normal text-primary">
-                    Current Stage
-                  </p>
-                  <p className="mt-1 text-sm leading-[1.45] text-on-surface-variant">
-                    {latestEvent?.stage
-                      ? (PIPELINE_STAGES.find((s) => s.id === latestEvent.stage)
-                          ?.label ?? latestEvent.stage)
-                      : "Waiting..."}
-                  </p>
-                </div>
-
-                {/* Progress */}
-                <div
-                  className={cn(
-                    "rounded-lg border border-white/[0.05] bg-surface/50 p-3",
-                    !isComplete && !isRunning && "opacity-45",
-                  )}
-                >
-                  <p className="font-display text-xs font-semibold uppercase tracking-normal text-primary">
-                    Progress
-                  </p>
-                  <p className="mt-1 text-sm leading-[1.45] text-on-surface-variant">
-                    {Math.round(progress)}%
-                  </p>
-                </div>
-
-                {/* Papers Count */}
-                <div
-                  className={cn(
-                    "rounded-lg border border-white/[0.05] bg-surface/50 p-3",
-                    !isComplete && !isRunning && "opacity-45",
-                  )}
-                >
-                  <p className="font-display text-xs font-semibold uppercase tracking-normal text-primary">
-                    Papers Retrieved
-                  </p>
-                  <p className="mt-1 text-sm leading-[1.45] text-on-surface-variant">
-                    {metadata?.papers_count ?? 0}
-                  </p>
-                </div>
-
-                {/* Evidence Count */}
-                <div
-                  className={cn(
-                    "rounded-lg border border-white/[0.05] bg-surface/50 p-3",
-                    !isComplete && !isRunning && "opacity-45",
-                  )}
-                >
-                  <p className="font-display text-xs font-semibold uppercase tracking-normal text-primary">
-                    Evidence Records
-                  </p>
-                  <p className="mt-1 text-sm leading-[1.45] text-on-surface-variant">
-                    {metadata?.evidence_count ?? 0}
-                  </p>
-                </div>
-
-                {/* Contradictions */}
-                <div
-                  className={cn(
-                    "rounded-lg border border-white/[0.05] bg-surface/50 p-3",
-                    !isComplete && !isRunning && "opacity-45",
-                  )}
-                >
-                  <p className="font-display text-xs font-semibold uppercase tracking-normal text-primary">
-                    Contradictions
-                  </p>
-                  <p className="mt-1 text-sm leading-[1.45] text-on-surface-variant">
-                    {metadata?.contradictions_count ?? 0}
-                  </p>
-                </div>
-
-                {/* Novelty Score */}
-                <div
-                  className={cn(
-                    "rounded-lg border border-white/[0.05] bg-surface/50 p-3",
-                    !isComplete && !isRunning && "opacity-45",
-                  )}
-                >
-                  <p className="font-display text-xs font-semibold uppercase tracking-normal text-primary">
-                    Novelty Score
-                  </p>
-                  <p className="mt-1 text-sm leading-[1.45] text-on-surface-variant">
-                    {metadata?.novelty_score != null
-                      ? `${Math.round(metadata.novelty_score * 100)}%`
-                      : "—"}
-                  </p>
-                </div>
-
-                {/* Execution Time */}
-                <div
-                  className={cn(
-                    "rounded-lg border border-white/[0.05] bg-surface/50 p-3",
-                    !isComplete && !isRunning && "opacity-45",
-                  )}
-                >
-                  <p className="font-display text-xs font-semibold uppercase tracking-normal text-primary">
-                    Execution Time
-                  </p>
-                  <p className="mt-1 text-sm leading-[1.45] text-on-surface-variant">
-                    {metadata?.execution_time_ms != null
-                      ? `${(metadata.execution_time_ms / 1000).toFixed(1)}s`
-                      : "—"}
-                  </p>
-                </div>
-              </div>
-
-              {isComplete && (
-                <div className="mt-5 grid grid-cols-2 gap-3">
-                  {[
-                    {
-                      label: "Evidence",
-                      href: projectRoute(primaryProjectId, "evidence"),
-                      icon: FileText,
-                    },
-                    {
-                      label: "Graph",
-                      href: projectRoute(primaryProjectId, "graph"),
-                      icon: Network,
-                    },
-                    {
-                      label: "Experiments",
-                      href: projectRoute(primaryProjectId, "experiments"),
-                      icon: Lightbulb,
-                    },
-                    {
-                      label: "Report",
-                      href: projectRoute(primaryProjectId, "reports"),
-                      icon: GitBranch,
-                    },
-                  ].map((link) => {
-                    const Icon = link.icon;
-
-                    return (
-                      <Button
-                        key={link.label}
-                        asChild
-                        variant="secondary"
-                        size="sm"
-                        className="justify-center"
-                      >
-                        <Link href={link.href}>
-                          <Icon className="h-4 w-4" />
-                          {link.label}
-                        </Link>
-                      </Button>
-                    );
-                  })}
-                </div>
-              )}
-            </section>
+            <ResearchTimeline
+              entries={timelineEntries}
+              progress={progress}
+              isComplete={isComplete}
+              isFailed={isFailed}
+              isRunning={isRunning}
+            />
           </MotionDiv>
-        ) : null}
+        )}
 
         <div className="mt-6 flex flex-wrap justify-center gap-3">
           {quickActions.map((action) => {
