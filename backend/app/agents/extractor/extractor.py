@@ -4,7 +4,11 @@ import asyncio
 from typing import Protocol
 
 from app.agents.base import BaseResearchAgent
-from app.agents.extractor.prompts import EXTRACTOR_PROMPT_VERSION, EXTRACTOR_SYSTEM_PROMPT
+from app.agents.extractor.prompts import (
+    EXTRACTOR_PROMPT_VERSION,
+    EXTRACTOR_SYSTEM_PROMPT,
+    EXTRACTOR_TASK_PROMPT_TEMPLATE,
+)
 from app.agents.extractor.schemas import (
     EvidenceClaim,
     EvidenceCollection,
@@ -13,6 +17,7 @@ from app.agents.extractor.schemas import (
     PaperEvidence,
 )
 from app.agents.openai_adapter import OpenAIClient
+from app.agents.prompt_templates import render_task_prompt
 from app.agents.retriever.schemas import Paper, PaperCollection
 from app.config import Settings, get_settings
 from app.schemas.agent import AgentContext
@@ -37,16 +42,17 @@ class OpenAIResponsesEvidenceClient:
 
     async def extract(self, paper: Paper, research_goal: str, domain: str) -> PaperEvidence:
         """Extract structured evidence using GPT-5 structured outputs."""
-        user_content = (
-            f"Research goal: {research_goal}\n"
-            f"Domain: {domain}\n"
-            f"Paper title: {paper.title}\n"
-            f"Authors: {', '.join(paper.authors)}\n"
-            f"Year: {paper.year}\n"
-            f"DOI: {paper.doi}\n"
-            f"Source: {paper.source}\n"
-            f"Keywords: {', '.join(paper.keywords)}\n"
-            f"Abstract: {paper.abstract or 'No abstract available.'}"
+        user_content = render_task_prompt(
+            EXTRACTOR_TASK_PROMPT_TEMPLATE,
+            research_goal=research_goal,
+            domain=domain,
+            title=paper.title,
+            authors=", ".join(paper.authors),
+            year=str(paper.year),
+            doi=paper.doi or "not available",
+            source=paper.source,
+            keywords=", ".join(paper.keywords),
+            abstract=paper.abstract or "No abstract available.",
         )
         result = await self._client.parse(
             user_content=user_content,
