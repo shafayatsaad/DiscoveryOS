@@ -116,3 +116,33 @@ Users who prefer pip over poetry/pdm need a generated requirements.txt.
 Every agent's `run()` accepts `Workspace | AgentContext | SpecificRequest` union types, requiring normalization code in every agent. This makes the API surface confusing.
 
 **Action:** Simplify to accept only the specific request type.
+
+---
+
+## Placeholder Data Audit (Completed 2026-07-20)
+
+### Removed / Replaced
+
+| File                                                            | What was removed                                                                                                                                                 | Replacement                                                                          |
+| --------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------ |
+| `apps/web/src/features/dashboard/data/dashboard-content.ts`     | `insightStream`, `activeProcesses`, `magicPipelineSteps`, `magicMomentResults`, `NavItem`, `ResearchProject`, `Insight`, `ProcessJob`, `MagicPipelineStep` types | Removed dead code — these were never imported by any component                       |
+| `apps/web/src/features/landing/data/landing-content.ts`         | Misleading "mock content" comment                                                                                                                                | Updated to clarify these are static marketing copy                                   |
+| `apps/web/src/features/landing/components/footer.tsx`           | Inert `<button>` social elements                                                                                                                                 | Replaced with `<a>` links to real GitHub repo, docs, and email                       |
+| `apps/web/src/features/dashboard/components/command-center.tsx` | Hardcoded `magicMomentQuestion` as placeholder                                                                                                                   | Now uses `getProjectWorkspace().researchGoal` with fallback to `magicMomentQuestion` |
+
+### Kept (Intentional)
+
+| File                                                        | What                                                  | Reason                                                                |
+| ----------------------------------------------------------- | ----------------------------------------------------- | --------------------------------------------------------------------- |
+| `backend/app/orchestrator/tests.py`                         | `MockPlanner`, `MockRetriever`, etc.                  | Test fixtures — required for pytest                                   |
+| `apps/web/src/features/landing/data/landing-content.ts`     | `featureCards`, `intelligenceNodes`, `pipelineStages` | Static marketing/presentation content, not mock data                  |
+| `apps/web/src/features/projects/data/project-workspaces.ts` | `workspaceProjects`                                   | Static project profiles — no backend endpoint for projects exists yet |
+| `apps/web/src/features/dashboard/data/dashboard-content.ts` | `magicMomentQuestion`                                 | Fallback default when no project workspace is available               |
+
+### Cannot Remove Yet (Needs Backend Endpoint)
+
+| Data                   | File                         | What's needed                                                                                                           |
+| ---------------------- | ---------------------------- | ----------------------------------------------------------------------------------------------------------------------- |
+| Project workspace list | `project-workspaces.ts`      | A `GET /workspaces` or `GET /projects` API endpoint to serve real project data                                          |
+| Active process jobs    | (was `dashboard-content.ts`) | No backend endpoint for "active processes" exists — the `ProcessesPanel` already uses `usePipelineStream` for real data |
+| Insight stream         | (was `dashboard-content.ts`) | No backend endpoint for "insights" exists                                                                               |
