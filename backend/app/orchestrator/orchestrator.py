@@ -1,5 +1,6 @@
 """Purpose: Coordinate the complete DiscoveryOS pipeline across all agents."""
 
+import logging
 from datetime import UTC, datetime
 from typing import Any
 
@@ -37,6 +38,8 @@ from app.workspace.schemas import (
     WorkspacePatch,
 )
 from app.workspace.service import WorkspaceService
+
+logger = logging.getLogger(__name__)
 
 
 class DiscoveryOrchestrator:
@@ -148,9 +151,13 @@ class DiscoveryOrchestrator:
                     message=f"Completed stage: {STAGE_LABELS.get(stage_name, stage_name)}",
                 )
                 state.events.append(event.model_dump(mode="json"))
-                await self._update_workspace(stage_name, state)
+                try:
+                    await self._update_workspace(stage_name, state)
+                except Exception as ws_err:
+                    logger.warning("Workspace update failed for stage %s: %s", stage_name, ws_err)
                 await self._persist_state(state)
             except Exception as exc:
+                logger.error("Stage %s failed: %s", stage_name, exc, exc_info=True)
                 state.mark_stage_failed(stage_name, str(exc))
                 event = make_event(
                     "stage.failed",
@@ -181,8 +188,8 @@ class DiscoveryOrchestrator:
                             project_id=state.project_id,
                             report=state.report,
                         )
-                    except Exception:
-                        pass  # MCP failures should not break the pipeline
+                    except Exception as exc:
+                        logger.warning("MCP save_report failed for project %s: %s", state.project_id, exc)
 
         return state
 
@@ -220,13 +227,19 @@ class DiscoveryOrchestrator:
         if state.plan is None:
             raise RuntimeError("Cannot run retriever without a plan.")
         plan = ResearchPlan.model_validate(state.plan)
-        collection: PaperCollection = await self._retriever.run(plan)
-        state.papers = [paper.model_dump(mode="json") for paper in collection.papers]
+        try:
+            collection: PaperCollection = await self._retriever.run(plan)
+            state.papers = [paper.model_dump(mode="json") for paper in collection.papers]
+        except Exception as exc:
+            logger.error("Retriever stage failed: %s", exc, exc_info=True)
+            # Return empty papers rather than crashing the pipeline
+            state.papers = []
 
     async def _run_extractor(self, state: DiscoveryState) -> None:
         """Stage 3: Extract structured evidence from retrieved papers."""
         if not state.papers:
-            raise RuntimeError("Cannot run extractor without retrieved papers.")
+            logger.warning("No papers to extract evidence from. Skipping extractor stage.")
+            return
         from app.agents.extractor.schemas import EvidenceCollection
         from app.agents.retriever.schemas import Paper
 
@@ -241,6 +254,10 @@ class DiscoveryOrchestrator:
 
     async def _run_knowledge_graph(self, state: DiscoveryState) -> None:
         """Stage 4: Build a knowledge graph from extracted evidence."""
+        if not state.evidence:
+            logger.warning("No evidence to build knowledge graph from. Skipping.")
+            state.knowledge_graph = None
+            return
         workspace = self._build_workspace_from_state(state)
         graph: KnowledgeGraph = self._graph_builder.build(workspace)
         state.knowledge_graph = graph.model_dump(mode="json")
@@ -389,25 +406,34 @@ class DiscoveryOrchestrator:
             novelty_analysis=state.novelty_analysis,
             suggested_experiments=state.suggested_experiments,
         )
-        self._workspace_service.update_workspace(state.project_id, patch)
+        try:
+            self._workspace_service.update_workspace(state.project_id, patch)
+        except Exception as ws_err:
+            logger.warning("Workspace update failed for project %s: %s", state.project_id, ws_err)
 
         # Append timeline event
-        self._workspace_service.append_artifact(
-            project_id=state.project_id,
-            request=WorkspaceArtifactAppend(
-                artifact_kind="timeline_events",
-                artifact={
-                    "event_type": f"stage.{stage_name}.completed",
-                    "message": f"Stage completed: {STAGE_LABELS.get(stage_name, stage_name)}",
-                    "status": "completed",
-                },
-                event_message=f"Stage completed: {STAGE_LABELS.get(stage_name, stage_name)}",
-            ),
-        )
+        try:
+            self._workspace_service.append_artifact(
+                project_id=state.project_id,
+                request=WorkspaceArtifactAppend(
+                    artifact_kind="timeline_events",
+                    artifact={
+                        "event_type": f"stage.{stage_name}.completed",
+                        "message": f"Stage completed: {STAGE_LABELS.get(stage_name, stage_name)}",
+                        "status": "completed",
+                    },
+                    event_message=f"Stage completed: {STAGE_LABELS.get(stage_name, stage_name)}",
+                ),
+            )
+        except Exception as append_err:
+            logger.warning("Timeline event append failed for project %s: %s", state.project_id, append_err)
 
     async def _persist_state(self, state: DiscoveryState) -> None:
         """Persist the current state to the state backend for resumability."""
-        await self._state_backend.set(
-            f"pipeline:{state.run_id}",
-            state.model_dump_json(),
-        )
+        try:
+            await self._state_backend.set(
+                f"pipeline:{state.run_id}",
+                state.model_dump_json(),
+            )
+        except Exception as persist_err:
+            logger.error("State persistence failed for run %s: %s", state.run_id, persist_err)
