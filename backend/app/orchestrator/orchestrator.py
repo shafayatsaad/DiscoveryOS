@@ -5,13 +5,13 @@ from typing import Any
 
 from app.agents.base import BaseResearchAgent
 from app.agents.contradiction.detector import ContradictionAgent
-from app.agents.contradiction.schemas import ContradictionDetectionRequest
+from app.agents.contradiction.schemas import Contradiction, ContradictionAnalysis, ContradictionDetectionRequest
 from app.agents.experiment.planner import ExperimentAgent
-from app.agents.experiment.schemas import ExperimentPlanningRequest
+from app.agents.experiment.schemas import ExperimentPlan, ExperimentPlanningRequest, SuggestedExperiment
 from app.agents.extractor.extractor import ExtractorAgent
 from app.agents.extractor.schemas import EvidenceExtractionRequest
 from app.agents.novelty.analyzer import NoveltyAgent
-from app.agents.novelty.schemas import NoveltyAnalysisRequest
+from app.agents.novelty.schemas import NoveltyAnalysis, NoveltyAnalysisRequest
 from app.agents.planner.planner import PlannerAgent
 from app.agents.planner.schemas import ResearchPlan
 from app.agents.report.report import ReportAgent
@@ -266,18 +266,13 @@ class DiscoveryOrchestrator:
             if state.knowledge_graph
             else None
         )
-        from app.agents.contradiction.schemas import ContradictionAnalysis
+        from app.agents.contradiction.schemas import Contradiction
         contradictions = ContradictionAnalysis(
             contradictions=[
-                # Reconstruct from serialized dicts
-            ],
+                Contradiction.model_validate(c) for c in state.contradictions
+            ] if state.contradictions else [],
             analyzed_evidence_count=len(state.evidence),
         )
-        if state.contradictions:
-            from app.agents.contradiction.schemas import Contradiction
-            contradictions.contradictions = [
-                Contradiction.model_validate(c) for c in state.contradictions
-            ]
         request = NoveltyAnalysisRequest(
             workspace=workspace,
             knowledge_graph=graph,
@@ -296,18 +291,14 @@ class DiscoveryOrchestrator:
             else None
         )
         novelty = (
-            None
-            if state.novelty_analysis is None
-            else None  # Will be passed as dict via workspace
+            NoveltyAnalysis.model_validate(state.novelty_analysis)
+            if state.novelty_analysis
+            else None
         )
         request = ExperimentPlanningRequest(
             workspace=workspace,
             knowledge_graph=graph,
-            novelty_analysis=(
-                None
-                if state.novelty_analysis is None
-                else None
-            ),
+            novelty_analysis=novelty,
         )
         from app.agents.experiment.schemas import ExperimentPlan
         plan: ExperimentPlan = await self._experiment.run(request)
@@ -323,9 +314,39 @@ class DiscoveryOrchestrator:
             if state.knowledge_graph
             else None
         )
+        # Reconstruct schema instances from serialized state dicts
+        contradictions = (
+            ContradictionAnalysis(
+                contradictions=[
+                    Contradiction.model_validate(c) for c in state.contradictions
+                ],
+                analyzed_evidence_count=len(state.evidence),
+            )
+            if state.contradictions
+            else None
+        )
+        novelty_analysis = (
+            NoveltyAnalysis.model_validate(state.novelty_analysis)
+            if state.novelty_analysis
+            else None
+        )
+        experiment_plan = (
+            ExperimentPlan(
+                suggested_experiments=[
+                    SuggestedExperiment.model_validate(e)
+                    for e in state.suggested_experiments
+                ],
+                planning_notes=[],
+            )
+            if state.suggested_experiments
+            else None
+        )
         request = ScientificReportRequest(
             workspace=workspace,
             knowledge_graph=graph,
+            contradictions=contradictions,
+            novelty_analysis=novelty_analysis,
+            experiment_plan=experiment_plan,
         )
         from app.agents.report.schemas import ScientificReport
         report: ScientificReport = await self._report.run(request)
