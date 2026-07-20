@@ -14,18 +14,23 @@ export function EvidenceSidebar({ projectId }: { projectId: string }) {
     <>
       <details className="sticky top-0 z-50 border-b border-white/10 bg-surface/90 backdrop-blur-xl md:hidden [&>summary::-webkit-details-marker]:hidden">
         <summary className="flex h-16 cursor-pointer list-none items-center justify-between px-5">
-          <span className="font-display text-xl font-extrabold text-on-surface">DiscoveryOS</span>
+          <span className="font-display text-xl font-extrabold text-on-surface">
+            DiscoveryOS
+          </span>
           <span className="inline-flex items-center gap-3 text-on-surface-variant">
             <Search className="h-4 w-4 text-primary" />
             <Menu className="h-4 w-4" />
           </span>
         </summary>
-        <nav className="space-y-1 border-t border-white/[0.05] px-3 py-3" aria-label="Evidence mobile">
+        <nav
+          className="space-y-1 border-t border-white/[0.05] px-3 py-3"
+          aria-label="Evidence mobile"
+        >
           {evidenceNavItems.map((item) => {
             const Icon = item.icon;
 
             return (
-              <a
+              <Link
                 key={item.label}
                 href={item.href ?? "#"}
                 className={cn(
@@ -37,7 +42,7 @@ export function EvidenceSidebar({ projectId }: { projectId: string }) {
               >
                 <Icon className="h-5 w-5" />
                 {item.label}
-              </a>
+              </Link>
             );
           })}
         </nav>
@@ -51,7 +56,9 @@ export function EvidenceSidebar({ projectId }: { projectId: string }) {
               <span className="block font-display text-2xl font-extrabold text-on-surface">
                 DiscoveryOS
               </span>
-              <span className="mt-1 block text-sm text-on-surface-variant">Autonomous Research</span>
+              <span className="mt-1 block text-sm text-on-surface-variant">
+                Autonomous Research
+              </span>
             </span>
           </Link>
           <Button className="mt-8 w-full shadow-[0_0_15px_rgba(77,142,255,0.2)]">
@@ -60,7 +67,10 @@ export function EvidenceSidebar({ projectId }: { projectId: string }) {
           </Button>
         </div>
 
-        <nav className="mt-10 flex-1 space-y-1 overflow-y-auto px-4" aria-label="Evidence">
+        <nav
+          className="mt-10 flex-1 space-y-1 overflow-y-auto px-4"
+          aria-label="Evidence"
+        >
           {evidenceNavItems.map((item) => {
             const Icon = item.icon;
 
