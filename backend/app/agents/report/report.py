@@ -1,44 +1,82 @@
-"""Purpose: Generate complete scientific reports from workspace artifacts."""
+"""Purpose: Generate scientific reports using GPT-5 structured outputs via shared OpenAIClient."""
 
 import html
 
 from app.agents.base import BaseResearchAgent
+from app.agents.openai_adapter import OpenAIClient
+from app.agents.report.prompts import REPORT_PROMPT_VERSION, REPORT_SYSTEM_PROMPT
+from app.agents.report.schemas import ScientificReport, ScientificReportRequest
 from app.agents.contradiction.schemas import ContradictionAnalysis
 from app.agents.experiment.schemas import ExperimentPlan
 from app.agents.novelty.schemas import NoveltyAnalysis
-from app.agents.report.schemas import ScientificReport, ScientificReportRequest
+from app.config import Settings, get_settings
 from app.graph.schemas import KnowledgeGraph
 from app.schemas.agent import AgentContext
 from app.workspace.schemas import Workspace
 
 
+class OpenAIReportClient:
+    """GPT-5 powered report generation using the shared OpenAIClient."""
+
+    def __init__(self, settings: Settings) -> None:
+        self._client = OpenAIClient(
+            settings=settings,
+            system_prompt=REPORT_SYSTEM_PROMPT,
+            prompt_version=REPORT_PROMPT_VERSION,
+        )
+
+    async def generate(self, request: ScientificReportRequest) -> ScientificReport:
+        """Generate a report using GPT-5 structured outputs."""
+        user_content = request.model_dump_json()
+        result = await self._client.parse(
+            user_content=user_content,
+            response_format=ScientificReport,
+        )
+        return result
+
+
 class ReportAgent(BaseResearchAgent):
-    """Agent that creates Markdown and HTML report artifacts from structured data."""
+    """Agent that creates Markdown and HTML report artifacts from structured data.
+
+    Uses GPT-5 via the shared OpenAIClient when OPENAI_API_KEY is set.
+    Falls back to deterministic template-based report generation when no API key is available.
+    """
 
     name = "report"
     description = "Report Agent generates auditable Markdown and HTML research reports."
+
+    def __init__(self, settings: Settings | None = None) -> None:
+        self._settings = settings or get_settings()
+        self._openai_client: OpenAIReportClient | None = None
+        if self._settings.openai_api_key:
+            self._openai_client = OpenAIReportClient(self._settings)
 
     async def run(
         self,
         request: ScientificReportRequest | Workspace | AgentContext,
     ) -> ScientificReport:
-        """Generate a complete deterministic report without unsupported conclusions."""
-
+        """Generate a report, using GPT-5 when available."""
         report_request = self._normalize_request(request)
-        markdown = self._markdown(report_request)
+
+        if self._openai_client is not None:
+            return await self._openai_client.generate(report_request)
+
+        return self._deterministic_report(report_request)
+
+    def _deterministic_report(self, request: ScientificReportRequest) -> ScientificReport:
+        """Fallback deterministic report generation when no OpenAI API key is configured."""
+        markdown = self._markdown(request)
         return ScientificReport(
-            title=self._title(report_request.workspace),
+            title=self._title(request.workspace),
             markdown=markdown,
             html=self._html(markdown),
-            references=self._references(report_request.workspace),
+            references=self._references(request.workspace),
         )
 
     def _normalize_request(
-        self,
-        request: ScientificReportRequest | Workspace | AgentContext,
+        self, request: ScientificReportRequest | Workspace | AgentContext,
     ) -> ScientificReportRequest:
         """Normalize workspace or generic context into a report request."""
-
         if isinstance(request, ScientificReportRequest):
             return request
         if isinstance(request, Workspace):
@@ -49,9 +87,7 @@ class ReportAgent(BaseResearchAgent):
                     if request.knowledge_graph
                     else None
                 ),
-                contradictions=(
-                    ContradictionAnalysis(contradictions=[], analyzed_evidence_count=0)
-                ),
+                contradictions=ContradictionAnalysis(contradictions=[], analyzed_evidence_count=0),
                 novelty_analysis=(
                     NoveltyAnalysis.model_validate(request.novelty_analysis)
                     if request.novelty_analysis
@@ -59,8 +95,7 @@ class ReportAgent(BaseResearchAgent):
                 ),
                 experiment_plan=(
                     ExperimentPlan(
-                        suggested_experiments=request.suggested_experiments,
-                        planning_notes=[],
+                        suggested_experiments=request.suggested_experiments, planning_notes=[],
                     )
                     if request.suggested_experiments
                     else None
@@ -75,7 +110,6 @@ class ReportAgent(BaseResearchAgent):
 
     def _markdown(self, request: ScientificReportRequest) -> str:
         """Compose the required report sections as Markdown."""
-
         workspace = request.workspace
         lines = [
             f"# {self._title(workspace)}",
@@ -108,7 +142,6 @@ class ReportAgent(BaseResearchAgent):
 
     def _html(self, markdown: str) -> str:
         """Render minimal semantic HTML while preserving future PDF export compatibility."""
-
         html_lines: list[str] = ["<article>"]
         for line in markdown.splitlines():
             escaped = html.escape(line)
@@ -125,12 +158,10 @@ class ReportAgent(BaseResearchAgent):
 
     def _title(self, workspace: Workspace) -> str:
         """Create a stable report title from workspace state."""
-
         return f"DiscoveryOS Report: {workspace.research_goal or workspace.project_id}"
 
     def _jsonish_section(self, value: dict | None) -> str:
         """Summarize structured plan dictionaries without losing their shape."""
-
         if not value:
             return "No research plan recorded."
         objectives = value.get("objectives", [])
@@ -142,7 +173,6 @@ class ReportAgent(BaseResearchAgent):
 
     def _evidence_summary(self, workspace: Workspace) -> str:
         """Summarize extracted evidence records."""
-
         if not workspace.extracted_evidence:
             return "No extracted evidence recorded."
         lines = []
@@ -155,7 +185,6 @@ class ReportAgent(BaseResearchAgent):
 
     def _graph_summary(self, graph: KnowledgeGraph | None) -> str:
         """Summarize graph metrics."""
-
         if graph is None:
             return "No knowledge graph recorded."
         return (
@@ -165,20 +194,15 @@ class ReportAgent(BaseResearchAgent):
         )
 
     def _contradictions_summary(
-        self,
-        contradictions: ContradictionAnalysis | None,
-        workspace: Workspace,
+        self, contradictions: ContradictionAnalysis | None, workspace: Workspace,
     ) -> str:
         """Summarize contradictions stored or passed to the report request."""
-
         records = contradictions.contradictions if contradictions else []
         if not records and workspace.contradictions:
-            records = ContradictionAnalysis.model_validate(
-                {
-                    "contradictions": workspace.contradictions,
-                    "analyzed_evidence_count": len(workspace.extracted_evidence),
-                }
-            ).contradictions
+            records = ContradictionAnalysis.model_validate({
+                "contradictions": workspace.contradictions,
+                "analyzed_evidence_count": len(workspace.extracted_evidence),
+            }).contradictions
         if not records:
             return "No contradictions detected in the current retrieved corpus."
         return "\n".join(
@@ -188,7 +212,6 @@ class ReportAgent(BaseResearchAgent):
 
     def _novelty_summary(self, novelty: NoveltyAnalysis | None) -> str:
         """Summarize novelty estimate."""
-
         if novelty is None:
             return "No novelty analysis recorded."
         return (
@@ -199,7 +222,6 @@ class ReportAgent(BaseResearchAgent):
 
     def _experiment_summary(self, plan: ExperimentPlan | None) -> str:
         """Summarize suggested experiments."""
-
         if plan is None or not plan.suggested_experiments:
             return "No suggested experiments recorded."
         return "\n".join(
@@ -209,7 +231,6 @@ class ReportAgent(BaseResearchAgent):
 
     def _references_summary(self, workspace: Workspace) -> str:
         """Render references from retrieved papers."""
-
         references = self._references(workspace)
         if not references:
             return "No references recorded."
@@ -217,7 +238,6 @@ class ReportAgent(BaseResearchAgent):
 
     def _references(self, workspace: Workspace) -> list[str]:
         """Collect paper references from workspace metadata."""
-
         references: list[str] = []
         for paper in workspace.retrieved_papers:
             title = paper.get("title", "Untitled paper")

@@ -1,15 +1,16 @@
-"""Purpose: Suggest structured validation experiments from workspace artifacts."""
+"""Purpose: Suggest structured validation experiments using GPT-5 structured outputs."""
 
 from typing import Protocol
 
 from app.agents.base import BaseResearchAgent
-from app.agents.experiment.prompts import EXPERIMENT_SYSTEM_PROMPT
+from app.agents.experiment.prompts import EXPERIMENT_PROMPT_VERSION, EXPERIMENT_SYSTEM_PROMPT
 from app.agents.experiment.schemas import (
     ExperimentPlan,
     ExperimentPlanningRequest,
     SuggestedExperiment,
 )
 from app.agents.novelty.schemas import NoveltyAnalysis
+from app.agents.openai_adapter import OpenAIClient
 from app.config import Settings, get_settings
 from app.graph.schemas import KnowledgeGraph
 from app.schemas.agent import AgentContext
@@ -24,29 +25,23 @@ class ExperimentPlanningClient(Protocol):
 
 
 class OpenAIExperimentPlanningClient:
-    """OpenAI Responses API implementation for experiment planning."""
+    """GPT-5 powered experiment planning using the shared OpenAIClient."""
 
-    def __init__(self, api_key: str, model: str) -> None:
-        self._api_key = api_key
-        self._model = model
+    def __init__(self, settings: Settings) -> None:
+        self._client = OpenAIClient(
+            settings=settings,
+            system_prompt=EXPERIMENT_SYSTEM_PROMPT,
+            prompt_version=EXPERIMENT_PROMPT_VERSION,
+        )
 
     async def plan(self, request: ExperimentPlanningRequest) -> ExperimentPlan:
-        """Call OpenAI with strict structured output validation."""
-
-        from openai import AsyncOpenAI
-
-        client = AsyncOpenAI(api_key=self._api_key)
-        response = await client.responses.parse(
-            model=self._model,
-            input=[
-                {"role": "system", "content": EXPERIMENT_SYSTEM_PROMPT},
-                {"role": "user", "content": request.model_dump_json()},
-            ],
-            text_format=ExperimentPlan,
+        """Plan experiments using GPT-5 structured outputs."""
+        user_content = request.model_dump_json()
+        result = await self._client.parse(
+            user_content=user_content,
+            response_format=ExperimentPlan,
         )
-        if response.output_parsed is None:
-            raise ValueError("OpenAI response did not include parsed ExperimentPlan.")
-        return response.output_parsed
+        return result
 
 
 class DeterministicExperimentPlanningClient:
@@ -54,7 +49,6 @@ class DeterministicExperimentPlanningClient:
 
     async def plan(self, request: ExperimentPlanningRequest) -> ExperimentPlan:
         """Create experiment suggestions from entities and evidence links."""
-
         entities = self._entities(request.workspace)
         goal = request.workspace.research_goal or "current research goal"
         references = [
@@ -95,7 +89,6 @@ class DeterministicExperimentPlanningClient:
 
     def _entities(self, workspace: Workspace) -> list[str]:
         """Collect candidate variables from extracted evidence entities."""
-
         entities: list[str] = []
         for evidence in workspace.extracted_evidence:
             for entity in evidence.get("key_entities", []):
@@ -105,7 +98,11 @@ class DeterministicExperimentPlanningClient:
 
 
 class ExperimentAgent(BaseResearchAgent):
-    """Agent that converts workspace artifacts into validation experiment suggestions."""
+    """Agent that converts workspace artifacts into validation experiment suggestions.
+
+    Uses GPT-5 via the shared OpenAIClient when OPENAI_API_KEY is set.
+    Falls back to deterministic entity-based planning when no API key is available.
+    """
 
     name = "experiment"
     description = "Experiment Agent proposes validation plans, datasets, metrics, and risks."
@@ -123,22 +120,18 @@ class ExperimentAgent(BaseResearchAgent):
         request: ExperimentPlanningRequest | Workspace | AgentContext,
     ) -> ExperimentPlan:
         """Run structured experiment planning."""
-
         return await self._client.plan(self._normalize_request(request))
 
     def _default_client(self, settings: Settings) -> ExperimentPlanningClient:
         """Use OpenAI when configured, otherwise deterministic local planning."""
-
         if settings.openai_api_key:
-            return OpenAIExperimentPlanningClient(settings.openai_api_key, settings.openai_model)
+            return OpenAIExperimentPlanningClient(settings)
         return DeterministicExperimentPlanningClient()
 
     def _normalize_request(
-        self,
-        request: ExperimentPlanningRequest | Workspace | AgentContext,
+        self, request: ExperimentPlanningRequest | Workspace | AgentContext,
     ) -> ExperimentPlanningRequest:
         """Normalize generic invocations into the experiment request schema."""
-
         if isinstance(request, ExperimentPlanningRequest):
             return request
         if isinstance(request, Workspace):
@@ -153,9 +146,7 @@ class ExperimentAgent(BaseResearchAgent):
                 else None
             )
             return ExperimentPlanningRequest(
-                workspace=request,
-                knowledge_graph=graph,
-                novelty_analysis=novelty,
+                workspace=request, knowledge_graph=graph, novelty_analysis=novelty,
             )
         candidate = request.inputs.get("workspace")
         if isinstance(candidate, Workspace):

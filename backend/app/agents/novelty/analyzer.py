@@ -1,14 +1,15 @@
-"""Purpose: Estimate literature coverage and research gaps for a workspace."""
+"""Purpose: Estimate literature coverage and research gaps using GPT-5 structured outputs."""
 
 from typing import Protocol
 
 from app.agents.base import BaseResearchAgent
-from app.agents.novelty.prompts import NOVELTY_SYSTEM_PROMPT
+from app.agents.novelty.prompts import NOVELTY_PROMPT_VERSION, NOVELTY_SYSTEM_PROMPT
 from app.agents.novelty.schemas import (
     NoveltyAnalysis,
     NoveltyAnalysisRequest,
     RelatedWork,
 )
+from app.agents.openai_adapter import OpenAIClient
 from app.config import Settings, get_settings
 from app.graph.schemas import KnowledgeGraph
 from app.schemas.agent import AgentContext
@@ -23,29 +24,23 @@ class NoveltyClient(Protocol):
 
 
 class OpenAINoveltyClient:
-    """OpenAI Responses API implementation for novelty analysis."""
+    """GPT-5 powered novelty analysis using the shared OpenAIClient."""
 
-    def __init__(self, api_key: str, model: str) -> None:
-        self._api_key = api_key
-        self._model = model
+    def __init__(self, settings: Settings) -> None:
+        self._client = OpenAIClient(
+            settings=settings,
+            system_prompt=NOVELTY_SYSTEM_PROMPT,
+            prompt_version=NOVELTY_PROMPT_VERSION,
+        )
 
     async def analyze(self, request: NoveltyAnalysisRequest) -> NoveltyAnalysis:
-        """Call OpenAI with strict structured output validation."""
-
-        from openai import AsyncOpenAI
-
-        client = AsyncOpenAI(api_key=self._api_key)
-        response = await client.responses.parse(
-            model=self._model,
-            input=[
-                {"role": "system", "content": NOVELTY_SYSTEM_PROMPT},
-                {"role": "user", "content": request.model_dump_json()},
-            ],
-            text_format=NoveltyAnalysis,
+        """Analyze novelty using GPT-5 structured outputs."""
+        user_content = request.model_dump_json()
+        result = await self._client.parse(
+            user_content=user_content,
+            response_format=NoveltyAnalysis,
         )
-        if response.output_parsed is None:
-            raise ValueError("OpenAI response did not include parsed NoveltyAnalysis.")
-        return response.output_parsed
+        return result
 
 
 class DeterministicNoveltyClient:
@@ -53,13 +48,11 @@ class DeterministicNoveltyClient:
 
     async def analyze(self, request: NoveltyAnalysisRequest) -> NoveltyAnalysis:
         """Estimate novelty from available artifact counts without external claims."""
-
         paper_count = len(request.workspace.retrieved_papers)
         evidence_count = len(request.workspace.extracted_evidence)
         contradiction_count = (
             len(request.contradictions.contradictions) if request.contradictions else 0
         )
-
         score = self._score(paper_count=paper_count, evidence_count=evidence_count)
         return NoveltyAnalysis(
             novelty_score=score,
@@ -88,7 +81,6 @@ class DeterministicNoveltyClient:
 
     def _score(self, paper_count: int, evidence_count: int) -> float:
         """Map corpus density to an estimated gap score."""
-
         density = paper_count + evidence_count
         if density >= 20:
             return 0.2
@@ -100,7 +92,6 @@ class DeterministicNoveltyClient:
 
     def _category(self, score: float) -> str:
         """Map novelty score to a careful qualitative category."""
-
         if score < 0.3:
             return "Well Studied"
         if score < 0.6:
@@ -111,7 +102,11 @@ class DeterministicNoveltyClient:
 
 
 class NoveltyAgent(BaseResearchAgent):
-    """Agent that estimates novelty from retrieved literature coverage."""
+    """Agent that estimates novelty from retrieved literature coverage.
+
+    Uses GPT-5 via the shared OpenAIClient when OPENAI_API_KEY is set.
+    Falls back to deterministic density-based estimation when no API key is available.
+    """
 
     name = "novelty"
     description = "Novelty Agent estimates research-gap signals from retrieved evidence."
@@ -129,22 +124,18 @@ class NoveltyAgent(BaseResearchAgent):
         request: NoveltyAnalysisRequest | Workspace | AgentContext,
     ) -> NoveltyAnalysis:
         """Run novelty analysis without claiming true scientific novelty."""
-
         return await self._client.analyze(self._normalize_request(request))
 
     def _default_client(self, settings: Settings) -> NoveltyClient:
         """Use OpenAI when configured, otherwise deterministic local analysis."""
-
         if settings.openai_api_key:
-            return OpenAINoveltyClient(settings.openai_api_key, settings.openai_model)
+            return OpenAINoveltyClient(settings)
         return DeterministicNoveltyClient()
 
     def _normalize_request(
-        self,
-        request: NoveltyAnalysisRequest | Workspace | AgentContext,
+        self, request: NoveltyAnalysisRequest | Workspace | AgentContext,
     ) -> NoveltyAnalysisRequest:
         """Normalize generic invocations into the novelty request schema."""
-
         if isinstance(request, NoveltyAnalysisRequest):
             return request
         if isinstance(request, Workspace):
