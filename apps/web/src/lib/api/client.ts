@@ -1,4 +1,6 @@
-// Purpose: Provide typed API client for the DiscoveryOS backend.
+// Purpose: Provide typed API client for the DiscoveryOS backend with retry support.
+// Retries are applied to transient failures (network blips, 503s) to keep the pipeline
+// responsive without crashing the application.
 
 const API_BASE =
   process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api/v1";
@@ -28,20 +30,74 @@ export type PipelineEvent = {
   };
 };
 
+// ---------------------------------------------------------------------------
+// Retry helper
+// ---------------------------------------------------------------------------
+
+async function fetchWithRetry(
+  url: string,
+  options: RequestInit,
+  maxRetries = 3,
+  baseDelayMs = 500,
+): Promise<Response> {
+  let lastError: Error | null = null;
+
+  for (let attempt = 0; attempt < maxRetries; attempt++) {
+    try {
+      const response = await fetch(url, options);
+      // Don't retry client errors (4xx) — they're the caller's fault
+      if (!response.ok && response.status < 500) {
+        return response;
+      }
+      // Retry server errors (5xx) and successful responses are returned as-is
+      if (response.ok) {
+        return response;
+      }
+      // 5xx — retry after backoff
+      lastError = new Error(`HTTP ${response.status}: ${response.statusText}`);
+    } catch (err) {
+      lastError = err instanceof Error ? err : new Error(String(err));
+    }
+
+    if (attempt < maxRetries - 1) {
+      const delay = baseDelayMs * Math.pow(2, attempt);
+      console.warn(
+        `[API] Request to ${url} failed (attempt ${attempt + 1}/${maxRetries}). Retrying in ${delay}ms...`,
+        lastError,
+      );
+      await new Promise((resolve) => setTimeout(resolve, delay));
+    }
+  }
+
+  throw (
+    lastError ??
+    new Error(`Request to ${url} failed after ${maxRetries} retries.`)
+  );
+}
+
+// ---------------------------------------------------------------------------
+// Public API
+// ---------------------------------------------------------------------------
+
 export async function startPipeline(
   projectId: string,
   query: string,
   domain?: string,
 ): Promise<PipelineStartResponse> {
-  const response = await fetch(`${API_BASE}/projects/${projectId}/run`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ query, domain }),
-  });
+  const response = await fetchWithRetry(
+    `${API_BASE}/projects/${projectId}/run`,
+    {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ query, domain }),
+    },
+    3,
+    500,
+  );
 
   if (!response.ok) {
-    const error = await response.text();
-    throw new Error(`Pipeline start failed: ${response.status} ${error}`);
+    const errorText = await response.text().catch(() => "Unknown error");
+    throw new Error(`Pipeline start failed (${response.status}): ${errorText}`);
   }
 
   return response.json();
@@ -60,12 +116,14 @@ export function subscribeToPipeline(
     try {
       const data = JSON.parse(event.data) as PipelineEvent;
       onEvent(data);
-    } catch {
-      // Ignore malformed events (e.g. keepalive comments)
+    } catch (parseErr) {
+      // Malformed events (e.g. keepalive comments) are expected — log at debug level
+      console.warn("[API] Malformed SSE event received:", event.data, parseErr);
     }
   };
 
   eventSource.onerror = (event: Event) => {
+    console.warn("[API] SSE connection error for project:", projectId, event);
     onError?.(event);
     // EventSource auto-reconnects by default
   };
@@ -74,6 +132,7 @@ export function subscribeToPipeline(
   const checkClosed = setInterval(() => {
     if (eventSource.readyState === EventSource.CLOSED) {
       clearInterval(checkClosed);
+      console.info("[API] SSE connection closed for project:", projectId);
       onClose?.();
     }
   }, 1000);
