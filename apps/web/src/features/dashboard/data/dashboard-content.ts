@@ -1,4 +1,4 @@
-// Purpose: Store mocked dashboard data separately from presentation components.
+// Purpose: Store dashboard navigation, project summaries, and presentation defaults.
 
 import type { LucideIcon } from "lucide-react";
 import {
@@ -13,9 +13,14 @@ import {
   Network,
   Settings,
   SquareTerminal,
+  TerminalSquare,
 } from "lucide-react";
 
-import { primaryProjectId, projectRoute, workspaceProjects } from "@/features/projects/data/project-workspaces";
+import {
+  primaryProjectId,
+  projectRoute,
+  workspaceProjects,
+} from "@/features/projects/data/project-workspaces";
 
 export type NavItem = {
   label: string;
@@ -67,20 +72,29 @@ export const navItems: NavItem[] = [
   { label: "Reports", icon: FileText, href: projectRoute(primaryProjectId, "reports") },
 ];
 
+const isDeveloperMode =
+  process.env.NODE_ENV !== "production" ||
+  process.env.NEXT_PUBLIC_DEVELOPER_MODE === "true";
+
 export const utilityNavItems: NavItem[] = [
   { label: "Settings", icon: Settings, href: projectRoute(primaryProjectId, "settings") },
+  ...(isDeveloperMode
+    ? [{ label: "Execution Logs", icon: TerminalSquare, href: "/dev/execution-logs" }]
+    : []),
 ];
 
-export const researchProjects: ResearchProject[] = workspaceProjects.map((project) => ({
-  id: project.id,
-  title: project.title,
-  domain: project.domain,
-  description: project.summary,
-  phase: project.phase,
-  href: projectRoute(project.id),
-  progress: project.progress,
-  status: project.status === "Completed" ? "completed" : undefined,
-}));
+export const researchProjects: ResearchProject[] = workspaceProjects
+  .filter((project) => !project.demo)
+  .map((project) => ({
+    id: project.id,
+    title: project.title,
+    domain: project.domain,
+    description: project.summary,
+    phase: project.phase,
+    href: projectRoute(project.id),
+    progress: project.progress,
+    status: project.status === "Completed" ? "completed" : undefined,
+  }));
 
 export const insightStream: Insight[] = [
   {
@@ -138,7 +152,8 @@ export const quickActions = [
   { label: "Export Report", icon: FileText, href: projectRoute(primaryProjectId, "reports") },
 ];
 
-export const magicMomentQuestion = "Can microplastics contribute to Alzheimer's disease?";
+export const magicMomentQuestion =
+  "Can microplastics contribute to Alzheimer's disease?";
 
 export const magicPipelineSteps: MagicPipelineStep[] = [
   { label: "Planning", detail: "Research goal decomposed into evidence requirements" },

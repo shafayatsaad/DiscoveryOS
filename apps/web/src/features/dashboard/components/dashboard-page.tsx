@@ -6,6 +6,7 @@ import { DashboardSidebar } from "@/features/dashboard/components/dashboard-side
 import { InsightsStream } from "@/features/dashboard/components/insights-stream";
 import { ProcessesPanel } from "@/features/dashboard/components/processes-panel";
 import { ProjectsPanel } from "@/features/dashboard/components/projects-panel";
+import { DemoModePanel } from "@/features/demo/components/demo-mode-panel";
 
 export function DashboardPage() {
   return (
@@ -15,6 +16,9 @@ export function DashboardPage() {
         <div className="mx-auto flex w-full max-w-container-max flex-col gap-8 px-5 py-6 sm:px-8 md:px-10 md:py-10">
           <Reveal>
             <CommandCenter />
+          </Reveal>
+          <Reveal delay={0.04}>
+            <DemoModePanel />
           </Reveal>
           <div className="grid grid-cols-1 gap-6 lg:grid-cols-12">
             <div className="flex flex-col gap-6 lg:col-span-8">

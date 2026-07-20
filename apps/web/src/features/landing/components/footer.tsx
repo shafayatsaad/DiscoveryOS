@@ -37,17 +37,30 @@ export function Footer() {
           {/* Social */}
           <div className="flex items-center gap-3">
             {[
-              { icon: Github, label: "GitHub" },
-              { icon: BookOpen, label: "Docs" },
-              { icon: Mail, label: "Email" },
-            ].map(({ icon: Icon, label }) => (
-              <button
+              {
+                icon: Github,
+                label: "GitHub",
+                href: "https://github.com/shafayatsaad/DiscoveryOS",
+              },
+              { icon: BookOpen, label: "Docs", href: "/docs" },
+              {
+                icon: Mail,
+                label: "Email",
+                href: "mailto:hello@discoveryos.org",
+              },
+            ].map(({ icon: Icon, label, href }) => (
+              <a
                 key={label}
                 aria-label={label}
+                href={href}
+                target={href.startsWith("http") ? "_blank" : undefined}
+                rel={
+                  href.startsWith("http") ? "noopener noreferrer" : undefined
+                }
                 className="flex h-9 w-9 items-center justify-center rounded-lg border border-white/[0.06] bg-surface-container-low text-on-surface-variant transition-colors hover:border-primary/30 hover:text-primary"
               >
                 <Icon className="h-4 w-4" />
-              </button>
+              </a>
             ))}
           </div>
         </div>

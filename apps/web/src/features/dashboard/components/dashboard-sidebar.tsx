@@ -1,3 +1,5 @@
+"use client";
+
 // Purpose: Render the dashboard's persistent research navigation shell.
 
 import { Menu, Plus } from "lucide-react";
@@ -5,6 +7,7 @@ import Link from "next/link";
 
 import { Button } from "@/components/ui/button";
 import { navItems, utilityNavItems } from "@/features/dashboard/data/dashboard-content";
+import { MotionDiv } from "@/features/landing/components/motion-primitives";
 import { cn } from "@/lib/utils";
 
 export function DashboardSidebar() {
@@ -40,7 +43,12 @@ export function DashboardSidebar() {
         </nav>
       </details>
 
-      <aside className="glass-panel sticky top-0 hidden h-screen w-72 shrink-0 flex-col rounded-none border-y-0 border-l-0 py-6 md:flex">
+      <MotionDiv
+        animate={{ opacity: 1, x: 0 }}
+        className="glass-panel sticky top-0 hidden h-screen w-72 shrink-0 flex-col rounded-none border-y-0 border-l-0 py-6 md:flex"
+        initial={{ opacity: 0, x: -12 }}
+        transition={{ duration: 0.32, ease: "easeOut" }}
+      >
         <div className="border-b border-white/[0.05] px-6 pb-6">
           <Link href="/" className="font-display text-2xl font-extrabold text-on-surface">
             DiscoveryOS
@@ -51,12 +59,17 @@ export function DashboardSidebar() {
         </div>
 
         <nav className="flex-1 space-y-1 overflow-y-auto px-3 py-4" aria-label="Dashboard">
-          {navItems.map((item) => {
+          {navItems.map((item, index) => {
             const Icon = item.icon;
 
             return (
-              <a
+              <MotionDiv
+                animate={{ opacity: 1, x: 0 }}
                 key={item.label}
+                initial={{ opacity: 0, x: -8 }}
+                transition={{ delay: index * 0.025, duration: 0.22 }}
+              >
+                <a
                 href={item.href ?? "#"}
                 className={cn(
                   "flex items-center gap-3 rounded-lg px-3 py-2.5 font-display text-sm font-semibold transition-all duration-200 active:scale-[0.98]",
@@ -68,6 +81,7 @@ export function DashboardSidebar() {
                 <Icon className="h-5 w-5" />
                 <span>{item.label}</span>
               </a>
+              </MotionDiv>
             );
           })}
         </nav>
@@ -94,7 +108,7 @@ export function DashboardSidebar() {
             );
           })}
         </div>
-      </aside>
+      </MotionDiv>
     </>
   );
 }

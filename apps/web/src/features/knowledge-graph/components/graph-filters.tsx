@@ -18,7 +18,21 @@ const dotClasses = {
   error: "bg-error",
 };
 
-export function GraphFilters({ filters }: { filters: NodeTypeFilter[] }) {
+export function GraphFilters({
+  activeFilters,
+  filters,
+  minStrength,
+  onReset,
+  onStrengthChange,
+  onToggle,
+}: {
+  activeFilters: string[];
+  filters: NodeTypeFilter[];
+  minStrength: number;
+  onReset: () => void;
+  onStrengthChange: (value: number) => void;
+  onToggle: (label: string) => void;
+}) {
   return (
     <MotionDiv
       className="glass-panel pointer-events-auto flex flex-col gap-6 rounded-xl p-5 lg:absolute lg:bottom-10 lg:left-10 lg:top-24 lg:w-72"
@@ -36,14 +50,22 @@ export function GraphFilters({ filters }: { filters: NodeTypeFilter[] }) {
               key={filter.label}
               className="group flex cursor-pointer items-center gap-3 text-sm text-on-surface-variant"
             >
-              <input className="sr-only" type="checkbox" defaultChecked />
+              <input
+                checked={activeFilters.includes(filter.label)}
+                className="sr-only"
+                onChange={() => onToggle(filter.label)}
+                type="checkbox"
+              />
               <span
                 className={cn(
                   "flex h-4 w-4 items-center justify-center rounded-full border transition-colors",
                   toneClasses[filter.tone],
+                  !activeFilters.includes(filter.label) && "bg-transparent opacity-45",
                 )}
               >
-                <span className={cn("h-2 w-2 rounded-full", dotClasses[filter.tone])} />
+                {activeFilters.includes(filter.label) ? (
+                  <span className={cn("h-2 w-2 rounded-full", dotClasses[filter.tone])} />
+                ) : null}
               </span>
               <span>{filter.label}</span>
               <span className="ml-auto font-mono text-sm text-on-surface-variant/50">{filter.count}</span>
@@ -64,17 +86,19 @@ export function GraphFilters({ filters }: { filters: NodeTypeFilter[] }) {
           aria-label="Relationship strength"
           max="100"
           min="0"
+          onChange={(event) => onStrengthChange(Number(event.target.value))}
           type="range"
-          defaultValue="50"
+          value={minStrength}
         />
         <div className="mt-3 flex justify-between font-display text-xs font-semibold text-on-surface-variant">
           <span>Low</span>
-          <span>High</span>
+          <span>{minStrength}%+</span>
         </div>
       </section>
 
       <button
         className="mt-auto rounded-lg border border-white/10 py-3 font-display text-xs font-semibold uppercase tracking-normal text-on-surface transition-colors hover:bg-white/[0.05]"
+        onClick={onReset}
         type="button"
       >
         Reset Filters

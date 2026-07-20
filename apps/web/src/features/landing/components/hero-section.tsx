@@ -1,9 +1,10 @@
 // Purpose: Render the DiscoveryOS landing hero with animated shader background.
 
-import { Sparkles } from "lucide-react";
+import { PlayCircle, Sparkles } from "lucide-react";
 import Link from "next/link";
 
 import { Button } from "@/components/ui/button";
+import { primaryDemoHref } from "@/features/demo/data/demo-projects";
 import {
   MotionDiv,
   MotionSection,
@@ -80,6 +81,17 @@ export function HeroSection() {
             className="w-full min-w-40 sm:w-auto"
           >
             <Link href="#capabilities">View Capabilities</Link>
+          </Button>
+          <Button
+            asChild
+            variant="secondary"
+            size="lg"
+            className="w-full min-w-40 border-primary/30 text-primary sm:w-auto"
+          >
+            <Link href={primaryDemoHref}>
+              <PlayCircle className="h-4 w-4" />
+              Try Demo
+            </Link>
           </Button>
         </MotionDiv>
 

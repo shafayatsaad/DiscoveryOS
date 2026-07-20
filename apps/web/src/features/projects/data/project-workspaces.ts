@@ -1,6 +1,11 @@
 // Purpose: Centralize domain-agnostic project profiles so every workspace screen renders from the same project context.
 
-export type DiscoveryDomain = "Materials Science" | "Biomedical" | "Climate";
+export type DiscoveryDomain =
+  | "Materials Science"
+  | "Biomedical"
+  | "Climate"
+  | "Quantum Computing"
+  | "AI Safety";
 
 export type WorkspaceProject = {
   id: string;
@@ -15,6 +20,8 @@ export type WorkspaceProject = {
   owner: string;
   started: string;
   commit: string;
+  cachedResultsAvailable?: boolean;
+  demo?: boolean;
 };
 
 export const primaryProjectId = "polymer-electrolyte-discovery";
@@ -83,6 +90,96 @@ export const workspaceProjects: WorkspaceProject[] = [
     owner: "Dr. Lina Ortiz",
     started: "Completed Friday",
     commit: "b845ce0",
+  },
+  {
+    id: "heart-failure-biomarkers",
+    displayId: "DEMO-BIO-1001",
+    title: "Heart Failure Biomarkers",
+    domain: "Biomedical",
+    status: "Completed",
+    phase: "Cached report ready",
+    progress: 100,
+    summary:
+      "Curated demo workflow for biomarker discovery across heart failure cohorts, assays, contradictions, and validation gaps.",
+    researchGoal:
+      "Identify reproducible heart failure biomarkers with evidence separated by cohort, assay type, and outcome context.",
+    owner: "DiscoveryOS Demo",
+    started: "Cached demo",
+    commit: "demo001",
+    cachedResultsAvailable: true,
+    demo: true,
+  },
+  {
+    id: "microplastics-alzheimers",
+    displayId: "DEMO-BIO-1002",
+    title: "Microplastics and Alzheimer's",
+    domain: "Biomedical",
+    status: "Completed",
+    phase: "Cached report ready",
+    progress: 100,
+    summary:
+      "Curated demo workflow synthesizing exposure, neuroinflammation, and uncertainty signals across early-stage evidence.",
+    researchGoal:
+      "Assess whether microplastic exposure has plausible indirect mechanisms related to Alzheimer's disease while preserving uncertainty.",
+    owner: "DiscoveryOS Demo",
+    started: "Cached demo",
+    commit: "demo002",
+    cachedResultsAvailable: true,
+    demo: true,
+  },
+  {
+    id: "sustainable-battery-materials",
+    displayId: "DEMO-MAT-1003",
+    title: "Sustainable Battery Materials",
+    domain: "Materials Science",
+    status: "Completed",
+    phase: "Cached report ready",
+    progress: 100,
+    summary:
+      "Curated demo workflow ranking lower-impact battery materials with manufacturability, scarcity, and performance evidence.",
+    researchGoal:
+      "Find sustainable battery material candidates that balance performance, resource availability, and scalable synthesis.",
+    owner: "DiscoveryOS Demo",
+    started: "Cached demo",
+    commit: "demo003",
+    cachedResultsAvailable: true,
+    demo: true,
+  },
+  {
+    id: "quantum-error-correction",
+    displayId: "DEMO-QC-1004",
+    title: "Quantum Error Correction",
+    domain: "Quantum Computing",
+    status: "Completed",
+    phase: "Cached report ready",
+    progress: 100,
+    summary:
+      "Curated demo workflow comparing error-correction codes, hardware constraints, thresholds, and open experiments.",
+    researchGoal:
+      "Compare quantum error correction strategies using evidence about thresholds, overhead, and hardware feasibility.",
+    owner: "DiscoveryOS Demo",
+    started: "Cached demo",
+    commit: "demo004",
+    cachedResultsAvailable: true,
+    demo: true,
+  },
+  {
+    id: "llm-hallucination-detection",
+    displayId: "DEMO-AI-1005",
+    title: "LLM Hallucination Detection",
+    domain: "AI Safety",
+    status: "Completed",
+    phase: "Cached report ready",
+    progress: 100,
+    summary:
+      "Curated demo workflow connecting hallucination benchmarks, retrieval grounding, calibration, and evaluation gaps.",
+    researchGoal:
+      "Identify reliable LLM hallucination detection methods with citations, benchmark context, and failure modes.",
+    owner: "DiscoveryOS Demo",
+    started: "Cached demo",
+    commit: "demo005",
+    cachedResultsAvailable: true,
+    demo: true,
   },
 ];
 

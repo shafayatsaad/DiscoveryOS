@@ -2,7 +2,7 @@
 
 // Purpose: Render an animated real-time research timeline from pipeline SSE events.
 
-import { useEffect, useRef } from "react";
+import { useEffect, useMemo, useRef } from "react";
 import {
   Atom,
   BrainCircuit,
@@ -302,7 +302,6 @@ export function ResearchTimeline({
             <TimelineRow
               key={entry.id}
               entry={entry}
-              isFirst={index === 0}
               isLast={index === entries.length - 1}
             />
           ))
@@ -318,11 +317,9 @@ export function ResearchTimeline({
 
 function TimelineRow({
   entry,
-  isFirst,
   isLast,
 }: {
   entry: TimelineEntry;
-  isFirst: boolean;
   isLast: boolean;
 }) {
   const Icon = entry.icon;

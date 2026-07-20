@@ -4,6 +4,7 @@
 
 import { Cpu } from "lucide-react";
 
+import { EmptyState, SkeletonBlock, SuccessMark } from "@/components/ui/feedback-states";
 import { usePipelineStream } from "@/features/dashboard/hooks/use-pipeline-stream";
 import { primaryProjectId } from "@/features/projects/data/project-workspaces";
 import { cn } from "@/lib/utils";
@@ -93,16 +94,25 @@ export function ProcessesPanel() {
         </span>
       </div>
 
-      {!hasData ? (
-        <div className="flex flex-col items-center justify-center py-8 text-center">
-          <Cpu className="mb-3 h-8 w-8 text-outline-variant" />
-          <p className="font-display text-sm font-medium text-on-surface-variant">
-            No active processes
-          </p>
-          <p className="mt-1 text-xs text-outline-variant">
-            Submit a research question to start the pipeline.
-          </p>
+      {!hasData && streamStatus === "connecting" ? (
+        <div className="space-y-4" aria-label="Loading active processes">
+          <SkeletonBlock className="h-2 w-full" />
+          {[0, 1, 2].map((item) => (
+            <div key={item} className="rounded-md border border-white/[0.05] bg-surface/50 p-4">
+              <div className="flex items-center justify-between gap-4">
+                <SkeletonBlock className="h-5 w-36" />
+                <SkeletonBlock className="h-5 w-16" />
+              </div>
+              <SkeletonBlock className="mt-4 h-1.5 w-full" />
+            </div>
+          ))}
         </div>
+      ) : !hasData ? (
+        <EmptyState
+          body="Submit a research question to start the pipeline."
+          icon={Cpu}
+          title="No active processes"
+        />
       ) : (
         <div className="flex flex-col gap-4">
           {/* Overall progress bar */}
@@ -240,6 +250,11 @@ export function ProcessesPanel() {
           )}
         />
       </div>
+      {isComplete ? (
+        <div className="mt-4">
+          <SuccessMark label="Workflow completed" />
+        </div>
+      ) : null}
     </section>
   );
 }
