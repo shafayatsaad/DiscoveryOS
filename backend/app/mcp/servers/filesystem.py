@@ -30,8 +30,11 @@ class FilesystemMCPServer(MCPServer):
 
     def _resolve_path(self, relative_path: str) -> Path:
         """Resolve a relative path and ensure it stays within the root directory."""
-        # Sanitize — prevent directory traversal
-        sanitized = relative_path.replace("..", "").lstrip("/").lstrip("\\")
+        # Reject paths containing parent directory references
+        if ".." in relative_path.split("/") or ".." in relative_path.split("\\"):
+            raise ValueError(f"Path traversal detected: {relative_path}")
+        # Strip leading separators to prevent absolute path escape
+        sanitized = relative_path.lstrip("/").lstrip("\\")
         full_path = (self._root / sanitized).resolve()
         if not str(full_path).startswith(str(self._root)):
             raise ValueError(f"Path traversal detected: {relative_path}")
