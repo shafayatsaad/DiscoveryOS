@@ -5,9 +5,12 @@ The MCPService is called by the orchestrator after pipeline stages complete.
 """
 
 import json
+import logging
 from typing import Any
 
 from app.mcp.registry import MCPRegistry
+
+logger = logging.getLogger(__name__)
 
 
 class MCPService:
@@ -85,8 +88,8 @@ class MCPService:
                     },
                 )
                 results.append(gist_result.model_dump(mode="json"))
-            except Exception:
-                pass  # GitHub failures should not break the pipeline
+            except Exception as gh_err:
+                logger.warning("MCP GitHub gist creation failed for project %s: %s", project_id, gh_err)
 
         return results
 
