@@ -3,7 +3,11 @@
 from typing import Protocol
 
 from app.agents.base import BaseResearchAgent
-from app.agents.experiment.prompts import EXPERIMENT_PROMPT_VERSION, EXPERIMENT_SYSTEM_PROMPT
+from app.agents.experiment.prompts import (
+    EXPERIMENT_PROMPT_VERSION,
+    EXPERIMENT_SYSTEM_PROMPT,
+    EXPERIMENT_TASK_PROMPT_TEMPLATE,
+)
 from app.agents.experiment.schemas import (
     ExperimentPlan,
     ExperimentPlanningRequest,
@@ -11,6 +15,7 @@ from app.agents.experiment.schemas import (
 )
 from app.agents.novelty.schemas import NoveltyAnalysis
 from app.agents.openai_adapter import OpenAIClient
+from app.agents.prompt_templates import render_task_prompt
 from app.config import Settings, get_settings
 from app.graph.schemas import KnowledgeGraph
 from app.schemas.agent import AgentContext
@@ -36,7 +41,10 @@ class OpenAIExperimentPlanningClient:
 
     async def plan(self, request: ExperimentPlanningRequest) -> ExperimentPlan:
         """Plan experiments using GPT-5 structured outputs."""
-        user_content = request.model_dump_json()
+        user_content = render_task_prompt(
+            EXPERIMENT_TASK_PROMPT_TEMPLATE,
+            payload=request.model_dump_json(),
+        )
         result = await self._client.parse(
             user_content=user_content,
             response_format=ExperimentPlan,
