@@ -174,6 +174,16 @@ class DiscoveryOrchestrator:
                 state.events.append(event.model_dump(mode="json"))
                 await self._persist_state(state)
 
+                # Persist artifacts through MCP after successful completion
+                if self._mcp_service is not None:
+                    try:
+                        await self._mcp_service.save_report(
+                            project_id=state.project_id,
+                            report=state.report,
+                        )
+                    except Exception:
+                        pass  # MCP failures should not break the pipeline
+
         return state
 
     async def _execute_stage(self, stage_name: str, state: DiscoveryState) -> None:
