@@ -1,6 +1,8 @@
 "use client";
 
 // Purpose: Subscribe to real-time pipeline SSE events with reconnection support.
+// Reconnection attempts are capped at 10. After that, the user sees a
+// persistent "disconnected" state instead of silently retrying forever.
 
 import { useCallback, useEffect, useRef, useState } from "react";
 
@@ -12,13 +14,15 @@ export type ConnectionStatus =
   | "connecting"
   | "connected"
   | "completed"
-  | "failed";
+  | "failed"
+  | "reconnect_exhausted";
 
 export type UsePipelineStreamOptions = {
   projectId: string | null;
   onEvent?: (event: PipelineEvent) => void;
   onComplete?: () => void;
   onError?: (error: string) => void;
+  maxReconnectAttempts?: number;
 };
 
 export type UsePipelineStreamReturn = {
@@ -30,6 +34,8 @@ export type UsePipelineStreamReturn = {
   isConnected: boolean;
   isComplete: boolean;
   isFailed: boolean;
+  isReconnectExhausted: boolean;
+  reconnectAttempts: number;
   disconnect: () => void;
 };
 
@@ -38,6 +44,7 @@ export function usePipelineStream({
   onEvent,
   onComplete,
   onError,
+  maxReconnectAttempts = 10,
 }: UsePipelineStreamOptions): UsePipelineStreamReturn {
   const [events, setEvents] = useState<PipelineEvent[]>([]);
   const [latestEvent, setLatestEvent] = useState<PipelineEvent | null>(null);
@@ -46,6 +53,7 @@ export function usePipelineStream({
   const [metadata, setMetadata] = useState<PipelineEvent["metadata"] | null>(
     null,
   );
+  const [reconnectAttempts, setReconnectAttempts] = useState(0);
   const statusRef = useRef<ConnectionStatus>("disconnected");
   const eventSourceRef = useRef<EventSource | null>(null);
   const reconnectTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(
@@ -74,7 +82,14 @@ export function usePipelineStream({
   const connect = useCallback(() => {
     if (!projectId) return;
 
+    // If we've exhausted reconnection attempts, give up permanently
+    if (reconnectAttemptRef.current >= maxReconnectAttempts) {
+      updateStatus("reconnect_exhausted");
+      return;
+    }
+
     updateStatus("connecting");
+    setReconnectAttempts(reconnectAttemptRef.current);
     eventSourceRef.current = subscribeToPipeline(
       projectId,
       (event) => {
@@ -95,33 +110,50 @@ export function usePipelineStream({
         } else {
           updateStatus("connected");
           reconnectAttemptRef.current = 0;
+          setReconnectAttempts(0);
         }
       },
       () => {
         // On error, attempt reconnection with exponential backoff
         if (
           statusRef.current !== "completed" &&
-          statusRef.current !== "failed"
+          statusRef.current !== "failed" &&
+          statusRef.current !== "reconnect_exhausted"
         ) {
+          reconnectAttemptRef.current += 1;
+          setReconnectAttempts(reconnectAttemptRef.current);
+
+          if (reconnectAttemptRef.current >= maxReconnectAttempts) {
+            updateStatus("reconnect_exhausted");
+            return;
+          }
+
           updateStatus("connecting");
           const delay = Math.min(
             1000 * Math.pow(2, reconnectAttemptRef.current),
             maxReconnectDelay,
           );
-          reconnectAttemptRef.current += 1;
           reconnectTimeoutRef.current = setTimeout(connect, delay);
         }
       },
       () => {
         if (
           statusRef.current !== "completed" &&
-          statusRef.current !== "failed"
+          statusRef.current !== "failed" &&
+          statusRef.current !== "reconnect_exhausted"
         ) {
           updateStatus("disconnected");
         }
       },
     );
-  }, [projectId, onEvent, onComplete, onError, updateStatus]);
+  }, [
+    projectId,
+    onEvent,
+    onComplete,
+    onError,
+    updateStatus,
+    maxReconnectAttempts,
+  ]);
 
   useEffect(() => {
     if (projectId) {
@@ -141,6 +173,8 @@ export function usePipelineStream({
     isConnected: status === "connected",
     isComplete: status === "completed",
     isFailed: status === "failed",
+    isReconnectExhausted: status === "reconnect_exhausted",
+    reconnectAttempts,
     disconnect,
   };
 }
