@@ -71,17 +71,22 @@ class MCPService:
         )
         results.append(mem_result.model_dump(mode="json"))
 
-        # Try GitHub if configured
-        gist_result = await self._registry.call_tool(
-            "github",
-            "create_gist",
-            {
-                "filename": f"discoveryos-report-{project_id}.md",
-                "content": markdown or report_json,
-                "description": f"DiscoveryOS research report for project {project_id}",
-            },
-        )
-        results.append(gist_result.model_dump(mode="json"))
+        # Try GitHub if configured — check server availability first
+        github_servers = [s for s in self._registry.list_servers().values() if s.get("name") == "github"]
+        if github_servers:
+            try:
+                gist_result = await self._registry.call_tool(
+                    "github",
+                    "create_gist",
+                    {
+                        "filename": f"discoveryos-report-{project_id}.md",
+                        "content": markdown or report_json,
+                        "description": f"DiscoveryOS research report for project {project_id}",
+                    },
+                )
+                results.append(gist_result.model_dump(mode="json"))
+            except Exception:
+                pass  # GitHub failures should not break the pipeline
 
         return results
 
