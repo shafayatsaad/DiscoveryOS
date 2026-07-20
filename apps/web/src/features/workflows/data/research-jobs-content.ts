@@ -87,7 +87,7 @@ export const jobSteps: JobStep[] = [
     status: "Done",
     activity: "Research goal decomposed",
     metric: "9 tasks",
-    bar: "██████",
+    bar: "100%",
     logs: [
       { time: "10:42:01", level: "INIT", message: "Planning discovery workflow..." },
       { time: "10:42:05", level: "INFO", message: "Classified domain as Materials Science." },
@@ -105,7 +105,7 @@ export const jobSteps: JobStep[] = [
     status: "Running",
     activity: "Downloading",
     metric: "1,237 papers",
-    bar: "██████████",
+    bar: "74%",
     defaultOpen: true,
     logs: [
       { time: "10:44:16", level: "INIT", message: "Searching OpenAlex..." },
@@ -121,42 +121,42 @@ export const jobSteps: JobStep[] = [
     status: "Running",
     activity: "Extracting",
     metric: "1,248 claims",
-    bar: "██████",
+    bar: "62%",
   },
   {
     title: "Claim Verification",
     status: "Running",
     activity: "Checking provenance",
     metric: "94% linked",
-    bar: "█████",
+    bar: "58%",
   },
   {
     title: "Contradiction Detection",
     status: "Running",
     activity: "Finding conflicts",
     metric: "Found 12",
-    bar: "████",
+    bar: "48%",
   },
   {
     title: "Knowledge Graph",
     status: "Queued",
     activity: "Building",
     metric: "Entities ready",
-    bar: "███",
+    bar: "Queued",
   },
   {
     title: "Hypothesis Generator",
     status: "Queued",
     activity: "Waiting for graph",
     metric: "Queued",
-    bar: "██",
+    bar: "Queued",
   },
   {
     title: "Novelty Analyzer",
     status: "Queued",
     activity: "Computing",
     metric: "Waiting on critic",
-    bar: "███",
+    bar: "Queued",
   },
   {
     title: "Experiment Planner",
@@ -180,3 +180,29 @@ export const statusIcon = {
   Queued: Clock,
   Pending: Clock,
 };
+
+export function getJobSteps(projectId: string): JobStep[] {
+  const project = getProjectWorkspace(projectId);
+
+  if (!project.cachedResultsAvailable) {
+    return jobSteps;
+  }
+
+  return jobSteps.map((step) => ({
+    ...step,
+    status: "Done",
+    activity:
+      step.title === "Report"
+        ? "Report generated from cached artifacts"
+        : step.title === "Experiment Planner"
+          ? "Experiments suggested"
+          : "Completed from demo cache",
+    metric: step.metric === "--" ? "Cached" : step.metric,
+    bar: "100%",
+    defaultOpen: step.title === "Report" || step.defaultOpen,
+    logs: step.logs ?? [
+      { time: "00:00:01", level: "INIT", message: `Loaded cached ${step.title.toLowerCase()} artifacts.` },
+      { time: "00:00:02", level: "DONE", message: `${step.title} completed from Demo Mode cache.` },
+    ],
+  }));
+}
