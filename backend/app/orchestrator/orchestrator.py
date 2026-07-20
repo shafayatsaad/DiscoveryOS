@@ -20,6 +20,7 @@ from app.agents.retriever.retriever import RetrieverAgent
 from app.agents.retriever.schemas import PaperCollection
 from app.graph.builder import KnowledgeGraphBuilder
 from app.graph.schemas import KnowledgeGraph
+from app.mcp.service import MCPService
 from app.orchestrator.events import DiscoveryEvent, make_event
 from app.orchestrator.state import (
     STAGE_LABELS,
