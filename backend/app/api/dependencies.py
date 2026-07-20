@@ -10,6 +10,8 @@ from app.agents.registry import AgentRegistry, build_agent_registry
 from app.config import Settings, get_settings
 from app.database.session import get_session
 from app.graph.repository import KnowledgeGraphRepository
+from app.mcp.registry import MCPRegistry, build_mcp_registry
+from app.mcp.service import MCPService
 from app.orchestrator.orchestrator import DiscoveryOrchestrator
 from app.orchestrator.service import OrchestratorService
 from app.services.agent_service import AgentService
