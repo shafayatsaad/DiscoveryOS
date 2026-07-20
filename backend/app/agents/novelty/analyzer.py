@@ -3,13 +3,18 @@
 from typing import Protocol
 
 from app.agents.base import BaseResearchAgent
-from app.agents.novelty.prompts import NOVELTY_PROMPT_VERSION, NOVELTY_SYSTEM_PROMPT
+from app.agents.novelty.prompts import (
+    NOVELTY_PROMPT_VERSION,
+    NOVELTY_SYSTEM_PROMPT,
+    NOVELTY_TASK_PROMPT_TEMPLATE,
+)
 from app.agents.novelty.schemas import (
     NoveltyAnalysis,
     NoveltyAnalysisRequest,
     RelatedWork,
 )
 from app.agents.openai_adapter import OpenAIClient
+from app.agents.prompt_templates import render_task_prompt
 from app.config import Settings, get_settings
 from app.graph.schemas import KnowledgeGraph
 from app.schemas.agent import AgentContext
@@ -35,7 +40,10 @@ class OpenAINoveltyClient:
 
     async def analyze(self, request: NoveltyAnalysisRequest) -> NoveltyAnalysis:
         """Analyze novelty using GPT-5 structured outputs."""
-        user_content = request.model_dump_json()
+        user_content = render_task_prompt(
+            NOVELTY_TASK_PROMPT_TEMPLATE,
+            payload=request.model_dump_json(),
+        )
         result = await self._client.parse(
             user_content=user_content,
             response_format=NoveltyAnalysis,
