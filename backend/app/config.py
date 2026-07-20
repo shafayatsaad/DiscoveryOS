@@ -26,6 +26,15 @@ class Settings(BaseSettings):
     openai_model: str = Field(default="gpt-5.6", alias="DISCOVERYOS_OPENAI_MODEL")
     pipeline_max_papers: int = Field(default=5, alias="DISCOVERYOS_PIPELINE_MAX_PAPERS")
 
+    # MCP (Model Context Protocol) settings
+    mcp_enabled: bool = Field(default=True, alias="DISCOVERYOS_MCP_ENABLED")
+    mcp_filesystem_root: str = Field(
+        default="./storage/artifacts",
+        alias="DISCOVERYOS_MCP_FILESYSTEM_ROOT",
+    )
+    github_token: str | None = Field(default=None, alias="DISCOVERYOS_GITHUB_TOKEN")
+    github_repo: str | None = Field(default=None, alias="DISCOVERYOS_GITHUB_REPO")
+
     model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8")
 
     @property
