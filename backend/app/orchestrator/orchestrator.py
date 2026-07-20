@@ -67,6 +67,7 @@ class DiscoveryOrchestrator:
         graph_builder: KnowledgeGraphBuilder | None = None,
         workspace_service: WorkspaceService | None = None,
         state_backend: StateBackend | None = None,
+        mcp_service: MCPService | None = None,
         max_papers_for_extraction: int = 5,
     ) -> None:
         self._planner = planner or PlannerAgent()
@@ -79,6 +80,7 @@ class DiscoveryOrchestrator:
         self._graph_builder = graph_builder or KnowledgeGraphBuilder()
         self._workspace_service = workspace_service
         self._state_backend = state_backend or InMemoryStateBackend()
+        self._mcp_service = mcp_service
         self._max_papers_for_extraction = max_papers_for_extraction
 
     async def run(
