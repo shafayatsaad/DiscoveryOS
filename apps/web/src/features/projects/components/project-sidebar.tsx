@@ -1,9 +1,12 @@
+"use client";
+
 // Purpose: Render the project workspace navigation for desktop and mobile.
 
 import Link from "next/link";
 import { FlaskConical, Menu, Plus } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
+import { MotionDiv } from "@/features/landing/components/motion-primitives";
 import { getProjectNavItems } from "@/features/projects/data/research-project-content";
 import { cn } from "@/lib/utils";
 
@@ -47,7 +50,12 @@ export function ProjectSidebar({ projectId, activeSection = "project" }: Project
         </nav>
       </details>
 
-      <aside className="hidden h-screen w-[280px] shrink-0 flex-col border-r border-white/10 bg-surface/80 py-6 backdrop-blur-xl md:sticky md:top-0 md:flex">
+      <MotionDiv
+        animate={{ opacity: 1, x: 0 }}
+        className="hidden h-screen w-[280px] shrink-0 flex-col border-r border-white/10 bg-surface/80 py-6 backdrop-blur-xl md:sticky md:top-0 md:flex"
+        initial={{ opacity: 0, x: -12 }}
+        transition={{ duration: 0.32, ease: "easeOut" }}
+      >
         <div className="px-6">
           <Link href="/dashboard" className="flex items-center gap-3">
             <FlaskConical className="h-9 w-9 text-primary" />
@@ -69,12 +77,17 @@ export function ProjectSidebar({ projectId, activeSection = "project" }: Project
         </div>
 
         <nav className="mt-10 flex-1 space-y-1 overflow-y-auto px-4" aria-label="Project">
-          {projectNavItems.map((item) => {
+          {projectNavItems.map((item, index) => {
             const Icon = item.icon;
 
             return (
-              <a
+              <MotionDiv
+                animate={{ opacity: 1, x: 0 }}
                 key={item.label}
+                initial={{ opacity: 0, x: -8 }}
+                transition={{ delay: index * 0.025, duration: 0.22 }}
+              >
+                <a
                 href={item.href ?? "#"}
                 className={cn(
                   "flex items-center gap-3 rounded-lg px-4 py-3 font-display text-sm font-semibold transition-all active:scale-[0.98]",
@@ -86,10 +99,11 @@ export function ProjectSidebar({ projectId, activeSection = "project" }: Project
                 <Icon className="h-5 w-5 shrink-0" />
                 <span>{item.label}</span>
               </a>
+              </MotionDiv>
             );
           })}
         </nav>
-      </aside>
+      </MotionDiv>
     </>
   );
 }
