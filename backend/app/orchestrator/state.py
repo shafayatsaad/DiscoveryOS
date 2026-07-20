@@ -82,6 +82,10 @@ class DiscoveryState(BaseModel):
     created_at: datetime = Field(default_factory=_utc_now)
     updated_at: datetime = Field(default_factory=_utc_now)
 
+    # Performance: cached metadata for SSE streaming to avoid recomputing on every poll.
+    _metadata_cache: dict[str, Any] | None = None
+    _last_known_event_count: int = 0
+
     model_config = ConfigDict(extra="forbid")
 
     def stage_progress_weight(self) -> float:
@@ -99,6 +103,7 @@ class DiscoveryState(BaseModel):
         stage.started_at = now
         self.current_stage = stage_name
         self.updated_at = now
+        self._invalidate_metadata_cache()
 
     def mark_stage_completed(self, stage_name: str) -> None:
         """Transition a stage to COMPLETED and advance progress."""
@@ -112,6 +117,7 @@ class DiscoveryState(BaseModel):
             100.0,
         )
         self.updated_at = now
+        self._invalidate_metadata_cache()
 
     def mark_stage_failed(self, stage_name: str, error: str) -> None:
         """Transition a stage to FAILED and halt the pipeline."""
@@ -123,6 +129,7 @@ class DiscoveryState(BaseModel):
             stage.error = error
         self.status = "failed"
         self.updated_at = now
+        self._invalidate_metadata_cache()
 
     def completed_stages(self) -> list[str]:
         """Return names of stages that have completed successfully."""
@@ -139,3 +146,51 @@ class DiscoveryState(BaseModel):
             if stage_name not in completed:
                 return stage_name
         return None
+
+    def _invalidate_metadata_cache(self) -> None:
+        """Clear cached metadata whenever the state changes."""
+        self._metadata_cache = None
+
+    def get_cached_metadata(self) -> dict[str, Any]:
+        """Return cached metadata, recomputing only when state has changed since last call."""
+        current_event_count = len(self.events)
+        if self._metadata_cache is not None and current_event_count == self._last_known_event_count:
+            return self._metadata_cache
+
+        self._metadata_cache = {
+            "papers_count": len(self.papers) if self.papers else 0,
+            "evidence_count": len(self.evidence) if self.evidence else 0,
+            "contradictions_count": len(self.contradictions) if self.contradictions else 0,
+            "novelty_score": (
+                self.novelty_analysis.get("novelty_score")
+                if self.novelty_analysis
+                else None
+            ),
+            "current_agent": self.current_stage,
+            "execution_time_ms": self._calculate_execution_time(),
+            "stages": {
+                name: {
+                    "status": stage.status.value,
+                    "label": STAGE_LABELS.get(name, name),
+                }
+                for name, stage in self.stages.items()
+            },
+        }
+        self._last_known_event_count = current_event_count
+        return self._metadata_cache
+
+    def _calculate_execution_time(self) -> int:
+        """Calculate total execution time in milliseconds from stage timestamps."""
+        total = 0
+        for stage in self.stages.values():
+            if stage.started_at and stage.completed_at:
+                diff = stage.completed_at - stage.started_at
+                total += int(diff.total_seconds() * 1000)
+        return total
+
+    def get_new_events_since(self, last_index: int) -> tuple[list[dict[str, Any]], int]:
+        """Return events appended since last_index, plus current event count."""
+        current_count = len(self.events)
+        if last_index >= current_count:
+            return [], current_count
+        return self.events[last_index:], current_count
