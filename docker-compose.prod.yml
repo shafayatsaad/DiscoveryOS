@@ -2,6 +2,8 @@
 
 services:
   api:
+    build:
+      target: runtime
     environment:
       DISCOVERYOS_ENVIRONMENT: production
       DISCOVERYOS_DEBUG: "false"
@@ -11,6 +13,8 @@ services:
     restart: unless-stopped
 
   frontend:
+    build:
+      target: runner
     environment:
       NEXT_PUBLIC_DEVELOPER_MODE: "false"
     restart: unless-stopped
