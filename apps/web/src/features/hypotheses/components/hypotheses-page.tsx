@@ -54,7 +54,7 @@ export function HypothesesPage({ projectId }: { projectId: string }) {
           <div className="space-y-5">
             {hypotheses.map((hypothesis, index) => (
               <Reveal key={hypothesis.statement} delay={index * 0.05}>
-                <article className="glass-panel rounded-xl p-5 sm:p-6">
+                <article className="premium-card rounded-xl p-5 sm:p-6">
                   <div className="flex flex-col gap-5 lg:flex-row lg:items-start lg:justify-between">
                     <div className="max-w-3xl">
                       <h2 className="flex items-start gap-3 font-display text-2xl font-semibold text-on-surface">
@@ -90,7 +90,7 @@ function Signal({
   value: string;
 }) {
   return (
-    <div className="rounded-lg border border-white/[0.05] bg-surface/50 p-3">
+    <div className="surface-panel rounded-lg p-3">
       <p className="mb-2 flex items-center gap-2 font-display text-xs font-semibold uppercase tracking-normal text-primary">
         <Icon className="h-4 w-4" />
         {label}
