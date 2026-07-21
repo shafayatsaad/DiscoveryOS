@@ -49,7 +49,7 @@ export function NodeInspector({ selectedNode }: { selectedNode: SelectedGraphNod
       <div className="mt-auto flex gap-3">
         <Button className="flex-1">Analyze</Button>
         <button
-          className="flex h-11 w-12 items-center justify-center rounded-lg border border-white/10 text-on-surface transition-colors hover:bg-white/[0.05]"
+          className="focus-ring flex h-11 w-12 items-center justify-center rounded-lg border border-white/10 text-on-surface transition-colors hover:bg-white/[0.05]"
           type="button"
           aria-label="Bookmark node"
         >
