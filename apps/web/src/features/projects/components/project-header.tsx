@@ -48,7 +48,7 @@ export function ProjectHeader({ projectId }: { projectId: string }) {
               return (
                 <button
                   key={action.label}
-                  className="flex h-10 w-10 items-center justify-center rounded-lg border border-white/10 text-on-surface transition-colors hover:bg-white/[0.05] hover:text-primary"
+                  className="focus-ring flex h-10 w-10 items-center justify-center rounded-lg border border-white/10 text-on-surface transition-colors hover:bg-white/[0.05] hover:text-primary"
                   type="button"
                   aria-label={action.label}
                 >
