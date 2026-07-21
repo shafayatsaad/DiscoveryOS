@@ -18,8 +18,10 @@ class OrchestratorService:
         orchestrator: DiscoveryOrchestrator | None = None,
         state_backend: StateBackend | None = None,
     ) -> None:
-        self._orchestrator = orchestrator or DiscoveryOrchestrator()
         self._state_backend = state_backend or InMemoryStateBackend()
+        self._orchestrator = orchestrator or DiscoveryOrchestrator(
+            state_backend=self._state_backend,
+        )
 
     async def start_pipeline(
         self,
