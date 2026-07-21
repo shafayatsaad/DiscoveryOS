@@ -2,7 +2,7 @@
 
 // Purpose: Render active pipeline processes with real-time progress from the backend.
 
-import { Cpu } from "lucide-react";
+import { Check, CircleDashed, Clock3, Cpu, X } from "lucide-react";
 
 import { EmptyState, SkeletonBlock, SuccessMark } from "@/components/ui/feedback-states";
 import { usePipelineStream } from "@/features/dashboard/hooks/use-pipeline-stream";
@@ -55,7 +55,7 @@ export function ProcessesPanel() {
 
   return (
     <section
-      className="glass-panel rounded-lg p-5 lg:sticky lg:top-10"
+      className="premium-card rounded-xl p-5 lg:sticky lg:top-10"
       aria-labelledby="processes-heading"
     >
       <div className="mb-6 flex items-center justify-between gap-4">
@@ -98,7 +98,7 @@ export function ProcessesPanel() {
         <div className="space-y-4" aria-label="Loading active processes">
           <SkeletonBlock className="h-2 w-full" />
           {[0, 1, 2].map((item) => (
-            <div key={item} className="rounded-md border border-white/[0.05] bg-surface/50 p-4">
+            <div key={item} className="surface-panel rounded-lg p-4">
               <div className="flex items-center justify-between gap-4">
                 <SkeletonBlock className="h-5 w-36" />
                 <SkeletonBlock className="h-5 w-16" />
@@ -145,7 +145,7 @@ export function ProcessesPanel() {
                 <article
                   key={stageId}
                   className={cn(
-                    "rounded-md border border-white/[0.05] bg-surface/50 p-4 transition-all duration-300",
+                    "surface-panel rounded-lg p-4 transition-all duration-300",
                     isStageRunning && "border-primary/20",
                     isStageFailed && "border-red-400/20",
                     isStagePending && "opacity-55",
@@ -214,15 +214,15 @@ export function ProcessesPanel() {
                             ? "Failed"
                             : "Waiting"}
                     </span>
-                    <span>
-                      {isStageComplete
-                        ? "✓"
-                        : isStageRunning
-                          ? "⟳"
-                          : isStageFailed
-                            ? "✗"
-                            : "—"}
-                    </span>
+                    {isStageComplete ? (
+                      <Check className="h-3.5 w-3.5 text-green-400" aria-label="Completed" />
+                    ) : isStageRunning ? (
+                      <CircleDashed className="h-3.5 w-3.5 animate-spin text-primary" aria-label="Running" />
+                    ) : isStageFailed ? (
+                      <X className="h-3.5 w-3.5 text-red-400" aria-label="Failed" />
+                    ) : (
+                      <Clock3 className="h-3.5 w-3.5 text-outline" aria-label="Waiting" />
+                    )}
                   </div>
                 </article>
               );
