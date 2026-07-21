@@ -30,6 +30,11 @@ export type PipelineEvent = {
   };
 };
 
+export type PipelineSubscription = {
+  close: () => void;
+  readonly readyState: number;
+};
+
 // ---------------------------------------------------------------------------
 // Retry helper
 // ---------------------------------------------------------------------------
@@ -108,9 +113,10 @@ export function subscribeToPipeline(
   onEvent: (event: PipelineEvent) => void,
   onError?: (error: Event) => void,
   onClose?: () => void,
-): EventSource {
+): PipelineSubscription {
   const url = `${API_BASE}/projects/${projectId}/stream`;
   const eventSource = new EventSource(url);
+  let closed = false;
 
   eventSource.onmessage = (event: MessageEvent) => {
     try {
@@ -128,14 +134,32 @@ export function subscribeToPipeline(
     // EventSource auto-reconnects by default
   };
 
-  // EventSource doesn't have a native onclose, but we can detect via readyState
+  const notifyClosed = () => {
+    if (closed) {
+      return;
+    }
+
+    closed = true;
+    console.info("[API] SSE connection closed for project:", projectId);
+    onClose?.();
+  };
+
+  // EventSource doesn't have a native onclose, but we can detect via readyState.
   const checkClosed = setInterval(() => {
     if (eventSource.readyState === EventSource.CLOSED) {
       clearInterval(checkClosed);
-      console.info("[API] SSE connection closed for project:", projectId);
-      onClose?.();
+      notifyClosed();
     }
   }, 1000);
 
-  return eventSource;
+  return {
+    close: () => {
+      clearInterval(checkClosed);
+      eventSource.close();
+      notifyClosed();
+    },
+    get readyState() {
+      return eventSource.readyState;
+    },
+  };
 }

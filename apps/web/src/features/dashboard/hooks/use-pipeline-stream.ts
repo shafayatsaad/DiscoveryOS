@@ -6,7 +6,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 
-import type { PipelineEvent } from "@/lib/api/client";
+import type { PipelineEvent, PipelineSubscription } from "@/lib/api/client";
 import { subscribeToPipeline } from "@/lib/api/client";
 
 export type ConnectionStatus =
@@ -55,7 +55,7 @@ export function usePipelineStream({
   );
   const [reconnectAttempts, setReconnectAttempts] = useState(0);
   const statusRef = useRef<ConnectionStatus>("disconnected");
-  const eventSourceRef = useRef<EventSource | null>(null);
+  const eventSourceRef = useRef<PipelineSubscription | null>(null);
   const reconnectTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(
     null,
   );
@@ -124,10 +124,14 @@ export function usePipelineStream({
           setReconnectAttempts(reconnectAttemptRef.current);
 
           if (reconnectAttemptRef.current >= maxReconnectAttempts) {
+            eventSourceRef.current?.close();
+            eventSourceRef.current = null;
             updateStatus("reconnect_exhausted");
             return;
           }
 
+          eventSourceRef.current?.close();
+          eventSourceRef.current = null;
           updateStatus("connecting");
           const delay = Math.min(
             1000 * Math.pow(2, reconnectAttemptRef.current),

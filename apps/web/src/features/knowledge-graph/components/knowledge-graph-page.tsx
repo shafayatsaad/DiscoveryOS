@@ -2,6 +2,7 @@
 
 // Purpose: Compose the Stitch knowledge graph explorer as a responsive project tool with breadcrumbs.
 
+import dynamic from "next/dynamic";
 import { FileSearch } from "lucide-react";
 import { useMemo, useState } from "react";
 
@@ -9,7 +10,6 @@ import { Breadcrumbs } from "@/components/navigation/breadcrumbs";
 import type { BreadcrumbSegment } from "@/components/navigation/breadcrumbs";
 import { EmptyState } from "@/components/ui/feedback-states";
 import { AnimatedCard } from "@/components/ui/motion";
-import { GraphCanvas } from "@/features/knowledge-graph/components/graph-canvas";
 import { GraphFilters } from "@/features/knowledge-graph/components/graph-filters";
 import { GraphSearch } from "@/features/knowledge-graph/components/graph-search";
 import { NodeInspector } from "@/features/knowledge-graph/components/node-inspector";
@@ -18,6 +18,26 @@ import {
   type GraphEdge,
 } from "@/features/knowledge-graph/data/knowledge-graph-content";
 import { getProjectWorkspace } from "@/features/projects/data/project-workspaces";
+
+const GraphCanvas = dynamic(
+  () =>
+    import("@/features/knowledge-graph/components/graph-canvas").then(
+      (module) => module.GraphCanvas,
+    ),
+  {
+    loading: () => (
+      <div
+        className="relative z-0 flex h-[430px] items-center justify-center overflow-hidden bg-[radial-gradient(circle_at_center,#181c21_0%,#0a0e13_100%)] lg:absolute lg:inset-0 lg:h-auto"
+        aria-label="Loading knowledge graph visualization"
+      >
+        <div className="rounded-lg border border-white/10 bg-surface/80 px-4 py-3 font-mono text-xs text-on-surface-variant shadow-ambient">
+          Loading graph...
+        </div>
+      </div>
+    ),
+    ssr: false,
+  },
+);
 
 export function KnowledgeGraphPage({ projectId }: { projectId: string }) {
   const graphData = getGraphData(projectId);
