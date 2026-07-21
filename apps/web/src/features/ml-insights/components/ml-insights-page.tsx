@@ -76,7 +76,7 @@ export function MlInsightsPage({ projectId }: { projectId: string }) {
 
               return (
                 <Reveal key={card.label} delay={index * 0.04}>
-                  <article className="glass-panel rounded-xl p-5 transition-colors hover:bg-white/[0.04]">
+                  <article className="premium-card rounded-xl p-5">
                     <Icon className="mb-5 h-6 w-6 text-primary" />
                     <p className="font-display text-xs font-semibold uppercase tracking-normal text-on-surface-variant">
                       {card.label}
@@ -104,10 +104,7 @@ export function MlInsightsPage({ projectId }: { projectId: string }) {
                   "Semantic distance",
                   "Graph support",
                 ].map((feature, index) => (
-                  <div
-                    key={feature}
-                    className="rounded-lg border border-white/[0.05] bg-surface/50 p-4"
-                  >
+                  <div key={feature} className="surface-panel rounded-lg p-4">
                     <div className="mb-3 flex justify-between font-display text-xs font-semibold text-on-surface-variant">
                       <span>{feature}</span>
                       <span className="text-primary">{86 - index * 7}%</span>
