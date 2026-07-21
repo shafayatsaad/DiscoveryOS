@@ -51,7 +51,7 @@ export function TerminalAndMetrics({ projectId }: { projectId: string }) {
           const Icon = metric.icon;
 
           return (
-            <article key={metric.label} className="glass-panel flex items-center gap-4 rounded-xl p-5">
+            <article key={metric.label} className="premium-card flex items-center gap-4 rounded-xl p-5">
               <div
                 className={cn(
                   "flex h-12 w-12 shrink-0 items-center justify-center rounded-lg border",
