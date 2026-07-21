@@ -3,7 +3,6 @@
 from typing import Annotated
 
 from fastapi import APIRouter, Depends
-from redis.asyncio import Redis
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -59,6 +58,8 @@ async def readiness_check(
         checks["database"] = ReadinessCheck(status="error", detail=str(error))
 
     if settings.redis_url:
+        from redis.asyncio import Redis
+
         redis = Redis.from_url(settings.redis_url, socket_connect_timeout=1.0)
         try:
             await redis.ping()
