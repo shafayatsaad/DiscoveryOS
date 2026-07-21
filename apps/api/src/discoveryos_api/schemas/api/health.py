@@ -22,3 +22,28 @@ class HealthResponse(BaseModel):
     success: bool = Field(default=True, description="Always true for successful responses.")
     data: HealthData
     meta: ResponseMeta
+
+
+class ReadinessCheck(BaseModel):
+    """Purpose: Describe one dependency check used by readiness probes."""
+
+    status: str
+    detail: str | None = None
+
+
+class ReadinessData(BaseModel):
+    """Purpose: Describe whether the API and its runtime dependencies are ready."""
+
+    status: str
+    service: str
+    environment: str
+    version: str
+    checks: dict[str, ReadinessCheck]
+
+
+class ReadinessResponse(BaseModel):
+    """Purpose: Provide the standard envelope for readiness responses."""
+
+    success: bool
+    data: ReadinessData
+    meta: ResponseMeta
