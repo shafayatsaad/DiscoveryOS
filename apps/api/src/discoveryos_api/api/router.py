@@ -2,6 +2,7 @@
 
 from fastapi import APIRouter
 
+from discoveryos_api.api.routes.demo_pipeline import router as demo_pipeline_router
 from discoveryos_api.api.routes.health import router as health_router
 from discoveryos_api.api.routes.memory import router as memory_router
 from discoveryos_api.api.routes.projects import router as projects_router
@@ -12,3 +13,4 @@ api_router.include_router(health_router, tags=["health"])
 api_router.include_router(projects_router)
 api_router.include_router(research_jobs_router)
 api_router.include_router(memory_router)
+api_router.include_router(demo_pipeline_router)
