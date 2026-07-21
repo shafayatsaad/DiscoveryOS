@@ -17,7 +17,7 @@ export function ResearchSynopsis({ projectId }: { projectId: string }) {
   const HealthIcon = researchHealth.icon;
 
   return (
-    <aside className="glass-panel rounded-xl p-5 sm:p-6 lg:sticky lg:top-24 lg:max-h-[calc(100vh-7rem)]" aria-labelledby="synopsis-heading">
+    <aside className="premium-card rounded-xl p-5 sm:p-6 lg:sticky lg:top-24 lg:max-h-[calc(100vh-7rem)]" aria-labelledby="synopsis-heading">
       <h2 id="synopsis-heading" className="mb-5 font-display text-2xl font-semibold text-on-surface">
         Research Synopsis
       </h2>
