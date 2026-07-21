@@ -22,7 +22,7 @@ export function ResearchJobsHeader({ projectId }: { projectId: string }) {
   ];
 
   return (
-    <header className="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
+    <header className="glass-panel flex flex-col gap-6 rounded-xl p-5 sm:p-6 lg:flex-row lg:items-start lg:justify-between">
       <div className="min-w-0">
         <Breadcrumbs segments={breadcrumbSegments} />
         <div className="mb-4 flex items-start gap-4">
@@ -54,12 +54,9 @@ export function ResearchJobsHeader({ projectId }: { projectId: string }) {
       </div>
 
       <div className="flex gap-3">
-        <button
-          className="rounded-lg border border-white/10 px-5 py-3 font-display text-xs font-semibold uppercase tracking-normal text-on-surface transition-colors hover:bg-white/[0.05]"
-          type="button"
-        >
+        <Button variant="secondary" className="h-12 px-5" type="button">
           Pause Run
-        </button>
+        </Button>
         <Button className="h-12 px-5">
           <RotateCw className="h-4 w-4" />
           Restart
