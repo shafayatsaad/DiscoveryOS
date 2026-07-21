@@ -25,10 +25,10 @@ export function DemoModePanel() {
         </span>
       </div>
 
-      <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-5">
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-5">
         {demoProjects.map((project, index) => (
           <AnimatedCard
-            className="glass-panel rounded-lg transition-colors hover:bg-white/[0.05]"
+            className="premium-card rounded-xl"
             delay={index * 0.035}
             key={project.id}
           >
