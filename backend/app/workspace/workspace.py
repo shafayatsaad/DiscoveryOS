@@ -10,7 +10,7 @@ from app.models.base import DiscoverySQLModel
 from app.utils.ids import prefixed_id
 
 
-def _utc_now() -> datetime:
+def utc_now() -> datetime:
     """Return timezone-aware UTC timestamp for persisted records."""
     return datetime.now(UTC)
 
@@ -37,5 +37,5 @@ class WorkspaceRecord(DiscoverySQLModel, table=True):
         default_factory=list,
         sa_column=Column(JSON),
     )
-    created_at: datetime = Field(default_factory=_utc_now)
-    updated_at: datetime = Field(default_factory=_utc_now)
+    created_at: datetime = Field(default_factory=utc_now)
+    updated_at: datetime = Field(default_factory=utc_now)
