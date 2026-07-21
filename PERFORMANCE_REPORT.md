@@ -58,9 +58,10 @@ Verification commands:
 npm run build
 npm run lint
 npm run typecheck
+npm run test:e2e --workspace=apps/web
 ```
 
-All three passed after the optimization pass.
+All four passed after the optimization pass. The Playwright route smoke suite rendered the sampled pages in roughly 323 ms to 641 ms after the initial page load on the local standalone server, and the dashboard stream interaction completed in 1.4 s with mocked API events.
 
 ## Optimizations Applied
 
@@ -151,6 +152,9 @@ All three passed after the optimization pass.
 - `apps/web/package.json`
 - `package-lock.json`
 - `apps/web/next.config.ts`
+- `apps/web/playwright.config.ts`
+- `apps/web/tests/e2e/frontend-routes.spec.ts`
+- `apps/web/tests/e2e/start-standalone.mjs`
 - `apps/web/Dockerfile`
 - `apps/api/Dockerfile`
 - `docker-compose.yml`
