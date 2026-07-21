@@ -23,10 +23,6 @@ export function HeroSection() {
       <ShaderBackground />
       <div className="absolute inset-0 z-0 bg-gradient-to-b from-background/25 via-background/60 to-background" />
 
-      {/* Decorative gradient overlay blobs */}
-      <div className="pointer-events-none absolute left-1/4 top-1/4 -z-0 h-[400px] w-[400px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-primary/[0.05] blur-[100px] animate-glow-pulse" />
-      <div className="pointer-events-none absolute right-1/4 bottom-1/4 -z-0 h-[300px] w-[300px] translate-x-1/2 translate-y-1/2 rounded-full bg-secondary/[0.03] blur-[120px]" />
-
       <div className="relative z-10 mx-auto flex w-full max-w-container-max flex-col items-center text-center">
         <MotionDiv
           className="mb-8 flex items-center gap-2"
@@ -97,14 +93,13 @@ export function HeroSection() {
           </Button>
         </MotionDiv>
 
-        {/* Subtle scroll down indicator */}
-        <MotionDiv 
+        <MotionDiv
           className="mt-20 flex flex-col items-center gap-2 cursor-pointer opacity-40 hover:opacity-80 transition-opacity duration-300"
           initial={{ opacity: 0 }}
           animate={{ opacity: 0.4 }}
           transition={{ delay: 0.4 }}
         >
-          <span className="font-display text-[10px] font-bold uppercase tracking-widest">Explore OS</span>
+          <span className="font-display text-[10px] font-bold uppercase tracking-normal">Explore OS</span>
           <div className="h-6 w-[1px] bg-gradient-to-b from-primary/80 to-transparent" />
         </MotionDiv>
       </div>
