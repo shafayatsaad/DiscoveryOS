@@ -16,7 +16,7 @@ from discoveryos_api.lifecycle import build_lifespan
 def create_app(settings: Settings | None = None) -> FastAPI:
     """Purpose: Build an application instance for ASGI servers, tests, and tooling."""
     resolved_settings = settings or get_settings()
-    configure_logging(resolved_settings.log_level)
+    configure_logging(resolved_settings.log_level, resolved_settings.log_dir)
 
     app = FastAPI(
         title=resolved_settings.app_name,
