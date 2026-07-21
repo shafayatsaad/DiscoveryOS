@@ -50,7 +50,7 @@ export function ExperimentsPage({ projectId }: { projectId: string }) {
           <div className="grid grid-cols-1 gap-5 lg:grid-cols-3">
             {experiments.map((experiment, index) => (
               <Reveal key={experiment.title} delay={index * 0.05}>
-                <article className="glass-panel flex h-full flex-col rounded-xl p-5 transition-colors hover:bg-white/[0.04]">
+                <article className="premium-card flex h-full flex-col rounded-xl p-5">
                   <div className="mb-5 flex h-12 w-12 items-center justify-center rounded-lg border border-primary/20 bg-primary/10 text-primary">
                     {index === 0 ? <FlaskConical className="h-5 w-5" /> : index === 1 ? <ShieldCheck className="h-5 w-5" /> : <Beaker className="h-5 w-5" />}
                   </div>
