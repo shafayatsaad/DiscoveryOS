@@ -28,7 +28,7 @@ export function ProjectSidebar({
         <summary className="flex h-16 cursor-pointer list-none items-center justify-between px-5">
           <Link
             href="/"
-            className="outline-none transition-transform hover:scale-[0.98]"
+            className="focus-ring rounded-lg transition-transform hover:scale-[0.98]"
           >
             <Logo size="sm" />
           </Link>
@@ -49,7 +49,7 @@ export function ProjectSidebar({
                 href={item.href ?? "#"}
                 prefetch={true}
                 className={cn(
-                  "flex items-center gap-3 rounded-lg px-3 py-2.5 font-display text-sm font-semibold transition-colors border-l-2",
+                  "focus-ring flex items-center gap-3 rounded-lg px-3 py-2.5 font-display text-sm font-semibold transition-colors border-l-2",
                   item.active
                     ? "bg-primary/5 text-primary border-primary"
                     : "text-on-surface-variant border-transparent hover:bg-white/[0.04] hover:text-on-surface",
@@ -70,7 +70,7 @@ export function ProjectSidebar({
         transition={{ duration: 0.32, ease: "easeOut" }}
       >
         <div className="px-6">
-          <Link href="/dashboard" className="outline-none transition-transform hover:scale-[0.98]">
+          <Link href="/dashboard" className="focus-ring rounded-lg transition-transform hover:scale-[0.98]">
             <Logo size="sm" />
           </Link>
           <p className="mt-2.5 font-display text-[10px] font-bold uppercase tracking-wider text-outline">
@@ -105,7 +105,7 @@ export function ProjectSidebar({
                   href={item.href ?? "#"}
                   prefetch={true}
                   className={cn(
-                    "flex items-center gap-3 rounded-lg px-4 py-3 font-display text-sm font-semibold transition-all duration-200 active:scale-[0.98] border-l-2",
+                    "focus-ring flex items-center gap-3 rounded-lg px-4 py-3 font-display text-sm font-semibold transition-all duration-200 active:scale-[0.98] border-l-2",
                     item.active
                       ? "bg-primary/5 text-primary border-primary shadow-[0_0_15px_rgba(173,198,255,0.06)]"
                       : "text-on-surface-variant border-transparent hover:bg-white/[0.02] hover:text-on-surface hover:border-white/10",
