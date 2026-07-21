@@ -1,4 +1,4 @@
-// Purpose: Store mocked research pipeline stream data separately from the UI.
+// Purpose: Store curated research pipeline stream data separately from the UI.
 
 import type { LucideIcon } from "lucide-react";
 import {

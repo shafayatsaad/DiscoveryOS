@@ -1,4 +1,4 @@
-// Purpose: Render project-level DiscoveryOS settings using mock configuration state.
+// Purpose: Render project-level DiscoveryOS settings using demo configuration state.
 
 import { Bell, Database, KeyRound, SlidersHorizontal, Workflow } from "lucide-react";
 
@@ -47,7 +47,7 @@ export function SettingsPage({ projectId }: { projectId: string }) {
                 Settings
               </h1>
               <p className="mt-3 max-w-3xl text-base leading-[1.6] text-on-surface-variant">
-                Configure the mock research workspace for {project.title}. These controls are frontend-only and ready for future API-backed preferences.
+                Configure the research workspace for {project.title}. These controls are frontend-only and ready for future API-backed preferences.
               </p>
             </header>
           </Reveal>

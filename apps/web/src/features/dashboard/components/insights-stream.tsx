@@ -1,4 +1,4 @@
-// Purpose: Render the dashboard timeline of mocked research insights.
+// Purpose: Render the dashboard timeline of curated research insights.
 
 import { Eye, Lightbulb } from "lucide-react";
 

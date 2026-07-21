@@ -1,4 +1,4 @@
-// Purpose: Store mocked evidence explorer data separately from UI components.
+// Purpose: Store curated evidence explorer data separately from UI components.
 
 import type { LucideIcon } from "lucide-react";
 import {

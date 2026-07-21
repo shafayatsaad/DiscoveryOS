@@ -42,7 +42,7 @@ export function ExperimentsPage({ projectId }: { projectId: string }) {
                 Suggested Experiments
               </h1>
               <p className="mt-3 max-w-3xl text-base leading-[1.6] text-on-surface-variant">
-                Validation plans for {project.title}. These are mock summaries meant to show how the workspace turns hypotheses into testable next steps.
+                Validation plans for {project.title}. These summaries show how the workspace turns hypotheses into testable next steps.
               </p>
             </header>
           </Reveal>

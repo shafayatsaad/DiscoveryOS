@@ -64,7 +64,7 @@ export function MlInsightsPage({ projectId }: { projectId: string }) {
                 ML Insights
               </h1>
               <p className="mt-3 max-w-3xl text-base leading-[1.6] text-on-surface-variant">
-                Interpretable model signals for {project.title}. These mock
+                Interpretable model signals for {project.title}. These
                 outputs are displayed as signals, not scientific conclusions.
               </p>
             </header>

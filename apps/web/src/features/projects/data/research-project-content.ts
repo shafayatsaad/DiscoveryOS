@@ -1,4 +1,4 @@
-// Purpose: Store mocked research project workspace data apart from UI components.
+// Purpose: Store curated research project workspace data apart from UI components.
 
 import type { LucideIcon } from "lucide-react";
 import {

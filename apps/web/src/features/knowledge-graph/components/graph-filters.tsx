@@ -1,4 +1,4 @@
-// Purpose: Render graph filtering controls from mocked node-type metadata.
+// Purpose: Render graph filtering controls from curated node-type metadata.
 
 import type { NodeTypeFilter } from "@/features/knowledge-graph/data/knowledge-graph-content";
 import { MotionDiv } from "@/features/landing/components/motion-primitives";

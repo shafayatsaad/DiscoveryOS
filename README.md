@@ -1,206 +1,156 @@
 # DiscoveryOS
 
-Autonomous scientific discovery infrastructure for evidence-backed hypotheses.
+![DiscoveryOS dashboard](stitch_discoveryos_research_platform/discoveryos_dashboard/screen.png)
 
-DiscoveryOS is an OpenAI hackathon project that explores what comes after chatbots for research. Instead of answering isolated prompts, DiscoveryOS turns a research goal into a reproducible scientific workflow powered by multi-agent AI, MCP-connected tools, literature evidence, knowledge graphs, and machine learning.
+[![Next.js](https://img.shields.io/badge/Next.js-15-black)](apps/web)
+[![FastAPI](https://img.shields.io/badge/FastAPI-0.115-009688)](apps/api)
+[![OpenAI](https://img.shields.io/badge/OpenAI-Responses_API-412991)](docs/11-HACKATHON_AI_USAGE.md)
+[![MCP](https://img.shields.io/badge/MCP-ready-blue)](docs/05-MCP.md)
+[![Docker](https://img.shields.io/badge/Docker-Compose-2496ED)](docker-compose.yml)
 
-The project is designed like a real startup: modular architecture, clear agent boundaries, auditable evidence chains, persistent project memory, and an open-source foundation that can grow beyond a hackathon prototype.
+DiscoveryOS is an autonomous scientific discovery workspace for turning research goals into evidence-backed hypotheses, knowledge graphs, experiment plans, and transparent reports.
 
-## Why DiscoveryOS
+It is built for the OpenAI Build Hackathon as a polished product demo, not a toy chatbot. The app shows how a research team can move from a question to an auditable discovery workflow with structured evidence, deterministic demo data, FastAPI services, OpenAI-ready agent boundaries, MCP integration points, and a production-shaped Next.js interface.
 
-Modern AI assistants are excellent at conversation, but scientific research is not just conversation. Research involves long-running investigation, source verification, conflicting evidence, evolving hypotheses, structured datasets, model-driven analysis, experiment design, and reproducible reporting.
+## Product
 
-DiscoveryOS treats research as an operating system:
+DiscoveryOS gives researchers a persistent workspace instead of a disposable chat thread:
 
-- A researcher creates a persistent research project.
-- Agents plan and execute the scientific workflow.
-- Literature and datasets are retrieved through controlled tools.
-- Evidence is extracted into structured claims.
-- A knowledge graph links entities, mechanisms, findings, and contradictions.
-- ML pipelines analyze patterns and generate signals.
-- Hypotheses are proposed, criticized, novelty-checked, and converted into experiment plans.
-- A final report explains the evidence trail instead of hiding it.
+- Plan a scientific workflow from a research goal.
+- Retrieve and structure evidence into inspectable claims.
+- Link entities, mechanisms, contradictions, and confidence in a knowledge graph.
+- Surface ML-style novelty and contradiction signals.
+- Generate experiment plans and reports with a visible evidence trail.
+- Run a stable offline demo without live API dependencies.
 
-## Core Workflow
+## Screens
 
-```text
-Research Goal
-  -> Planner Agent
-  -> Literature Retrieval Agent
-  -> Evidence Extraction Agent
-  -> Knowledge Graph Agent
-  -> Machine Learning Agent
-  -> Hypothesis Generator
-  -> Critic Agent
-  -> Novelty Detection Agent
-  -> Experiment Design Agent
-  -> Research Report Generator
+| Dashboard | Evidence Explorer | Knowledge Graph |
+| --- | --- | --- |
+| ![Dashboard](stitch_discoveryos_research_platform/discoveryos_dashboard/screen.png) | ![Evidence Explorer](stitch_discoveryos_research_platform/evidence_explorer/screen.png) | ![Knowledge Graph](stitch_discoveryos_research_platform/knowledge_graph_explorer/screen.png) |
+
+## Architecture
+
+```mermaid
+flowchart LR
+  User["Researcher"] --> Web["Next.js App Router UI"]
+  Web --> API["FastAPI API"]
+  API --> DB[("PostgreSQL / SQLite")]
+  API --> Redis[("Redis readiness + coordination")]
+  API --> Agents["Agent service boundary"]
+  Agents --> OpenAI["OpenAI Responses API"]
+  Agents --> MCP["MCP tools"]
+  Agents --> Memory["Project memory + evidence store"]
+  Memory --> DB
 ```
 
-## Tech Stack
+## Research Pipeline
 
-Frontend:
-
-- Next.js
-- React
-- TypeScript
-- Tailwind CSS
-
-Backend:
-
-- FastAPI
-- Python
-
-Data and storage:
-
-- PostgreSQL for Docker Compose project memory
-- Redis for runtime coordination and readiness checks
-- Local `storage/` for demo-safe runtime artifacts
-- Local `logs/` for agent and infrastructure debugging
-- SQLite remains available for isolated local API tests
-
-Machine learning:
-
-- scikit-learn
-- XGBoost
-
-AI and tools:
-
-- OpenAI Responses API
-- Structured outputs
-- MCP tool ecosystem
-- Multi-agent orchestration
-
-## Repository Structure
-
-```text
-apps/
-  web/                 Next.js frontend
-  api/                 FastAPI backend
-backend/               Agent/orchestration scaffold and domain prototypes
-packages/
-  shared-types/        Shared contracts and generated types
-  prompts/             Versioned prompts and agent instructions
-  evaluation/          Evaluation rubrics and benchmark assets
-docs/                  Project documentation
-storage/               Runtime database and vector storage locations
-docker/                Docker operational notes
-scripts/               Startup, seed, and developer utilities
-tests/                 Integration and end-to-end tests
-.github/               GitHub workflow and metadata location
-README.md
-docker-compose.yml
-.env.example
-Makefile
+```mermaid
+flowchart TD
+  Goal["Research goal"] --> Planner["Planner agent"]
+  Planner --> Retriever["Literature retriever"]
+  Retriever --> Extractor["Evidence extractor"]
+  Extractor --> Graph["Knowledge graph builder"]
+  Graph --> ML["ML insight signals"]
+  ML --> Hypothesis["Hypothesis generator"]
+  Hypothesis --> Critic["Contradiction + novelty review"]
+  Critic --> Experiments["Experiment planner"]
+  Experiments --> Report["Transparent research report"]
 ```
 
-## Docker Demo Quick Start
+## Stack
 
-DiscoveryOS is prepared for hackathon demo setup through Docker Compose. The default demo path uses seeded local data, so the walkthrough does not depend on OpenAlex or any other live literature API.
+- Frontend: Next.js 15, React 19, TypeScript, Tailwind CSS, React Query, React Flow.
+- Backend: FastAPI, Pydantic, SQLAlchemy async, Alembic.
+- Data: PostgreSQL in Docker, SQLite for local tests, Redis for readiness/coordination.
+- AI: OpenAI Responses API boundary with structured-output-oriented agent design.
+- Tools: MCP-ready integration layer for filesystem, memory, and external research tools.
+- Operations: Docker Compose, health checks, seeded demo data, CI workflow.
 
-Prerequisites:
-
-- Docker Desktop or Docker Engine with Compose v2
-- `make` available on your shell
-
-Run the stack:
+## Quick Start
 
 ```bash
 cp .env.example .env
-make demo
+docker compose up --build
 ```
 
 Open:
 
-- Frontend: [http://localhost:3000](http://localhost:3000)
+- Web app: [http://localhost:3000](http://localhost:3000)
 - API health: [http://localhost:8000/api/v1/health](http://localhost:8000/api/v1/health)
 - API readiness: [http://localhost:8000/api/v1/ready](http://localhost:8000/api/v1/ready)
 
-Useful commands:
+The default stack starts the frontend, API, PostgreSQL, and Redis. It runs migrations and seeds deterministic demo projects, including Heart Failure Biomarkers, Sustainable Battery Materials, Urban Heat Resilience, LLM Hallucination Detection, and Microplastics and Alzheimer's.
+
+## Development
 
 ```bash
-make up      # build and start frontend, API, PostgreSQL, and Redis
-make down    # stop the stack
-make test    # run API tests and frontend typecheck in Compose
-make demo    # start the seeded demo stack and print service URLs
-make logs    # follow API/frontend container logs
-make seed    # rerun the offline demo seed script
+npm install
+npm run dev:web
+npm run dev:api
 ```
 
-The API container waits for PostgreSQL and Redis, runs `alembic upgrade head`, seeds demo data when `DISCOVERYOS_SEED_DEMO=true`, and then starts Uvicorn. The seeded path creates:
+Quality checks:
+
+```bash
+npm run lint
+npm run typecheck
+python -m pytest apps/api/tests
+```
+
+Docker helpers:
+
+```bash
+make demo
+make logs
+make test
+make down
+```
+
+Production-shaped Compose:
+
+```bash
+docker compose -f docker-compose.yml -f docker-compose.prod.yml up --build
+```
+
+## OpenAI
+
+DiscoveryOS is designed around OpenAI's Responses API boundary for agent reasoning, structured outputs, synthesis, report generation, and future tool-calling workflows. The demo remains stable without an API key; live model calls can be enabled through `.env`.
+
+```bash
+DISCOVERYOS_OPENAI_API_KEY=
+DISCOVERYOS_OPENAI_BASE_URL=https://api.openai.com/v1
+DISCOVERYOS_OPENAI_MODEL=gpt-5.6
+```
+
+## MCP
+
+The MCP layer is represented as a service boundary for research tools and project memory. The demo includes filesystem, memory, and GitHub-oriented server scaffolds in the legacy agent prototype and documents the intended tool contracts in [docs/05-MCP.md](docs/05-MCP.md).
+
+## Repository
 
 ```text
-Demo Workspace
-  -> Demo Papers
-  -> Demo Graph
-  -> Demo Report
+apps/
+  web/      Next.js product UI
+  api/      FastAPI service used by Docker and tests
+backend/   Legacy agent/orchestration prototype retained for reference
+docs/      Architecture, MCP, AI, roadmap, and hackathon docs
+scripts/   Demo seed and container startup scripts
+storage/   Local runtime storage
+logs/      Runtime logs
 ```
 
-Runtime debug logs are written to `logs/`:
+## Demo
 
-- `planner.log`
-- `retriever.log`
-- `orchestrator.log`
-- `mcp.log`
-- `openai.log`
+Use the seeded dashboard flow:
 
-Optional live model settings are documented in `.env.example`. For NVIDIA-hosted DeepSeek, set:
+1. Open the dashboard.
+2. Click `Run Query`.
+3. Watch the deterministic SSE pipeline advance through planning, retrieval, graph, and report stages.
+4. Open Evidence Explorer, Knowledge Graph, Pipeline, Reports, and Settings from the project sidebar.
 
-```bash
-DISCOVERYOS_OPENAI_BASE_URL=https://integrate.api.nvidia.com/v1
-DISCOVERYOS_OPENAI_MODEL=deepseek-ai/deepseek-v4-flash
-DISCOVERYOS_OPENAI_API_KEY=your-key
-```
-
-## Documentation
-
-- [Hackathon Context](docs/00-HACKATHON_CONTEXT.md)
-- [Problem](docs/01-PROBLEM.md)
-- [Vision](docs/02-VISION.md)
-- [Architecture](docs/03-ARCHITECTURE.md)
-- [Agents](docs/04-AGENTS.md)
-- [MCP](docs/05-MCP.md)
-- [ML Pipeline](docs/06-ML_PIPELINE.md)
-- [Database](docs/07-DATABASE.md)
-- [API](docs/08-API.md)
-- [Frontend](docs/09-FRONTEND.md)
-- [Roadmap](docs/10-ROADMAP.md)
-- [Hackathon AI Usage](docs/11-HACKATHON_AI_USAGE.md)
-- [Monorepo Architecture](docs/12-MONOREPO_ARCHITECTURE.md)
-
-## What Makes DiscoveryOS Different
-
-DiscoveryOS is not a chat interface with citations. It is a research execution environment.
-
-The system is built around:
-
-- Persistent research projects instead of disposable chats
-- Verifiable evidence objects instead of unsupported summaries
-- Agent specialization instead of a single monolithic assistant
-- Scientific memory instead of short-term chat history
-- Knowledge graph reasoning instead of flat notes
-- ML-assisted insight discovery instead of purely textual analysis
-- Reproducible reports instead of opaque conclusions
-
-## Hackathon Scope
-
-The hackathon version is intended to demonstrate one complete vertical workflow:
-
-1. Accept a research goal.
-2. Generate an execution plan.
-3. Retrieve a focused literature set.
-4. Extract structured evidence.
-5. Build a small knowledge graph.
-6. Generate and critique hypotheses.
-7. Estimate novelty.
-8. Propose experiments.
-9. Produce a transparent research report.
-
-The goal is not to replace scientists. The goal is to give researchers a system that makes their reasoning, evidence, and discovery process more organized, auditable, and powerful.
-
-## Project Status
-
-DiscoveryOS now includes a Docker Compose demo stack with frontend, FastAPI API, PostgreSQL, Redis, automatic migrations, deterministic seed data, health checks, and local debug logs.
+The full narration and Devpost-ready copy live in [docs/14-HACKATHON_DELIVERABLES.md](docs/14-HACKATHON_DELIVERABLES.md).
 
 ## License
 

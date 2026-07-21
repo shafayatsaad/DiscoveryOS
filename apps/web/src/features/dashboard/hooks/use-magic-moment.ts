@@ -1,6 +1,6 @@
 "use client";
 
-// Purpose: Expose Magic Moment mock data through TanStack Query for future API replacement.
+// Purpose: Expose curated Magic Moment demo data through TanStack Query.
 
 import { useQuery } from "@tanstack/react-query";
 
