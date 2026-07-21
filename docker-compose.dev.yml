@@ -1,0 +1,56 @@
+# Purpose: Development override with hot reload for the frontend and API.
+
+services:
+  api:
+    build:
+      target: dev
+    command:
+      [
+        "uvicorn",
+        "discoveryos_api.main:app",
+        "--host",
+        "0.0.0.0",
+        "--port",
+        "8000",
+        "--reload",
+        "--app-dir",
+        "src",
+      ]
+    environment:
+      DISCOVERYOS_ENVIRONMENT: development
+      DISCOVERYOS_DEBUG: "true"
+      DISCOVERYOS_SEED_DEMO: ${DISCOVERYOS_SEED_DEMO:-true}
+    volumes:
+      - ./apps/api/src:/app/src
+      - ./apps/api/alembic:/app/alembic
+      - ./apps/api/alembic.ini:/app/alembic.ini
+      - ./scripts:/app/scripts
+      - api-storage:/app/storage
+      - api-logs:/app/logs
+
+  frontend:
+    build:
+      target: dev
+      args:
+        NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-http://localhost:8000/api/v1}
+        NEXT_PUBLIC_DEVELOPER_MODE: ${NEXT_PUBLIC_DEVELOPER_MODE:-true}
+    command:
+      [
+        "npm",
+        "run",
+        "dev",
+        "--workspace=apps/web",
+        "--",
+        "--hostname",
+        "0.0.0.0",
+        "--port",
+        "3000",
+      ]
+    environment:
+      NEXT_PUBLIC_DEVELOPER_MODE: "true"
+    volumes:
+      - ./apps/web:/app/apps/web
+      - web-next-cache:/app/apps/web/.next
+
+volumes:
+  web-next-cache:
