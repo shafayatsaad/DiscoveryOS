@@ -20,7 +20,7 @@ export function ProjectsPanel() {
           <FolderOpen className="h-5 w-5 text-primary" />
           Active Projects
         </h2>
-        <a href="#" className="font-display text-xs font-semibold uppercase tracking-normal text-primary hover:underline">
+        <a href="#" className="focus-ring rounded-md px-2 py-1 font-display text-xs font-semibold uppercase tracking-normal text-primary transition-colors hover:bg-primary/10">
           View All
         </a>
       </div>
@@ -29,7 +29,7 @@ export function ProjectsPanel() {
         {activeProjects.map((project) => (
           <MotionDiv
             key={project.title}
-            className="glass-panel min-h-36 rounded-lg transition-all duration-300 hover:bg-white/[0.03] hover:border-primary/20 hover:shadow-card-hover"
+            className="premium-card min-h-36 rounded-xl"
             whileHover={{ y: -4 }}
             transition={{ duration: 0.2 }}
           >
@@ -68,7 +68,7 @@ export function ProjectsPanel() {
 
         {completedProject ? (
           <MotionDiv
-            className="glass-panel min-h-28 rounded-lg transition-all duration-300 hover:bg-white/[0.03] hover:border-primary/20 hover:shadow-card-hover md:col-span-2"
+            className="premium-card min-h-28 rounded-xl md:col-span-2"
             whileHover={{ y: -4 }}
             transition={{ duration: 0.2 }}
           >
