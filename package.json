@@ -2,7 +2,7 @@
   "name": "discoveryos",
   "version": "0.1.0",
   "private": true,
-  "description": "DiscoveryOS — Autonomous Scientific Discovery Platform powered by AI Agents, MCP, Machine Learning, and Knowledge Graphs.",
+  "description": "DiscoveryOS - Autonomous Scientific Discovery Platform powered by AI agents, MCP, machine learning, and knowledge graphs.",
   "scripts": {
     "dev": "npm run dev --workspace=apps/web",
     "dev:web": "npm run dev --workspace=apps/web",
