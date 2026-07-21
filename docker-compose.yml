@@ -1,18 +1,102 @@
-# Purpose: Provide a local development composition for the DiscoveryOS backend service.
+# Purpose: Run the full DiscoveryOS hackathon demo stack with Docker Compose.
 
 services:
-  api:
-    # Purpose: Build the API service from the backend package context.
-    build:
-      context: ./apps/api
-      dockerfile: Dockerfile
-    # Purpose: Load documented defaults without requiring a local secret-bearing .env file.
-    env_file:
-      - ./apps/api/.env.example
+  postgres:
+    image: postgres:16-alpine
     environment:
-      DISCOVERYOS_DATABASE_URL: sqlite+aiosqlite:////app/storage/sqlite/runtime/discoveryos.db
+      POSTGRES_DB: ${POSTGRES_DB:-discoveryos}
+      POSTGRES_USER: ${POSTGRES_USER:-discoveryos}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-discoveryos}
     ports:
-      - "8000:8000"
+      - "${POSTGRES_PORT:-5432}:5432"
     volumes:
-      # Purpose: Persist local SQLite and artifact data across container restarts.
+      - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 12
+
+  redis:
+    image: redis:7-alpine
+    command: ["redis-server", "--appendonly", "yes"]
+    ports:
+      - "${REDIS_PORT:-6379}:6379"
+    volumes:
+      - redis-data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 12
+
+  api:
+    build:
+      context: .
+      dockerfile: apps/api/Dockerfile
+    environment:
+      DISCOVERYOS_APP_NAME: ${DISCOVERYOS_APP_NAME:-DiscoveryOS API}
+      DISCOVERYOS_ENVIRONMENT: ${DISCOVERYOS_ENVIRONMENT:-development}
+      DISCOVERYOS_DEBUG: ${DISCOVERYOS_DEBUG:-true}
+      DISCOVERYOS_API_VERSION: ${DISCOVERYOS_API_VERSION:-v1}
+      DISCOVERYOS_API_V1_PREFIX: ${DISCOVERYOS_API_V1_PREFIX:-/api/v1}
+      DISCOVERYOS_LOG_LEVEL: ${DISCOVERYOS_LOG_LEVEL:-INFO}
+      DISCOVERYOS_LOG_DIR: /app/logs
+      DISCOVERYOS_CORS_ORIGINS: '["http://localhost:3000","http://127.0.0.1:3000","http://frontend:3000"]'
+      DISCOVERYOS_DATABASE_URL: postgresql+asyncpg://${POSTGRES_USER:-discoveryos}:${POSTGRES_PASSWORD:-discoveryos}@postgres:5432/${POSTGRES_DB:-discoveryos}
+      DISCOVERYOS_SQLALCHEMY_ECHO: ${DISCOVERYOS_SQLALCHEMY_ECHO:-false}
+      DISCOVERYOS_REDIS_URL: redis://redis:6379/0
+      DISCOVERYOS_OPENAI_API_KEY: ${DISCOVERYOS_OPENAI_API_KEY:-}
+      DISCOVERYOS_OPENAI_BASE_URL: ${DISCOVERYOS_OPENAI_BASE_URL:-https://integrate.api.nvidia.com/v1}
+      DISCOVERYOS_OPENAI_MODEL: ${DISCOVERYOS_OPENAI_MODEL:-deepseek-ai/deepseek-v4-flash}
+      DISCOVERYOS_DEMO_MODE: ${DISCOVERYOS_DEMO_MODE:-true}
+      DISCOVERYOS_SEED_DEMO: ${DISCOVERYOS_SEED_DEMO:-true}
+    ports:
+      - "${API_PORT:-8000}:8000"
+    volumes:
       - ./storage:/app/storage
+      - ./logs:/app/logs
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "python -c \"import json,sys,urllib.request; data=json.load(urllib.request.urlopen('http://127.0.0.1:8000/api/v1/ready', timeout=3)); sys.exit(0 if data.get('success') else 1)\"",
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 20s
+
+  frontend:
+    build:
+      context: .
+      dockerfile: apps/web/Dockerfile
+      args:
+        NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-http://localhost:8000/api/v1}
+    environment:
+      NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-http://localhost:8000/api/v1}
+      NEXT_PUBLIC_DEVELOPER_MODE: ${NEXT_PUBLIC_DEVELOPER_MODE:-true}
+    ports:
+      - "${WEB_PORT:-3000}:3000"
+    depends_on:
+      api:
+        condition: service_healthy
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "node -e \"fetch('http://127.0.0.1:3000').then((r)=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))\"",
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 30s
+
+volumes:
+  postgres-data:
+  redis-data:
