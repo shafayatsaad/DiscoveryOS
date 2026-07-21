@@ -32,7 +32,7 @@ export function HeroSection() {
         >
           <span className="flex items-center gap-1.5 rounded-full border border-white/[0.06] bg-surface-container-low px-3.5 py-1.5 font-display text-xs font-semibold text-on-surface-variant hover:border-primary/20 transition-all duration-300">
             <Sparkles className="h-3.5 w-3.5 text-primary animate-pulse" />
-            v0.1 — Early Access
+            v0.1 - Early Access
           </span>
         </MotionDiv>
 
