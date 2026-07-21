@@ -21,7 +21,7 @@ export function DashboardSidebar() {
         <summary className="flex h-16 cursor-pointer list-none items-center justify-between px-5">
           <Link
             href="/"
-            className="outline-none transition-transform hover:scale-[0.98]"
+            className="focus-ring rounded-lg transition-transform hover:scale-[0.98]"
           >
             <Logo size="sm" />
           </Link>
@@ -41,7 +41,7 @@ export function DashboardSidebar() {
                 key={item.label}
                 href={item.href ?? "#"}
                 className={cn(
-                  "flex items-center gap-3 rounded-lg px-3 py-2.5 font-display text-sm font-semibold transition-colors border-l-2",
+                  "focus-ring flex items-center gap-3 rounded-lg px-3 py-2.5 font-display text-sm font-semibold transition-colors border-l-2",
                   item.active
                     ? "bg-primary/5 text-primary border-primary"
                     : "text-on-surface-variant border-transparent hover:bg-white/[0.04] hover:text-on-surface",
@@ -64,7 +64,7 @@ export function DashboardSidebar() {
         <div className="border-b border-white/[0.05] px-6 pb-6">
           <Link
             href="/"
-            className="outline-none transition-transform hover:scale-[0.98]"
+            className="focus-ring rounded-lg transition-transform hover:scale-[0.98]"
           >
             <Logo size="sm" />
           </Link>
@@ -90,7 +90,7 @@ export function DashboardSidebar() {
                 <Link
                   href={item.href ?? "#"}
                   className={cn(
-                    "flex items-center gap-3 rounded-lg px-3 py-2.5 font-display text-sm font-semibold transition-all duration-200 active:scale-[0.98] border-l-2",
+                    "focus-ring flex items-center gap-3 rounded-lg px-3 py-2.5 font-display text-sm font-semibold transition-all duration-200 active:scale-[0.98] border-l-2",
                     item.active
                       ? "bg-primary/5 text-primary border-primary shadow-[0_0_15px_rgba(173,198,255,0.06)]"
                       : "text-on-surface-variant border-transparent hover:bg-white/[0.02] hover:text-on-surface hover:border-white/10",
@@ -113,7 +113,7 @@ export function DashboardSidebar() {
           </Button>
           <Link
             href="/"
-            className="flex items-center gap-3 rounded-lg px-3 py-2.5 font-display text-sm font-semibold text-on-surface-variant transition-all hover:bg-white/[0.04] hover:text-on-surface"
+            className="focus-ring flex items-center gap-3 rounded-lg px-3 py-2.5 font-display text-sm font-semibold text-on-surface-variant transition-all hover:bg-white/[0.04] hover:text-on-surface"
           >
             <ArrowLeftFromLine className="h-4 w-4" />
             <span>Back to Home</span>
@@ -125,7 +125,7 @@ export function DashboardSidebar() {
               <Link
                 key={item.label}
                 href={item.href ?? "#"}
-                className="flex items-center gap-3 rounded-lg px-3 py-2.5 font-display text-sm font-semibold text-on-surface-variant transition-all hover:bg-white/[0.04] hover:text-on-surface"
+                className="focus-ring flex items-center gap-3 rounded-lg px-3 py-2.5 font-display text-sm font-semibold text-on-surface-variant transition-all hover:bg-white/[0.04] hover:text-on-surface"
               >
                 <Icon className="h-5 w-5" />
                 <span>{item.label}</span>
