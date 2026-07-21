@@ -58,7 +58,7 @@ export function SettingsPage({ projectId }: { projectId: string }) {
 
               return (
                 <Reveal key={group.title} delay={index * 0.04}>
-                  <section className="glass-panel rounded-xl p-5" aria-labelledby={`${group.title}-heading`}>
+                  <section className="premium-card rounded-xl p-5" aria-labelledby={`${group.title}-heading`}>
                     <h2 id={`${group.title}-heading`} className="mb-5 flex items-center gap-2 font-display text-xl font-semibold text-on-surface">
                       <Icon className="h-5 w-5 text-primary" />
                       {group.title}
@@ -71,7 +71,7 @@ export function SettingsPage({ projectId }: { projectId: string }) {
                         >
                           <span>{setting}</span>
                           <input
-                            className="h-4 w-4 accent-primary"
+                            className="h-4 w-4 rounded border-white/20 bg-surface accent-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
                             type="checkbox"
                             defaultChecked={settingIndex !== 1}
                           />
