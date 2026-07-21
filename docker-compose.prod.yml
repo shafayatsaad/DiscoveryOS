@@ -1,0 +1,22 @@
+# Purpose: Production-shaped overrides for the DiscoveryOS Docker Compose stack.
+
+services:
+  api:
+    environment:
+      DISCOVERYOS_ENVIRONMENT: production
+      DISCOVERYOS_DEBUG: "false"
+      DISCOVERYOS_LOG_LEVEL: INFO
+      DISCOVERYOS_DEMO_MODE: ${DISCOVERYOS_DEMO_MODE:-true}
+      DISCOVERYOS_SEED_DEMO: ${DISCOVERYOS_SEED_DEMO:-false}
+    restart: unless-stopped
+
+  frontend:
+    environment:
+      NEXT_PUBLIC_DEVELOPER_MODE: "false"
+    restart: unless-stopped
+
+  postgres:
+    restart: unless-stopped
+
+  redis:
+    restart: unless-stopped

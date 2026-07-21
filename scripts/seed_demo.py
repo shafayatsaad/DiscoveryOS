@@ -19,7 +19,85 @@ from discoveryos_api.models.memory import (
 from discoveryos_api.models.project import Project
 from discoveryos_api.models.research_job import ResearchJob
 
-DEMO_PROJECT_ID = "00000000-0000-4000-8000-000000000001"
+DEMO_PROJECT_ID = "polymer-electrolyte-discovery"
+
+DEMO_PROJECTS = [
+    {
+        "id": DEMO_PROJECT_ID,
+        "title": "Solid-State Polymer Electrolytes",
+        "description": (
+            "Evidence-backed polymer electrolyte discovery workspace used by the live "
+            "dashboard pipeline demo."
+        ),
+        "research_goal": (
+            "Identify evidence-backed polymer electrolyte hypotheses with strong "
+            "conductivity, thermal stability, and scalable synthesis routes."
+        ),
+        "domain": "materials science",
+        "owner_name": "Dr. E. Vance",
+        "metadata": {"demo": True, "source": "local_seed", "frontend_id": DEMO_PROJECT_ID},
+    },
+    {
+        "id": "heart-failure-biomarkers",
+        "title": "Heart Failure Biomarkers",
+        "description": "Cached demo workflow for cohort-aware biomarker discovery.",
+        "research_goal": (
+            "Identify reproducible heart failure biomarkers with evidence separated by "
+            "cohort, assay type, and outcome context."
+        ),
+        "domain": "biomedicine",
+        "owner_name": "DiscoveryOS Demo",
+        "metadata": {"demo": True, "source": "local_seed"},
+    },
+    {
+        "id": "sustainable-battery-materials",
+        "title": "Sustainable Battery Materials",
+        "description": "Cached demo workflow for lower-impact battery material discovery.",
+        "research_goal": (
+            "Find sustainable battery material candidates that balance performance, "
+            "resource availability, and scalable synthesis."
+        ),
+        "domain": "materials science",
+        "owner_name": "DiscoveryOS Demo",
+        "metadata": {"demo": True, "source": "local_seed"},
+    },
+    {
+        "id": "urban-heat-resilience",
+        "title": "Urban Heat Resilience",
+        "description": "Cached demo workflow for climate adaptation evidence synthesis.",
+        "research_goal": (
+            "Generate testable hypotheses for reducing heat exposure in dense "
+            "neighborhoods using climate and built-environment evidence."
+        ),
+        "domain": "climate adaptation",
+        "owner_name": "DiscoveryOS Demo",
+        "metadata": {"demo": True, "source": "local_seed"},
+    },
+    {
+        "id": "llm-hallucination-detection",
+        "title": "LLM Hallucination Detection",
+        "description": "Cached demo workflow for grounding and hallucination detection research.",
+        "research_goal": (
+            "Identify reliable LLM hallucination detection methods with citations, "
+            "benchmark context, and failure modes."
+        ),
+        "domain": "ai safety",
+        "owner_name": "DiscoveryOS Demo",
+        "metadata": {"demo": True, "source": "local_seed"},
+    },
+    {
+        "id": "microplastics-alzheimers",
+        "title": "Microplastics and Alzheimer's",
+        "description": "Cached demo workflow for cautious biomedical evidence synthesis.",
+        "research_goal": (
+            "Assess whether microplastic exposure has plausible indirect mechanisms "
+            "related to Alzheimer's disease while preserving uncertainty."
+        ),
+        "domain": "biomedicine",
+        "owner_name": "DiscoveryOS Demo",
+        "metadata": {"demo": True, "source": "local_seed"},
+    },
+]
 
 
 async def seed_demo() -> None:
@@ -28,27 +106,7 @@ async def seed_demo() -> None:
     manager = DatabaseSessionManager(settings)
     try:
         async with manager.session() as session:
-            result = await session.execute(select(Project).where(Project.id == DEMO_PROJECT_ID))
-            project = result.scalar_one_or_none()
-            if project is None:
-                project = Project(
-                    id=DEMO_PROJECT_ID,
-                    title="Demo Workspace",
-                    description="Offline hackathon demo workspace with seeded evidence.",
-                    status="active",
-                    research_goal=(
-                        "Identify evidence-backed biomarkers and mechanisms for fatigue-linked "
-                        "heart failure progression without depending on live literature APIs."
-                    ),
-                    domain="biomedicine",
-                    owner_name="DiscoveryOS Demo",
-                    project_metadata={
-                        "demo": True,
-                        "source": "local_seed",
-                        "fallback_reason": "OpenAlex/network APIs are optional for the demo.",
-                    },
-                )
-                session.add(project)
+            await _seed_projects(session)
 
             await _seed_papers(session)
             await _seed_graph(session)
@@ -57,6 +115,40 @@ async def seed_demo() -> None:
             await session.commit()
     finally:
         await manager.dispose()
+
+
+async def _seed_projects(session) -> None:
+    """Purpose: Seed every frontend demo project ID so API contracts match the UI."""
+    for demo_project in DEMO_PROJECTS:
+        result = await session.execute(select(Project).where(Project.id == demo_project["id"]))
+        project = result.scalar_one_or_none()
+        if project is None:
+            session.add(
+                Project(
+                    id=demo_project["id"],
+                    title=demo_project["title"],
+                    description=demo_project["description"],
+                    status="active",
+                    research_goal=demo_project["research_goal"],
+                    domain=demo_project["domain"],
+                    owner_name=demo_project["owner_name"],
+                    project_metadata={
+                        **demo_project["metadata"],
+                        "fallback_reason": "OpenAlex/network APIs are optional for the demo.",
+                    },
+                )
+            )
+        else:
+            project.title = demo_project["title"]
+            project.description = demo_project["description"]
+            project.status = "active"
+            project.research_goal = demo_project["research_goal"]
+            project.domain = demo_project["domain"]
+            project.owner_name = demo_project["owner_name"]
+            project.project_metadata = {
+                **demo_project["metadata"],
+                "fallback_reason": "OpenAlex/network APIs are optional for the demo.",
+            }
 
 
 async def _seed_papers(session) -> None:
