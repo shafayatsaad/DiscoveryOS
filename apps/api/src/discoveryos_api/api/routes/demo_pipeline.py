@@ -6,14 +6,12 @@ import asyncio
 import json
 from datetime import UTC, datetime
 from typing import Annotated, Any
-from uuid import uuid4
 
 from fastapi import APIRouter, Body, Depends, HTTPException, Request, status
 from fastapi.responses import StreamingResponse
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from discoveryos_api.api.dependencies import get_db_session
-from discoveryos_api.models.project import utc_now
 from discoveryos_api.repositories.projects import ProjectRepository
 from discoveryos_api.repositories.research_jobs import ResearchJobRepository
 from discoveryos_api.schemas.research_jobs import ResearchJobCreate
