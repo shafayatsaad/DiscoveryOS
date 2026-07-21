@@ -53,9 +53,11 @@ Backend:
 
 Data and storage:
 
-- SQLite for relational project memory
-- ChromaDB for vector search and semantic memory
-- NetworkX for knowledge graph construction and analysis
+- PostgreSQL for Docker Compose project memory
+- Redis for runtime coordination and readiness checks
+- Local `storage/` for demo-safe runtime artifacts
+- Local `logs/` for agent and infrastructure debugging
+- SQLite remains available for isolated local API tests
 
 Machine learning:
 
@@ -75,18 +77,79 @@ AI and tools:
 apps/
   web/                 Next.js frontend
   api/                 FastAPI backend
+backend/               Agent/orchestration scaffold and domain prototypes
 packages/
   shared-types/        Shared contracts and generated types
   prompts/             Versioned prompts and agent instructions
   evaluation/          Evaluation rubrics and benchmark assets
 docs/                  Project documentation
-data/                  Local research and ML data
 storage/               Runtime database and vector storage locations
-experiments/           Notebooks, baselines, and experiment outputs
-infra/                 Docker, deployment, and environment support
-tools/                 Developer and research utilities
+docker/                Docker operational notes
+scripts/               Startup, seed, and developer utilities
 tests/                 Integration and end-to-end tests
-assets/                Brand and diagram assets
+.github/               GitHub workflow and metadata location
+README.md
+docker-compose.yml
+.env.example
+Makefile
+```
+
+## Docker Demo Quick Start
+
+DiscoveryOS is prepared for hackathon demo setup through Docker Compose. The default demo path uses seeded local data, so the walkthrough does not depend on OpenAlex or any other live literature API.
+
+Prerequisites:
+
+- Docker Desktop or Docker Engine with Compose v2
+- `make` available on your shell
+
+Run the stack:
+
+```bash
+cp .env.example .env
+make demo
+```
+
+Open:
+
+- Frontend: [http://localhost:3000](http://localhost:3000)
+- API health: [http://localhost:8000/api/v1/health](http://localhost:8000/api/v1/health)
+- API readiness: [http://localhost:8000/api/v1/ready](http://localhost:8000/api/v1/ready)
+
+Useful commands:
+
+```bash
+make up      # build and start frontend, API, PostgreSQL, and Redis
+make down    # stop the stack
+make test    # run API tests and frontend typecheck in Compose
+make demo    # start the seeded demo stack and print service URLs
+make logs    # follow API/frontend container logs
+make seed    # rerun the offline demo seed script
+```
+
+The API container waits for PostgreSQL and Redis, runs `alembic upgrade head`, seeds demo data when `DISCOVERYOS_SEED_DEMO=true`, and then starts Uvicorn. The seeded path creates:
+
+```text
+Demo Workspace
+  -> Demo Papers
+  -> Demo Graph
+  -> Demo Report
+```
+
+Runtime debug logs are written to `logs/`:
+
+- `planner.log`
+- `retriever.log`
+- `orchestrator.log`
+- `mcp.log`
+- `openai.log`
+
+Optional live model settings are documented in `.env.example`. For NVIDIA-hosted DeepSeek, set:
+
+```bash
+DISCOVERYOS_OPENAI_BASE_URL=https://integrate.api.nvidia.com/v1
+DISCOVERYOS_OPENAI_MODEL=deepseek-ai/deepseek-v4-flash
+DISCOVERYOS_OPENAI_API_KEY=your-key
 ```
 
 ## Documentation
@@ -137,7 +200,7 @@ The goal is not to replace scientists. The goal is to give researchers a system 
 
 ## Project Status
 
-DiscoveryOS is currently in documentation and architecture phase. Application code has not yet been implemented.
+DiscoveryOS now includes a Docker Compose demo stack with frontend, FastAPI API, PostgreSQL, Redis, automatic migrations, deterministic seed data, health checks, and local debug logs.
 
 ## License
 
