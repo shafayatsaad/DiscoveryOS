@@ -1,32 +1,72 @@
-# Purpose: Build the production container image for the DiscoveryOS FastAPI backend.
+# syntax=docker/dockerfile:1
+# Purpose: Build optimized runtime and development images for the DiscoveryOS API.
+
+FROM python:3.12-slim AS builder
+
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1 \
+    PIP_NO_CACHE_DIR=1
+
+WORKDIR /build
+
+COPY apps/api/pyproject.toml apps/api/README.md ./
+COPY apps/api/src ./src
+RUN python -m pip install --upgrade pip wheel \
+    && python -m pip wheel --wheel-dir /wheels .
 
 FROM python:3.12-slim AS runtime
 
-# Purpose: Keep Python deterministic and make container logs stream immediately.
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
     PIP_NO_CACHE_DIR=1
 
 WORKDIR /app
 
-# Purpose: Install package metadata first so dependency layers can be cached.
-COPY apps/api/pyproject.toml apps/api/README.md ./
+RUN useradd --create-home --user-group --uid 10001 --shell /usr/sbin/nologin appuser
 
-# Purpose: Copy only backend source and migration infrastructure into the image.
+COPY --from=builder /wheels /wheels
+RUN python -m pip install --no-cache-dir /wheels/*.whl \
+    && rm -rf /wheels
+
+COPY apps/api/alembic.ini ./alembic.ini
+COPY apps/api/alembic ./alembic
+COPY scripts/seed_demo.py ./scripts/seed_demo.py
+COPY scripts/docker/api-entrypoint.sh ./docker/api-entrypoint.sh
+
+RUN chmod +x ./docker/api-entrypoint.sh \
+    && mkdir -p /app/storage /app/logs \
+    && chown -R appuser:appuser /app
+
+USER appuser
+
+EXPOSE 8000
+
+ENTRYPOINT ["./docker/api-entrypoint.sh"]
+
+CMD ["uvicorn", "discoveryos_api.main:app", "--host", "0.0.0.0", "--port", "8000"]
+
+FROM python:3.12-slim AS dev
+
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1 \
+    PIP_NO_CACHE_DIR=1
+
+WORKDIR /app
+
+COPY apps/api/pyproject.toml apps/api/README.md ./
 COPY apps/api/src ./src
 COPY apps/api/alembic.ini ./alembic.ini
 COPY apps/api/alembic ./alembic
 COPY scripts/seed_demo.py ./scripts/seed_demo.py
 COPY scripts/docker/api-entrypoint.sh ./docker/api-entrypoint.sh
 
-# Purpose: Install the backend package and runtime dependencies.
 RUN python -m pip install --upgrade pip \
-    && python -m pip install ".[dev]" \
-    && chmod +x ./docker/api-entrypoint.sh
+    && python -m pip install -e ".[dev]" \
+    && chmod +x ./docker/api-entrypoint.sh \
+    && mkdir -p /app/storage /app/logs
 
 EXPOSE 8000
 
 ENTRYPOINT ["./docker/api-entrypoint.sh"]
 
-# Purpose: Start the ASGI app with Uvicorn; orchestration can override this command.
-CMD ["uvicorn", "discoveryos_api.main:app", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["uvicorn", "discoveryos_api.main:app", "--host", "0.0.0.0", "--port", "8000", "--reload", "--app-dir", "src"]
