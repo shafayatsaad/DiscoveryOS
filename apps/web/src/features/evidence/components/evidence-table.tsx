@@ -8,9 +8,9 @@ import { MotionDiv } from "@/features/landing/components/motion-primitives";
 import { cn } from "@/lib/utils";
 
 const claimToneClasses: Record<EvidenceRecord["claimType"], string> = {
-  Performance: "border-secondary/10 bg-secondary-container/30 text-secondary-fixed",
-  Mechanism: "border-tertiary/10 bg-tertiary-container/30 text-tertiary-fixed",
-  Constraint: "border-error/10 bg-error-container/30 text-error",
+  Performance: "border-secondary/20 bg-secondary/10 text-secondary",
+  Mechanism: "border-tertiary/20 bg-tertiary/10 text-tertiary",
+  Constraint: "border-red-300/20 bg-red-400/10 text-red-200",
 };
 
 const confidenceToneClasses: Record<EvidenceRecord["claimType"], string> = {
@@ -100,7 +100,7 @@ function EvidenceRow({ record }: { record: EvidenceRecord }) {
               </h3>
               <p className="text-base leading-[1.65] text-on-surface">
                 <span className="text-on-surface-variant">{record.contextBefore} </span>
-                <mark className="rounded bg-primary-container/20 px-1 text-primary-fixed">
+                <mark className="rounded bg-primary/15 px-1 text-primary">
                   {record.highlight}
                 </mark>
                 <span className="text-on-surface-variant"> {record.contextAfter}</span>
