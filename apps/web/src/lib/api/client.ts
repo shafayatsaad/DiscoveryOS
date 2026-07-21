@@ -1,6 +1,6 @@
 // Purpose: Provide typed API client for the DiscoveryOS backend with retry support.
-// Retries are applied to transient failures (network blips, 503s) to keep the pipeline
-// responsive without crashing the application.
+// Retries are applied to transient failures so the pipeline can recover from
+// short network blips without crashing the application.
 
 const API_BASE =
   process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api/v1";
@@ -35,10 +35,6 @@ export type PipelineSubscription = {
   readonly readyState: number;
 };
 
-// ---------------------------------------------------------------------------
-// Retry helper
-// ---------------------------------------------------------------------------
-
 async function fetchWithRetry(
   url: string,
   options: RequestInit,
@@ -50,15 +46,15 @@ async function fetchWithRetry(
   for (let attempt = 0; attempt < maxRetries; attempt++) {
     try {
       const response = await fetch(url, options);
-      // Don't retry client errors (4xx) — they're the caller's fault
+
       if (!response.ok && response.status < 500) {
         return response;
       }
-      // Retry server errors (5xx) and successful responses are returned as-is
+
       if (response.ok) {
         return response;
       }
-      // 5xx — retry after backoff
+
       lastError = new Error(`HTTP ${response.status}: ${response.statusText}`);
     } catch (err) {
       lastError = err instanceof Error ? err : new Error(String(err));
@@ -79,10 +75,6 @@ async function fetchWithRetry(
     new Error(`Request to ${url} failed after ${maxRetries} retries.`)
   );
 }
-
-// ---------------------------------------------------------------------------
-// Public API
-// ---------------------------------------------------------------------------
 
 export async function startPipeline(
   projectId: string,
@@ -123,7 +115,6 @@ export function subscribeToPipeline(
       const data = JSON.parse(event.data) as PipelineEvent;
       onEvent(data);
     } catch (parseErr) {
-      // Malformed events (e.g. keepalive comments) are expected — log at debug level
       console.warn("[API] Malformed SSE event received:", event.data, parseErr);
     }
   };
@@ -131,7 +122,6 @@ export function subscribeToPipeline(
   eventSource.onerror = (event: Event) => {
     console.warn("[API] SSE connection error for project:", projectId, event);
     onError?.(event);
-    // EventSource auto-reconnects by default
   };
 
   const notifyClosed = () => {
@@ -144,7 +134,6 @@ export function subscribeToPipeline(
     onClose?.();
   };
 
-  // EventSource doesn't have a native onclose, but we can detect via readyState.
   const checkClosed = setInterval(() => {
     if (eventSource.readyState === EventSource.CLOSED) {
       clearInterval(checkClosed);
