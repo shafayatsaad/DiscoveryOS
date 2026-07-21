@@ -76,11 +76,15 @@ def graph_repository_dependency(
     return KnowledgeGraphRepository(workspace_service=workspace_service)
 
 
+# Module-level singleton so POST (start) and GET (stream) share the same state backend.
+_shared_state_backend = InMemoryStateBackend()
+
+
 def orchestrator_service_dependency() -> OrchestratorService:
     """Inject the orchestrator service used by project pipeline routes."""
 
     return OrchestratorService(
-        state_backend=InMemoryStateBackend(),
+        state_backend=_shared_state_backend,
     )
 
 
