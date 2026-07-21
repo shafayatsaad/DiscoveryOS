@@ -1,8 +1,9 @@
-# Purpose: Run the full DiscoveryOS hackathon demo stack with Docker Compose.
+# Purpose: Run the full DiscoveryOS stack with Docker Compose.
 
 services:
   postgres:
     image: postgres:16-alpine
+    init: true
     environment:
       POSTGRES_DB: ${POSTGRES_DB:-discoveryos}
       POSTGRES_USER: ${POSTGRES_USER:-discoveryos}
@@ -19,6 +20,7 @@ services:
 
   redis:
     image: redis:7-alpine
+    init: true
     command: ["redis-server", "--appendonly", "yes"]
     ports:
       - "${REDIS_PORT:-6379}:6379"
@@ -31,9 +33,11 @@ services:
       retries: 12
 
   api:
+    init: true
     build:
       context: .
       dockerfile: apps/api/Dockerfile
+      target: runtime
     environment:
       DISCOVERYOS_APP_NAME: ${DISCOVERYOS_APP_NAME:-DiscoveryOS API}
       DISCOVERYOS_ENVIRONMENT: ${DISCOVERYOS_ENVIRONMENT:-development}
@@ -54,8 +58,8 @@ services:
     ports:
       - "${API_PORT:-8000}:8000"
     volumes:
-      - ./storage:/app/storage
-      - ./logs:/app/logs
+      - api-storage:/app/storage
+      - api-logs:/app/logs
     depends_on:
       postgres:
         condition: service_healthy
@@ -73,11 +77,14 @@ services:
       start_period: 20s
 
   frontend:
+    init: true
     build:
       context: .
       dockerfile: apps/web/Dockerfile
+      target: runner
       args:
         NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-http://localhost:8000/api/v1}
+        NEXT_PUBLIC_DEVELOPER_MODE: ${NEXT_PUBLIC_DEVELOPER_MODE:-false}
     environment:
       NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-http://localhost:8000/api/v1}
       NEXT_PUBLIC_DEVELOPER_MODE: ${NEXT_PUBLIC_DEVELOPER_MODE:-true}
@@ -100,3 +107,5 @@ services:
 volumes:
   postgres-data:
   redis-data:
+  api-storage:
+  api-logs:
