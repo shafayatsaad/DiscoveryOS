@@ -38,6 +38,15 @@ class Settings(BaseSettings):
 
     database_url: str = "sqlite+aiosqlite:///../../storage/sqlite/runtime/discoveryos.db"
     sqlalchemy_echo: bool = False
+    redis_url: str | None = None
+
+    openai_api_key: str | None = None
+    openai_base_url: str = "https://api.openai.com/v1"
+    openai_model: str = "gpt-5.6"
+
+    demo_mode: bool = False
+    seed_demo: bool = False
+    log_dir: str = "logs"
 
     @property
     def sqlite_database_path(self) -> Path | None:
