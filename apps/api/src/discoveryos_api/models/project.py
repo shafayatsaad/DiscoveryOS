@@ -3,8 +3,7 @@
 from datetime import UTC, datetime
 from uuid import uuid4
 
-from sqlalchemy import DateTime, String, Text
-from sqlalchemy.dialects.sqlite import JSON
+from sqlalchemy import JSON, DateTime, String, Text
 from sqlalchemy.orm import Mapped, mapped_column
 
 from discoveryos_api.db.base import Base
