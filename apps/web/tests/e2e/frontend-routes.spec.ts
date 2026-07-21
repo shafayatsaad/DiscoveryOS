@@ -86,6 +86,7 @@ test("dashboard magic moment streams to report links", async ({ page }) => {
   });
 
   await page.goto("/dashboard");
+  await page.waitForLoadState("networkidle");
   await page.getByLabel("Research problem").fill("Can microplastics contribute to Alzheimer's disease?");
   await page.getByRole("button", { name: "Run Query" }).click();
   await expect(page.getByRole("heading", { name: "Discovery Complete" })).toBeVisible({
