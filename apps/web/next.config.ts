@@ -3,7 +3,13 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  compress: true,
   devIndicators: false,
+  experimental: {
+    optimizePackageImports: ["framer-motion", "lucide-react"],
+  },
+  output: "standalone",
+  poweredByHeader: false,
   reactStrictMode: true,
 };
 
