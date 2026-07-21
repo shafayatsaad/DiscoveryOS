@@ -3,8 +3,7 @@
 from datetime import datetime
 from uuid import uuid4
 
-from sqlalchemy import DateTime, Float, ForeignKey, String
-from sqlalchemy.dialects.sqlite import JSON
+from sqlalchemy import JSON, DateTime, Float, ForeignKey, String
 from sqlalchemy.ext.mutable import MutableList
 from sqlalchemy.orm import Mapped, mapped_column
 
