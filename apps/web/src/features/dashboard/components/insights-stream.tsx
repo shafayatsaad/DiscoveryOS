@@ -7,7 +7,7 @@ import { cn } from "@/lib/utils";
 
 export function InsightsStream() {
   return (
-    <section className="glass-panel rounded-lg p-5 sm:p-6" aria-labelledby="insights-heading">
+    <section className="premium-card rounded-xl p-5 sm:p-6" aria-labelledby="insights-heading">
       <div className="mb-5 border-b border-white/[0.05] pb-4">
         <h2
           id="insights-heading"
