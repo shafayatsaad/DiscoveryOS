@@ -1,57 +1,18 @@
-"use client";
+// Purpose: Render lightweight pipeline process summaries without opening a stream on navigation.
 
-// Purpose: Render active pipeline processes with real-time progress from the backend.
+import { Check, Clock3, Cpu } from "lucide-react";
 
-import { Check, CircleDashed, Clock3, Cpu, X } from "lucide-react";
-
-import { EmptyState, SkeletonBlock, SuccessMark } from "@/components/ui/feedback-states";
-import { usePipelineStream } from "@/features/dashboard/hooks/use-pipeline-stream";
-import { primaryProjectId } from "@/features/projects/data/project-workspaces";
+import { activeProcesses } from "@/features/dashboard/data/dashboard-content";
 import { cn } from "@/lib/utils";
 
-const STAGE_ICONS: Record<string, string> = {
-  planner: "bg-primary/10 text-primary",
-  retriever: "bg-secondary/10 text-secondary",
-  extractor: "bg-tertiary/10 text-tertiary",
-  knowledge_graph: "bg-primary/10 text-primary",
-  contradiction: "bg-secondary/10 text-secondary",
-  novelty: "bg-tertiary/10 text-tertiary",
-  experiment: "bg-primary/10 text-primary",
-  report: "bg-secondary/10 text-secondary",
-};
-
-const STAGE_LABELS: Record<string, string> = {
-  planner: "Planning",
-  retriever: "Retriever",
-  extractor: "Extractor",
-  knowledge_graph: "Graph Builder",
-  contradiction: "Contradiction",
-  novelty: "Novelty",
-  experiment: "Experiment",
-  report: "Report",
+const roleToneClasses = {
+  primary: "border-primary/20 bg-primary/10 text-primary",
+  secondary: "border-secondary/20 bg-secondary/10 text-secondary",
+  muted: "border-white/[0.06] bg-surface-container-high text-outline",
 };
 
 export function ProcessesPanel() {
-  const {
-    events,
-    status: streamStatus,
-    progress,
-    metadata,
-    isConnected,
-    isComplete,
-    isFailed,
-  } = usePipelineStream({
-    projectId: primaryProjectId,
-  });
-
-  const isRunning =
-    streamStatus === "connecting" || streamStatus === "connected";
-  const hasData = events.length > 0;
-
-  // Count running stages from events
-  const runningCount = events.filter(
-    (e) => e.event_type === "stage.started",
-  ).length;
+  const runningCount = activeProcesses.filter((process) => process.progress > 0).length;
 
   return (
     <section
@@ -66,195 +27,77 @@ export function ProcessesPanel() {
           <Cpu className="h-5 w-5 text-primary" />
           Active Processes
         </h2>
-        <span
-          className={cn(
-            "inline-flex shrink-0 items-center gap-2 rounded-md px-3 py-2 font-display text-xs font-semibold",
-            isComplete
-              ? "bg-green-500/20 text-green-400"
-              : isFailed
-                ? "bg-red-500/20 text-red-400"
-                : isRunning
-                  ? "bg-primary/20 text-primary"
-                  : "bg-surface-container-highest text-outline",
-          )}
-        >
-          <span
-            className={cn(
-              "h-1.5 w-1.5 rounded-full",
-              isRunning ? "bg-primary animate-pulse" : "bg-current",
-            )}
-          />
-          {isComplete
-            ? "Complete"
-            : isFailed
-              ? "Failed"
-              : isRunning
-                ? `${runningCount} Running`
-                : "Idle"}
+        <span className="inline-flex shrink-0 items-center gap-2 rounded-md bg-primary/10 px-3 py-2 font-display text-xs font-semibold text-primary">
+          <span className="h-1.5 w-1.5 rounded-full bg-primary" />
+          {runningCount} Active
         </span>
       </div>
 
-      {!hasData && streamStatus === "connecting" ? (
-        <div className="space-y-4" aria-label="Loading active processes">
-          <SkeletonBlock className="h-2 w-full" />
-          {[0, 1, 2].map((item) => (
-            <div key={item} className="surface-panel rounded-lg p-4">
-              <div className="flex items-center justify-between gap-4">
-                <SkeletonBlock className="h-5 w-36" />
-                <SkeletonBlock className="h-5 w-16" />
-              </div>
-              <SkeletonBlock className="mt-4 h-1.5 w-full" />
-            </div>
-          ))}
-        </div>
-      ) : !hasData ? (
-        <EmptyState
-          body="Submit a research question to start the pipeline."
-          icon={Cpu}
-          title="No active processes"
-        />
-      ) : (
-        <div className="flex flex-col gap-4">
-          {/* Overall progress bar */}
-          <div className="mb-2">
-            <div className="mb-1 flex items-center justify-between">
-              <span className="font-display text-xs font-semibold text-on-surface-variant">
-                Overall Progress
-              </span>
-              <span className="font-mono text-xs text-primary">
-                {Math.round(progress)}%
-              </span>
-            </div>
-            <div className="h-1.5 w-full overflow-hidden rounded-full bg-surface-container-highest">
-              <div
-                className="h-full rounded-full bg-gradient-to-r from-primary to-primary/60 transition-all duration-500"
-                style={{ width: `${progress}%` }}
-              />
-            </div>
-          </div>
+      <div className="flex flex-col gap-4">
+        {activeProcesses.map((process) => {
+          const Icon = process.icon;
+          const isQueued = process.progress === 0;
 
-          {/* Stage processes */}
-          {metadata?.stages &&
-            Object.entries(metadata.stages).map(([stageId, stageInfo]) => {
-              const isStageComplete = stageInfo.status === "completed";
-              const isStageRunning = stageInfo.status === "running";
-              const isStageFailed = stageInfo.status === "failed";
-              const isStagePending = stageInfo.status === "pending";
-
-              return (
-                <article
-                  key={stageId}
+          return (
+            <article key={process.name} className="surface-panel rounded-lg p-4">
+              <div className="mb-3 flex items-start justify-between gap-3">
+                <div className="flex min-w-0 items-center gap-3">
+                  <span
+                    className={cn(
+                      "flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border",
+                      roleToneClasses[process.roleTone],
+                    )}
+                  >
+                    <Icon className="h-4 w-4" />
+                  </span>
+                  <div className="min-w-0">
+                    <h3 className="truncate font-display text-sm font-semibold text-on-surface">
+                      {process.name}
+                    </h3>
+                    <p className="mt-1 font-mono text-xs text-on-surface-variant">
+                      {process.role}
+                    </p>
+                  </div>
+                </div>
+                <span
                   className={cn(
-                    "surface-panel rounded-lg p-4 transition-all duration-300",
-                    isStageRunning && "border-primary/20",
-                    isStageFailed && "border-red-400/20",
-                    isStagePending && "opacity-55",
+                    "shrink-0 rounded px-2 py-0.5 font-display text-xs font-semibold uppercase tracking-normal",
+                    isQueued ? "bg-surface-container-highest text-outline" : "bg-primary/10 text-primary",
                   )}
                 >
-                  <div className="mb-3 flex items-start justify-between gap-3">
-                    <div
-                      className={cn(
-                        "flex min-w-0 items-center gap-2 font-mono text-sm text-on-surface",
-                        isStagePending && "opacity-70",
-                      )}
-                    >
-                      <span
-                        className={cn(
-                          "flex h-5 w-5 shrink-0 items-center justify-center rounded text-[10px] font-bold",
-                          STAGE_ICONS[stageId] ||
-                            "bg-surface-container-highest text-outline",
-                        )}
-                      >
-                        {STAGE_LABELS[stageId]?.charAt(0) || "?"}
-                      </span>
-                      <span className="min-w-0 break-words">
-                        {stageInfo.label}
-                      </span>
-                    </div>
-                    <span
-                      className={cn(
-                        "shrink-0 rounded px-2 py-0.5 font-display text-xs font-semibold uppercase tracking-normal",
-                        isStageComplete
-                          ? "bg-green-500/10 text-green-400"
-                          : isStageRunning
-                            ? "bg-primary/10 text-primary"
-                            : isStageFailed
-                              ? "bg-red-500/10 text-red-400"
-                              : "bg-surface-container-highest text-outline",
-                      )}
-                    >
-                      {isStageComplete
-                        ? "Done"
-                        : isStageRunning
-                          ? "Active"
-                          : isStageFailed
-                            ? "Failed"
-                            : "Pending"}
-                    </span>
-                  </div>
+                  {process.eta}
+                </span>
+              </div>
 
-                  {/* Stage progress bar */}
-                  <div className="mb-2 h-1 w-full overflow-hidden rounded-full bg-surface-container-highest">
-                    {isStageComplete ? (
-                      <div className="h-full w-full rounded-full bg-green-500/60" />
-                    ) : isStageRunning ? (
-                      <div className="relative h-full w-full overflow-hidden rounded-full">
-                        <div className="absolute inset-0 animate-shimmer bg-primary/40" />
-                      </div>
-                    ) : null}
-                  </div>
+              <div className="mb-2 h-1.5 w-full overflow-hidden rounded-full bg-surface-container-highest">
+                <div
+                  className={cn(
+                    "h-full rounded-full transition-[width] duration-500",
+                    isQueued ? "bg-outline-variant" : "bg-gradient-to-r from-primary to-tertiary",
+                  )}
+                  style={{ width: `${Math.max(process.progress, 6)}%` }}
+                />
+              </div>
 
-                  <div className="flex items-center justify-between gap-3 font-display text-xs font-semibold text-on-surface-variant">
-                    <span>
-                      {isStageComplete
-                        ? "Completed"
-                        : isStageRunning
-                          ? "Running..."
-                          : isStageFailed
-                            ? "Failed"
-                            : "Waiting"}
-                    </span>
-                    {isStageComplete ? (
-                      <Check className="h-3.5 w-3.5 text-green-400" aria-label="Completed" />
-                    ) : isStageRunning ? (
-                      <CircleDashed className="h-3.5 w-3.5 animate-spin text-primary" aria-label="Running" />
-                    ) : isStageFailed ? (
-                      <X className="h-3.5 w-3.5 text-red-400" aria-label="Failed" />
-                    ) : (
-                      <Clock3 className="h-3.5 w-3.5 text-outline" aria-label="Waiting" />
-                    )}
-                  </div>
-                </article>
-              );
-            })}
-        </div>
-      )}
+              <div className="flex items-center justify-between gap-3 font-display text-xs font-semibold text-on-surface-variant">
+                <span>{process.state}</span>
+                {isQueued ? (
+                  <Clock3 className="h-3.5 w-3.5 text-outline" aria-label="Queued" />
+                ) : (
+                  <Check className="h-3.5 w-3.5 text-primary" aria-label="Active" />
+                )}
+              </div>
+            </article>
+          );
+        })}
+      </div>
 
-      {/* Connection status */}
       <div className="mt-4 flex items-center justify-between border-t border-white/[0.05] pt-3">
         <span className="font-display text-[10px] font-semibold uppercase tracking-normal text-outline-variant">
-          {isConnected
-            ? "Live"
-            : streamStatus === "connecting"
-              ? "Reconnecting..."
-              : "Disconnected"}
+          Offline demo cache
         </span>
-        <span
-          className={cn(
-            "h-2 w-2 rounded-full",
-            isConnected
-              ? "bg-green-500"
-              : streamStatus === "connecting"
-                ? "bg-yellow-500 animate-pulse"
-                : "bg-outline-variant",
-          )}
-        />
+        <span className="h-2 w-2 rounded-full bg-emerald-400" />
       </div>
-      {isComplete ? (
-        <div className="mt-4">
-          <SuccessMark label="Workflow completed" />
-        </div>
-      ) : null}
     </section>
   );
 }
