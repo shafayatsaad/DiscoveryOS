@@ -100,7 +100,7 @@ export function CommandCenter() {
         )}
 
         <div className="relative z-10 mx-auto flex max-w-5xl flex-col items-center">
-          <h1 className="max-w-3xl font-display text-3xl font-bold leading-[1.15] text-on-surface sm:text-4xl lg:text-5xl tracking-tight">
+          <h1 className="max-w-3xl font-display text-3xl font-bold leading-[1.15] text-on-surface sm:text-4xl xl:text-[44px] tracking-tight">
             What scientific problem are you trying to solve today?
           </h1>
 
@@ -118,12 +118,12 @@ export function CommandCenter() {
                 id="research-query"
                 value={query}
                 onChange={(event) => setQuery(event.target.value)}
-                className="h-16 w-full rounded-lg border border-white/10 bg-[#070b11] py-3 pl-12 pr-36 font-mono text-sm text-on-surface outline-none transition-all placeholder:text-outline-variant focus:border-primary focus:ring-0 sm:pr-44 focus:shadow-[0_0_25px_rgba(173,198,255,0.12)]"
+                className="h-16 w-full rounded-lg border border-white/10 bg-[#070b11] py-3 pl-12 pr-4 font-mono text-sm text-on-surface outline-none transition-all placeholder:text-outline-variant focus:border-primary focus:ring-0 focus:shadow-[0_0_25px_rgba(173,198,255,0.12)] sm:pr-44"
                 placeholder={inputPlaceholder}
                 type="text"
                 disabled={isRunning}
               />
-              <div className="absolute inset-y-0 right-2 flex items-center gap-2">
+              <div className="mt-3 flex items-center justify-center gap-2 sm:absolute sm:inset-y-0 sm:right-2 sm:mt-0">
                 <button
                   className="hidden rounded-md p-2 text-outline-variant transition-colors hover:text-primary sm:inline-flex"
                   type="button"
