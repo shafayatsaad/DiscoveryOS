@@ -1,15 +1,20 @@
 # Purpose: Keep Docker build contexts small and free of local runtime artifacts.
 
 .git
+.github
 .ruff_cache
 node_modules
 apps/web/.next
 apps/web/playwright-report
 apps/web/test-results
+apps/web/.next-dev.*.log
+apps/web/.next-start.*.log
 coverage
-logs/*.log
+logs
 storage
 *.pyc
 __pycache__
 .env
 .env*.local
+*.tsbuildinfo
+README.old.md
