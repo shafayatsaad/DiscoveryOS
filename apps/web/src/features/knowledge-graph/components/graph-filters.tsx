@@ -8,14 +8,14 @@ const toneClasses = {
   primary: "border-primary bg-primary/20 text-primary",
   secondary: "border-secondary bg-secondary/20 text-secondary",
   tertiary: "border-tertiary bg-tertiary/20 text-tertiary",
-  error: "border-error bg-error/20 text-error",
+  error: "border-red-300/30 bg-red-400/15 text-red-200",
 };
 
 const dotClasses = {
   primary: "bg-primary",
   secondary: "bg-secondary",
   tertiary: "bg-tertiary",
-  error: "bg-error",
+  error: "bg-red-300",
 };
 
 export function GraphFilters({
