@@ -26,6 +26,11 @@ for (const route of routes) {
 }
 
 test("dashboard magic moment streams to report links", async ({ page }) => {
+  const corsHeaders = {
+    "Access-Control-Allow-Headers": "Content-Type",
+    "Access-Control-Allow-Methods": "GET,POST,OPTIONS",
+    "Access-Control-Allow-Origin": "*",
+  };
   const streamEvents = [
     { event_type: "pipeline.started", stage: null, progress: 5 },
     { event_type: "stage.completed", stage: "planner", progress: 18 },
@@ -49,8 +54,14 @@ test("dashboard magic moment streams to report links", async ({ page }) => {
   }));
 
   await page.route("**/api/v1/projects/*/run", async (route) => {
+    if (route.request().method() === "OPTIONS") {
+      await route.fulfill({ headers: corsHeaders, status: 204 });
+      return;
+    }
+
     await route.fulfill({
       contentType: "application/json",
+      headers: corsHeaders,
       json: {
         run_id: "e2e-demo-run",
         project_id: projectId,
@@ -67,6 +78,7 @@ test("dashboard magic moment streams to report links", async ({ page }) => {
       body: streamEvents.map((event) => `data: ${JSON.stringify(event)}\n\n`).join(""),
       contentType: "text/event-stream",
       headers: {
+        ...corsHeaders,
         "Cache-Control": "no-cache",
       },
       status: 200,
