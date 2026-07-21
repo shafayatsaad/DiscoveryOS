@@ -5,9 +5,9 @@ from typing import Annotated
 from fastapi import APIRouter, Depends
 from redis.asyncio import Redis
 from sqlalchemy import text
+from sqlalchemy.ext.asyncio import AsyncSession
 
-from discoveryos_api.api.dependencies import get_db_session
-from discoveryos_api.api.dependencies import RequestContext, get_request_context
+from discoveryos_api.api.dependencies import RequestContext, get_db_session, get_request_context
 from discoveryos_api.schemas.api.health import (
     HealthData,
     HealthResponse,
@@ -16,7 +16,6 @@ from discoveryos_api.schemas.api.health import (
     ReadinessResponse,
 )
 from discoveryos_api.schemas.api.responses import ResponseMeta
-from sqlalchemy.ext.asyncio import AsyncSession
 
 router = APIRouter()
 
