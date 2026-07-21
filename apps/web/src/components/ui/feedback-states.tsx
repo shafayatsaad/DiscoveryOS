@@ -30,9 +30,16 @@ export function EmptyState({
   className?: string;
 }) {
   return (
-    <div className={cn("flex flex-col items-center justify-center py-8 text-center", className)}>
-      <Icon className="mb-3 h-8 w-8 text-outline-variant" />
-      <p className="font-display text-sm font-medium text-on-surface-variant">{title}</p>
+    <div
+      className={cn(
+        "flex flex-col items-center justify-center rounded-lg border border-white/[0.05] bg-surface/35 px-5 py-8 text-center",
+        className,
+      )}
+    >
+      <span className="mb-3 flex h-11 w-11 items-center justify-center rounded-lg border border-white/[0.06] bg-white/[0.025] text-outline-variant">
+        <Icon className="h-5 w-5" />
+      </span>
+      <p className="font-display text-sm font-semibold text-on-surface">{title}</p>
       <p className="mt-1 max-w-xs text-xs leading-5 text-outline">{body}</p>
     </div>
   );
