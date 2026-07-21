@@ -13,7 +13,7 @@ export default defineConfig({
     trace: "on-first-retry",
   },
   webServer: {
-    command: "node .next/standalone/apps/web/server.js",
+    command: "node tests/e2e/start-standalone.mjs",
     env: {
       HOSTNAME: "127.0.0.1",
       PORT: "3100",
